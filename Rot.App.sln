@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rot.App", "Rot.App\Rot.App.csproj", "{3CB9E917-FEF7-453F-A88D-6B85B552B058}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNA", "FNA\FNA.csproj", "{35253CE1-C864-4CD3-8249-4D1319748E8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez.FNA", "Nez\Nez.Portable\Nez.FNA.csproj", "{11A5855C-B12C-4F8D-B935-56F3D0B671C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez.FNA.ImGui", "Nez\Nez.ImGui\Nez.FNA.ImGui.csproj", "{16DA6D66-4DFD-46D4-A367-C02B48B80CAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez.FNA.Persistence", "Nez\Nez.Persistence\Nez.FNA.Persistence.csproj", "{26DA6D66-4DFD-46D4-A367-C02B48B80CAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rot.Engine", "Rot.Engine\Rot.Engine.csproj", "{8AD4F73A-9C91-4B77-A4D0-7F485E1E6A3E}"
+EndProject
+Global
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CB9E917-FEF7-453F-A88D-6B85B552B058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CB9E917-FEF7-453F-A88D-6B85B552B058}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11A5855C-B12C-4F8D-B935-56F3D0B671C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11A5855C-B12C-4F8D-B935-56F3D0B671C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16DA6D66-4DFD-46D4-A367-C02B48B80CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16DA6D66-4DFD-46D4-A367-C02B48B80CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DA6D66-4DFD-46D4-A367-C02B48B80CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26DA6D66-4DFD-46D4-A367-C02B48B80CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AD4F73A-9C91-4B77-A4D0-7F485E1E6A3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AD4F73A-9C91-4B77-A4D0-7F485E1E6A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+EndGlobal
