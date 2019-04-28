@@ -5,7 +5,7 @@
         <TargetFramework>net471</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <AssemblyName>Rot.App</AssemblyName>
+        <AssemblyName>Rot.Game</AssemblyName>
         <MonoGamePlatform>DesktopGL</MonoGamePlatform>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     </PropertyGroup>

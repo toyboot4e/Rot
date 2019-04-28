@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 
-namespace Rot.App
+namespace Rot.Game
 {
     class Program
     {

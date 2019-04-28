@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.ImGuiTools;
 
-namespace Rot.App
+namespace Rot.Game
 {
     public class DefaultScene : Scene
     {

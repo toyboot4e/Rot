@@ -1,7 +1,7 @@
 using Nez;
 using Nez.ImGuiTools;
 
-namespace Rot.App
+namespace Rot.Game
 {
     class Game : Core
     {

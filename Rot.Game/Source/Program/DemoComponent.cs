@@ -2,7 +2,7 @@ using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
 
-namespace Rot.App
+namespace Rot.Game
 {
     public class DemoComponent : Component
     {
