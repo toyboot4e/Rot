@@ -3,6 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Rot.Engine {
+    public static class StringExt {
+        public static string format(this string self, params object[] args) {
+            return string.Format(self, args);
+        }
+    }
+
+    public static class CompareableExt {
+        public static T clamp<T>(this T val, T min, T max) where T : IComparable<T> {
+            if (val.CompareTo(min) < 0) {
+                return min;
+            } else if (val.CompareTo(max) > 0) {
+                return max;
+            } else {
+                return val;
+            }
+        }
+    }
+
+    public static class KvPairExt {
+        // Enables foreach( var(key, value) in dict ) { .. }
+        public static void Deconstruct<T1, T2>(this KeyValuePair<T1, T2> tuple, out T1 key, out T2 value) {
+            key = tuple.Key;
+            value = tuple.Value;
+        }
+    }
+
     public static class IEnumerableExt {
         public static void forEach<T>(this IEnumerable<T> self, System.Action<T> action) {
             foreach(T item in self) {

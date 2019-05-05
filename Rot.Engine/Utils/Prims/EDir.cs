@@ -8,54 +8,54 @@ namespace Rot.Engine {
     /// <summary>
     /// One of the eight directions: almost an enum. Can be None.
     /// </summary>
-    public struct EDIr : IEquatable<EDIr> {
+    public struct EDir : IEquatable<EDir> {
         readonly Vec2 mVec;
 
         public Vec2 vec => mVec;
         public Vector2 vector2 => mVec.vector2;
         public int x => mVec.x;
         public int y => mVec.y;
-        public EDIr xSgn => new EDIr(mVec.x, 0);
-        public EDIr ySgn => new EDIr(0, mVec.y);
+        public EDir xSgn => new EDir(mVec.x, 0);
+        public EDir ySgn => new EDir(0, mVec.y);
 
-        public static EDIr fromVec(Vec2 v) => EDIr.all.FirstOrDefault(d => v == d.vec);
-        public static EDIr fromXy(int x, int y) => EDIr.all.FirstOrDefault(d => x == d.x && y == d.y);
-        EDIr(Vec2 offset) : this(offset.x, offset.y) { }
-        EDIr(int x, int y) {
+        public static EDir fromVec(Vec2 v) => EDir.all.FirstOrDefault(d => v == d.vec);
+        public static EDir fromXy(int x, int y) => EDir.all.FirstOrDefault(d => x == d.x && y == d.y);
+        EDir(Vec2 offset) : this(offset.x, offset.y) { }
+        EDir(int x, int y) {
             mVec = new Vec2(x.clamp(-1, 1), y.clamp(-1, 1));
         }
 
         // -> Self
-        public static EDIr None => new EDIr(new Vec2(0, 0));
-        public static EDIr N => new EDIr(new Vec2(0, -1));
-        public static EDIr NE => new EDIr(new Vec2(1, -1));
-        public static EDIr E => new EDIr(new Vec2(1, 0));
-        public static EDIr SE => new EDIr(new Vec2(1, 1));
-        public static EDIr S => new EDIr(new Vec2(0, 1));
-        public static EDIr SW => new EDIr(new Vec2(-1, 1));
-        public static EDIr W => new EDIr(new Vec2(-1, 0));
-        public static EDIr NW => new EDIr(new Vec2(-1, -1));
+        public static EDir None => new EDir(new Vec2(0, 0));
+        public static EDir N => new EDir(new Vec2(0, -1));
+        public static EDir NE => new EDir(new Vec2(1, -1));
+        public static EDir E => new EDir(new Vec2(1, 0));
+        public static EDir SE => new EDir(new Vec2(1, 1));
+        public static EDir S => new EDir(new Vec2(0, 1));
+        public static EDir SW => new EDir(new Vec2(-1, 1));
+        public static EDir W => new EDir(new Vec2(-1, 0));
+        public static EDir NW => new EDir(new Vec2(-1, -1));
 
-        public static EDIr random => EDIr.fromInt(Nez.Random.range(0, 7));
+        public static EDir random => EDir.fromInt(Nez.Random.range(0, 7));
 
-        public static EDIr fromInt(int n) {
+        public static EDir fromInt(int n) {
             switch (n) {
                 case 0:
-                    return EDIr.N;
+                    return EDir.N;
                 case 1:
-                    return EDIr.NE;
+                    return EDir.NE;
                 case 2:
-                    return EDIr.E;
+                    return EDir.E;
                 case 3:
-                    return EDIr.SE;
+                    return EDir.SE;
                 case 4:
-                    return EDIr.S;
+                    return EDir.S;
                 case 5:
-                    return EDIr.SW;
+                    return EDir.SW;
                 case 6:
-                    return EDIr.W;
+                    return EDir.W;
                 case 7:
-                    return EDIr.NW;
+                    return EDir.NW;
                 default:
                     throw new Exception("Dir.random error");
             }
@@ -78,23 +78,23 @@ namespace Rot.Engine {
         public int numpadIndex => 7 + (x + 1) - 3 * (y + 1);
 
         // -> [Self]1
-        public static IList<EDIr> all => new List<EDIr> { N, NE, E, SE, S, SW, W, NW };
-        public static IList<EDIr> clockwise => new List<EDIr> { N, NE, E, SE, S, SW, W, NW };
-        public static IList<EDIr> Counterclockwise => new List<EDIr> { N, NW, W, SW, S, SE, E, NE };
-        public static IList<EDIr> cardinal => new List<EDIr> { N, S, E, W };
-        public static IList<EDIr> diagonal => new List<EDIr> { NE, NW, SE, SW };
+        public static IList<EDir> all => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
+        public static IList<EDir> clockwise => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
+        public static IList<EDir> Counterclockwise => new List<EDir> { N, NW, W, SW, S, SE, E, NE };
+        public static IList<EDir> cardinal => new List<EDir> { N, S, E, W };
+        public static IList<EDir> diagonal => new List<EDir> { NE, NW, SE, SW };
 
         // &Self -> bool
-        public bool isCardinal => this.isIn(EDIr.cardinal);
-        public bool isDiagonal => this.isIn(EDIr.diagonal);
-        bool isIn(IEnumerable<EDIr> a) {
+        public bool isCardinal => this.isIn(EDir.cardinal);
+        public bool isDiagonal => this.isIn(EDir.diagonal);
+        bool isIn(IEnumerable<EDir> a) {
             var t = this;
             return a.Any(d => d == t);
         }
 
         // Self -> Self
-        public static EDIr towards(Vec2 pos) => new EDIr(pos.xSgn, pos.ySgn);
-        public EDIr r45 {
+        public static EDir towards(Vec2 pos) => new EDir(pos.xSgn, pos.ySgn);
+        public EDir r45 {
             get {
                 // can't switch(){}: no constants
                 if (this == N) return NE;
@@ -109,7 +109,7 @@ namespace Rot.Engine {
             }
         }
 
-        public EDIr l45 {
+        public EDir l45 {
             get {
                 if (this == N) return NW;
                 else if (this == NE) return N;
@@ -122,29 +122,29 @@ namespace Rot.Engine {
                 else return None;
             }
         }
-        public EDIr r90 => EDIr.fromXy(-this.y, this.x);
-        public EDIr l90 => EDIr.fromXy(this.y, -this.x);
-        public EDIr rev => EDIr.fromXy(-this.x, -this.y);
+        public EDir r90 => EDir.fromXy(-this.y, this.x);
+        public EDir l90 => EDir.fromXy(this.y, -this.x);
+        public EDir rev => EDir.fromXy(-this.x, -this.y);
 
         // for the compiler
-        public static Vec2 operator +(Vec2 v, EDIr d) => v + d.mVec;
-        public static Vec2 operator +(EDIr d, Vec2 v) => v + d.mVec;
-        public static bool operator ==(EDIr left, EDIr right) {
+        public static Vec2 operator +(Vec2 v, EDir d) => v + d.mVec;
+        public static Vec2 operator +(EDir d, Vec2 v) => v + d.mVec;
+        public static bool operator ==(EDir left, EDir right) {
             return left.Equals(right);
         }
-        public static bool operator !=(EDIr left, EDIr right) {
+        public static bool operator !=(EDir left, EDir right) {
             return !left.Equals(right);
         }
 
-        public bool Equals(EDIr other) {
+        public bool Equals(EDir other) {
             return mVec.Equals(other.mVec);
         }
 
         public override bool Equals(object obj) {
             if (obj == null) return false;
-            if (!(obj is EDIr)) return false;
+            if (!(obj is EDir)) return false;
 
-            return Equals((EDIr) obj);
+            return Equals((EDir) obj);
         }
 
         public override int GetHashCode() {

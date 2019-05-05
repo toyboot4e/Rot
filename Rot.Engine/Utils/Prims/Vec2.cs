@@ -87,7 +87,8 @@ namespace Rot.Engine {
             new Vec2(0, -1),
             new Vec2(1, -1),
             new Vec2(-1, 0),
-            /*   center    */ new Vec2(1, 0),
+            /*   center    */
+            new Vec2(1, 0),
             new Vec2(-1, 1),
             new Vec2(0, 1),
             new Vec2(1, 1),
@@ -95,7 +96,8 @@ namespace Rot.Engine {
         public static IList<Vec2> cardinal => new List<Vec2> {
             new Vec2(0, -1),
             new Vec2(-1, 0),
-            /*   center    */ new Vec2(1, 0),
+            /*   center    */
+            new Vec2(1, 0),
             new Vec2(0, 1),
         };
         public static IList<Vec2> intercardinal => new List<Vec2> {
@@ -108,31 +110,31 @@ namespace Rot.Engine {
 
         // &Self -> Other
         public Vector2 vector2 => new Vector2(x, y);
-        public EDIr toDir() {
+        public EDir toDir() {
             if (this.x == 0) {
-                if (this.y == 0) return EDIr.None;
-                if (this.y < 0) return EDIr.N;
-                if (this.y > 0) return EDIr.S;
+                if (this.y == 0) return EDir.None;
+                if (this.y < 0) return EDir.N;
+                if (this.y > 0) return EDir.S;
             }
             double rad = Math.Atan2(y, x);
             int z = (int) (((rad + Math.PI * 9 / 8) % (Math.PI * 2)) / (Math.PI * 2 / 8));
             switch (z) {
                 case 0:
-                    return EDIr.W;
+                    return EDir.W;
                 case 1:
-                    return EDIr.NW;
+                    return EDir.NW;
                 case 2:
-                    return EDIr.N;
+                    return EDir.N;
                 case 3:
-                    return EDIr.NE;
+                    return EDir.NE;
                 case 4:
-                    return EDIr.E;
+                    return EDir.E;
                 case 5:
-                    return EDIr.SE;
+                    return EDir.SE;
                 case 6:
-                    return EDIr.S;
+                    return EDir.S;
                 case 7:
-                    return EDIr.SW;
+                    return EDir.SW;
                 default:
                     throw new Exception("Vec2.toDir");
             }

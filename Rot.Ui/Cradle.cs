@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Rot.World {
+namespace Rot.Ui {
     public abstract class Control {
         public virtual void update(ControlContext context) { }
         public virtual void onPushed() { }
@@ -9,7 +9,7 @@ namespace Rot.World {
         public virtual void onRemoved() { }
     }
 
-    public class ControlContext {
+    public struct ControlContext {
         public Cradle cradle;
         public VInput input;
 
@@ -22,9 +22,6 @@ namespace Rot.World {
     public class Cradle {
         public Dictionary<Type, Control> storage { get; private set; }
         Stack<Control> stack;
-        List<Control> parallels;
-        public IReadOnlyList<Control> parallelControls => parallels;
-        ControlContext context;
 
         Queue<Control> reserved = new Queue<Control>(2);
         /// <summary> lazy pushing </summary>
@@ -36,37 +33,30 @@ namespace Rot.World {
         public Cradle(VInput input) {
             this.storage = new Dictionary<Type, Control>();
             this.stack = new Stack<Control>();
-            this.parallels = new List<Control>();
-            this.context = new ControlContext(this, input);
         }
 
-        public void update() {
-            // this.input.update();
+        public void update(VInput input) {
             foreach(var c in this.reserved) {
                 this.push(c);
             }
+
+            var context = new ControlContext(this, input);
             while (true) {
-                var peek = this.stack.Peek();
-                peek.update(this.context);
-                if (this.stack.Peek() == peek) {
+                var peek = this.safePeek();
+                if (peek == null) {
                     break;
                 }
+                peek.update(context);
             }
         }
 
-        #region Stack
-        public T parallel<T>(T c) where T : Control {
-            c.onPushed();
-            this.parallels.Add(c);
-            return c;
-        }
-
-        public T parallel<T>() where T : Control {
-            Control c;
-            if (!this.storage.TryGetValue(typeof(T), out c)) {
-                throw new Exception();
+        #region StackOperations
+        Control safePeek() {
+            if (this.stack.Count > 0) {
+                return this.stack.Peek();
+            } else {
+                return null;
             }
-            return this.parallel(c as T);
         }
 
         public T push<T>(T c) where T : Control {
