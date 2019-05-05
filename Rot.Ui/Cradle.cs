@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Rot.Engine;
 
 namespace Rot.Ui {
     public abstract class Control {
@@ -42,7 +43,7 @@ namespace Rot.Ui {
 
             var context = new ControlContext(this, input);
             while (true) {
-                var peek = this.safePeek();
+                var peek = this.stack.safePeek();
                 if (peek == null) {
                     break;
                 }
@@ -51,14 +52,6 @@ namespace Rot.Ui {
         }
 
         #region StackOperations
-        Control safePeek() {
-            if (this.stack.Count > 0) {
-                return this.stack.Peek();
-            } else {
-                return null;
-            }
-        }
-
         public T push<T>(T c) where T : Control {
             c.onPushed();
             this.stack.Push(c);

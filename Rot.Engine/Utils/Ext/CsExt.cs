@@ -21,11 +21,21 @@ namespace Rot.Engine {
         }
     }
 
-    public static class KvPairExt {
+    public static class DeconstrucExt {
         // Enables foreach( var(key, value) in dict ) { .. }
         public static void Deconstruct<T1, T2>(this KeyValuePair<T1, T2> tuple, out T1 key, out T2 value) {
             key = tuple.Key;
             value = tuple.Value;
+        }
+    }
+
+    public static class CollectionExt {
+        public static T safePeek<T>(this Stack<T> self) where T : class {
+            if (self.Count > 0) {
+                return self.Peek();
+            } else {
+                return null;
+            }
         }
     }
 
