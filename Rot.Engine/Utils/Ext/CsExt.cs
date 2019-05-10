@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Rot.Engine {
     public static class StringExt {
+        /// <summary> Consider using $"{var}" or $@"{var}" instead </summary>
         public static string format(this string self, params object[] args) {
             return string.Format(self, args);
         }

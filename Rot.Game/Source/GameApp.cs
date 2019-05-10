@@ -2,8 +2,8 @@ using Nez;
 using Nez.ImGuiTools;
 
 namespace Rot.Game {
-    class Game : Nez.Core {
-        public Game() : base() { }
+    class GameApp : Nez.Core {
+        public GameApp() : base() { }
 
         override protected void Initialize() {
             base.Initialize();

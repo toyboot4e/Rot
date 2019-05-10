@@ -4,10 +4,17 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     public abstract class Control {
-        public virtual void update(ControlContext context) { }
+        public virtual ControlResult update(ControlContext context) {
+            return ControlResult.SeeYouNextFrame;
+        }
         public virtual void onPushed() { }
         public virtual void onPoped() { }
         public virtual void onRemoved() { }
+    }
+
+    public enum ControlResult {
+        SeeYouNextFrame,
+        Continue,
     }
 
     public struct ControlContext {
@@ -22,14 +29,7 @@ namespace Rot.Ui {
 
     public class Cradle {
         public Dictionary<Type, Control> storage { get; private set; }
-        Stack<Control> stack;
-
-        Queue<Control> reserved = new Queue<Control>(2);
-        /// <summary> lazy pushing </summary>
-        public T reserve<T>(T c) where T : Control {
-            this.reserved.Enqueue(c);
-            return c;
-        }
+        public Stack<Control> stack;
 
         public Cradle(VInput input) {
             this.storage = new Dictionary<Type, Control>();
@@ -37,17 +37,21 @@ namespace Rot.Ui {
         }
 
         public void update(VInput input) {
-            foreach(var c in this.reserved) {
-                this.push(c);
-            }
-
             var context = new ControlContext(this, input);
             while (true) {
                 var peek = this.stack.safePeek();
                 if (peek == null) {
                     break;
                 }
-                peek.update(context);
+                switch (peek.update(context)) {
+                    case ControlResult.SeeYouNextFrame:
+                        return;
+                    case ControlResult.Continue:
+                        continue;
+                }
+                // if (peek == this.stack.safePeek()) {
+                //     break;
+                // }
             }
         }
 
@@ -90,6 +94,12 @@ namespace Rot.Ui {
         public T add<T>(T child) where T : Control {
             this.storage.Add(typeof(T), child);
             return child;
+        }
+
+        public void addAll(params Control[] ctrls) {
+            for (var i = 0; i < ctrls.Length; i++) {
+                this.add(ctrls[i]);
+            }
         }
 
         public T add<T>() where T : Control, new() {
