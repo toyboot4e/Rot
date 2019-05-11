@@ -4,11 +4,13 @@ using Nez;
 using Rot.Engine;
 
 namespace Rot.Engine {
+    /// <summary> Injected to the `RlGame` </summary>
     public interface ActorScheduler {
         IActor next();
         void updateList();
     }
 
+    /// <summary> Ease for prototyping: a collection that implements ActorScheduler </summary>
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;
 
@@ -32,7 +34,7 @@ namespace Rot.Engine {
             int len = base.Count;
             if (len == 0) {
                 return (false, "EntityList: length == 0");
-            } else if (this.index < len) {
+            } else if (this.index >= len) {
                 return (true, "EntityList as ActorScheduler: index out of range");
             }
             return (true, "");
@@ -53,9 +55,6 @@ namespace Rot.Engine {
         }
 
         public RlReport tick() {
-            if (this.loop == null) {
-                return RlReport.error("Not given scheduler");
-            }
             return this.loop.tick();
         }
 

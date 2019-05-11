@@ -1,7 +1,8 @@
 namespace Rot.Engine {
-    public static class RlReportGenerator {
-        public static RlReport.Actor into(this RlReport.Actor.Kind self) {
-            return new RlReport.Actor(self);
+    public static class RlReportGenExt {
+        // FIXME: the hack. Maybe by deleting IActor?
+        public static RlReport.Actor into(this RlReport.Actor.Kind self, Engine.IActor actor) {
+            return new RlReport.Actor(self, actor as Engine.Actor);
         }
     }
 
@@ -18,6 +19,7 @@ namespace Rot.Engine {
 
         public class Actor : RlReport {
             public Kind kind;
+            public Engine.Actor actor;
 
             public enum Kind {
                 TakeTurn,
@@ -25,8 +27,8 @@ namespace Rot.Engine {
             }
 
             /// <summary> To be created via Kind.into() extention </summary>
-            public Actor(Kind kind) {
-                this.kind = kind;
+            public Actor(Kind kind, Engine.Actor actor) {
+                (this.kind, this.actor) = (kind, actor);
             }
         }
 
@@ -41,11 +43,11 @@ namespace Rot.Engine {
                 End,
             }
 
-            public static Action begin() => new Action(Kind.Begin);
-            public static Action end() => new Action(Kind.End);
+            public static Action begin(IAction action) => new Action(Kind.Begin, action);
+            public static Action end(IAction action) => new Action(Kind.End, action);
             public static Action process(IAction action) => new Action(Kind.Process, action);
 
-            public Action(Kind state, IAction action = null) {
+            public Action(Kind state, IAction action) {
                 (this.kind, this.action) = (state, action);
             }
         }
