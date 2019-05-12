@@ -9,31 +9,41 @@ namespace Rot.Engine {
             return new RlActionReport.TellUi(RlReport.error(message), Order.finish());
         }
 
-        public static Order chain(IAction next) {
-            return new Order(Order.Kind.Chain, false, next);
-        }
         public static Order finish(bool consumesTurn = true) {
-            return new Order(Order.Kind.Finish, consumesTurn);
+            return new Order(Order.Kind.Finish);
         }
+
         public static Order process() {
             return new Order(Order.Kind.Process);
+        }
+
+        public static Order chain(IAction next) {
+            return new Order(Order.Kind.Chain, next);
+        }
+
+        public static Order another() {
+            return new Order(Order.Kind.Another);
         }
         #endregion
 
         /// <summary> Specific orders to the game loop </summary>
         public class Order : RlActionReport {
             public Kind kind;
-            public bool consumesTurn = true; // Process
-            public IAction chainnedAction; // Chain
+            public IAction chainned; // Chain
 
             public enum Kind {
+                /// <summary> Every action sometime ends </summary>
                 Finish,
+                /// <summary> The action didn't consume turn </summary>
+                Another,
+                /// <summary> `process` the action until is finished </summary>
                 Process,
+                /// <summary> Alternate the action with another </summary>
                 Chain,
             }
 
-            public Order(Kind kind, bool consumesTurn = true, IAction next = null) {
-                (this.kind, this.consumesTurn, this.chainnedAction) = (kind, consumesTurn, next);
+            public Order(Kind kind, IAction next = null) {
+                (this.kind, this.chainned) = (kind, next);
             }
         }
 

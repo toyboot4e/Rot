@@ -3,6 +3,7 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
+    /// <summary> Creates modification and let UI visualize them. </summary>
     public interface IAction {
         RlActionReport perform();
         RlActionReport process();
@@ -85,21 +86,20 @@ namespace Rot.Engine {
 
                 case RlActionReport.Order order:
                     switch (order.kind) {
+                        case RlActionReport.Order.Kind.Finish:
+                            yield break;
+
                         case RlActionReport.Order.Kind.Process:
                             goto Process;
 
-                        case RlActionReport.Order.Kind.Finish:
-                            if (order.consumesTurn) {
-                                yield break;
-                            } else {
-                                yield return RlReport.Action.end(action);
-                                action = actor.anotherAction();
-                                goto Perform;
-                            }
+                        case RlActionReport.Order.Kind.Another:
+                            yield return RlReport.Action.end(action);
+                            action = actor.anotherAction();
+                            goto Perform;
 
                         case RlActionReport.Order.Kind.Chain:
                             yield return RlReport.Action.end(action);
-                            action = order.chainnedAction;
+                            action = order.chainned;
                             goto Perform;
 
                         default:
