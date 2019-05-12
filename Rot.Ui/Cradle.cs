@@ -49,9 +49,6 @@ namespace Rot.Ui {
                     case ControlResult.Continue:
                         continue;
                 }
-                // if (peek == this.stack.safePeek()) {
-                //     break;
-                // }
             }
         }
 
@@ -83,7 +80,9 @@ namespace Rot.Ui {
             }
             return push(c as T);
         }
+        #endregion
 
+        #region StackOperations
         public T get<T>() where T : Control {
             Control control;
             this.storage.TryGetValue(typeof(T), out control);
@@ -108,10 +107,6 @@ namespace Rot.Ui {
             return child;
         }
 
-        public T addAndPush<T>() where T : Control, new() {
-            return this.push(this.add<T>());
-        }
-
         public T remove<T>(T child) where T : Control {
             if (this.storage.ContainsValue(child)) {
                 this.storage.Remove(typeof(T));
@@ -126,6 +121,20 @@ namespace Rot.Ui {
             if (control == null) throw new Exception("Cradle: tried to remove unexisting child");
             this.storage.Remove(typeof(T));
             return control as T;
+        }
+        #endregion
+
+        #region SyntaxSugar
+        public T addAndPush<T>() where T : Control, new() {
+            return this.push(this.add<T>());
+        }
+
+        public T addAndPush<T>(T child) where T : Control {
+            return this.push(this.add(child));
+        }
+
+        public Control removeTop() {
+            return this.remove(this.pop());
         }
         #endregion
     }

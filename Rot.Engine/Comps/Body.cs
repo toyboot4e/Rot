@@ -18,9 +18,7 @@ namespace Rot.Engine {
 
         public Body(Vec2 pos, EDir dir, bool isBlocker) {
             this.location = Location.OnStage;
-            this.pos = pos;
-            this.facing = dir;
-            this.isBlocker = isBlocker;
+            (this.pos, this.facing, this.isBlocker) = (pos, dir, isBlocker);
         }
 
         public EDir dirTo(Entity e) => dirTo(e.get<Body>().pos);

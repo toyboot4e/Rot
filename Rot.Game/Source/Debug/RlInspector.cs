@@ -36,7 +36,7 @@ namespace Rot.Game {
             ImGui.Begin("RL inspector", ImGuiWindowFlags.AlwaysAutoResize);
 
             var text = new string[] {
-                "cradle: " + string.Join(" > ", cradle.stack.Select(c => c.GetType().Name)),
+                "cradle: " + string.Join(" < ", cradle.stack.Select(c => c.GetType().Name)),
                 "camera: " + this.entity.scene.camera.position,
                 "mouse_screen: " + this.input.mousePos,
             };

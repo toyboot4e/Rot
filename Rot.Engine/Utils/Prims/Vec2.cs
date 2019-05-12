@@ -13,8 +13,8 @@ namespace Rot.Engine {
         public readonly int y;
 
         // -> Self
-        public static Vec2 zero = new Vec2(0, 0);
-        public static Vec2 one = new Vec2(1, 1);
+        public static Vec2 zero => new Vec2(0, 0);
+        public static Vec2 one => new Vec2(1, 1);
         public Vec2(int x, int y) {
             this.x = x;
             this.y = y;
@@ -158,7 +158,7 @@ namespace Rot.Engine {
             return this.x.Equals(other.x) && this.y.Equals(other.y);
         }
         public override string ToString() {
-            return this.x.ToString() + ", " + this.y.ToString();
+            return $"({x}, {y})";
         }
         public override bool Equals(object obj) {
             if (obj is Vec2) {

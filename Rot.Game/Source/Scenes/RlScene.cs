@@ -37,12 +37,15 @@ namespace Rot.Game {
 
             var entities = new RotEntityList();
             for (int i = 0; i < 5; i++) {
-                var e = base.createEntity("i");
+                var e = base.createEntity($"actor_{i}");
                 var pos = new Vec2(5 + i, 5 + i);
                 e.add(new Actor(null));
                 e.add(new Body(pos, dir : EDir.random, isBlocker : true));
                 entities.Add(e);
             }
+            var pl = entities[0];
+            pl.get<Actor>().setBehavior(new Engine.Beh.PlBehavior(pl));
+
             this.game.setActorScheduler(entities);
 
             var ctrls = new Control[] {
@@ -61,46 +64,55 @@ namespace Rot.Game {
             this.game = game;
         }
 
+        // FIXME: proper timing
         public override ControlResult update(Ui.ControlContext context) {
             var report = game.tick();
 
             switch (report) {
                 case RlReport.Action actionReport:
+                    var action = actionReport.action;
                     switch (actionReport.kind) {
                         case RlReport.Action.Kind.Begin:
+                            Nez.Debug.log($"action: {action}");
                             break;
 
                         case RlReport.Action.Kind.End:
                             break;
 
                         case RlReport.Action.Kind.Process:
-                            var action = actionReport.action;
                             break;
                     }
-                    break;
+                    return ControlResult.SeeYouNextFrame;
 
                 case RlReport.Actor actorReport:
-                    // var actor = actorReport.actor;
+                    // not so important (the actor may not have enough power to act)
+                    var actor = actorReport.actor;
                     switch (actorReport.kind) {
                         case RlReport.Actor.Kind.TakeTurn:
                             break;
 
                         case RlReport.Actor.Kind.EndTurn:
                             break;
-
                     }
-                    break;
-
-                case RlReport.Event eventReport:
-                    var ev = eventReport.ev;
-                    break;
+                    return ControlResult.Continue;
 
                 case RlReport.Error errorReport:
                     var message = errorReport.message;
                     Nez.Debug.log(message);
-                    break;
+                    // maybe avoid stack overflow
+                    return ControlResult.SeeYouNextFrame;
+
+                case RlReport.DecideActionOfEntity decide:
+                    context.cradle.addAndPush(new PlControl(decide.context));
+                    return ControlResult.SeeYouNextFrame;
+
+                case RlReport.Event eventReport:
+                    var ev = eventReport.ev;
+                    return ControlResult.SeeYouNextFrame;
+
+                default:
+                    throw new System.Exception($"invalid case: {report}");
             }
-            return ControlResult.SeeYouNextFrame;
         }
     }
 }

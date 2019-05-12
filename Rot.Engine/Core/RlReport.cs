@@ -52,6 +52,13 @@ namespace Rot.Engine {
             }
         }
 
+        public class DecideActionOfEntity : RlReport {
+            public EntityControlContext context;
+            public DecideActionOfEntity(EntityControlContext context) {
+                this.context = context;
+            }
+        }
+
         public class Event : RlReport {
             public RlEvent ev;
         }

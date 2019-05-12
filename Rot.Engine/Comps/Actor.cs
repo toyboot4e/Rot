@@ -6,6 +6,7 @@ namespace Rot.Engine {
         IAction make();
     }
 
+    // FIXME: forbidding null behavior
     /// <summary> Wrapper around IBehavior </sumary>
     public class Actor : Nez.Component, IActor {
         public bool needsDeleting { get; set; }
@@ -17,6 +18,11 @@ namespace Rot.Engine {
             this.energy = new Energy(speedLevel);
         }
 
+        public Actor setBehavior(IBehavior beh) {
+            this.behavior = beh;
+            return this;
+        }
+
         IEnumerable<IAction> IActor.takeTurn() {
             this.energy.gain();
             if (!this.energy.canTakeTurn) {
@@ -26,11 +32,14 @@ namespace Rot.Engine {
             }
 
             foreach(var _ in this.energy.take_turns()) {
-                Nez.Debug.log($"Actor {this.entity.id} takes turn");
                 if (this.behavior != null) {
                     yield return this.behavior.make();
                 }
             }
+        }
+
+        IAction IActor.anotherAction() {
+            return this.behavior?.make() ?? null;
         }
     }
 
