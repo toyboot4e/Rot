@@ -1,0 +1,42 @@
+{
+    // Change "mono" to "clr" for 64-bit .NET Framework debugging on Windows.
+    // (See: https://github.com/OmniSharp/omnisharp-vscode/wiki/Desktop-.NET-Framework)
+
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "mono",
+            "request": "launch",
+            "program": "${workspaceFolder}/Rot.Game/bin/Debug/Rot.Game.exe",
+            "cwd": "${workspaceFolder}/Rot.Game",
+            "preLaunchTask": "Build (Debug)",
+            "osx":{
+                "env": {
+                    "DYLD_LIBRARY_PATH": "${workspaceFolder}/Rot.Game/bin/Debug/osx/"
+                },
+            }
+        },
+		
+        {
+            "name": "Launch Without Building",
+            "type": "mono",
+            "request": "launch",
+            "program": "${workspaceFolder}/Fook/bin/Debug/Fook.exe",
+            "cwd": "${workspaceFolder}",
+            "osx":{
+                "env": {
+                    "DYLD_LIBRARY_PATH": "${workspaceFolder}/Fook/bin/Debug/osx/"
+                },
+            }
+        },
+
+        {
+            "name": "Attach",
+            "type": "mono",
+            "request": "attach",
+            "address": "localhost",
+            "port": 55555
+        }
+    ]
+}
