@@ -40,6 +40,22 @@ namespace Rot.Engine {
         }
     }
 
+    public static class SystemActionExt {
+        /// <summary> Fn(Sub) -> Fn(Super) </sumary>
+        public static System.Action<Super> upcast<Super, Sub>(this System.Action<Sub> self) where Sub : class, Super {
+            return super => self.Invoke(super as Sub);
+        }
+
+        /// <summary> Fn(Super) -> Fn(Sub) </sumary>
+        public static System.Action<Sub> downcast<Super, Sub>(this System.Action<Super> self) where Sub : class, Super where Super : class {
+            return sub => self.Invoke(sub as Super);
+        }
+
+        public static void castCall<T, U>(this System.Action<T> self, U item) where T : class {
+            self.Invoke(item as T);
+        }
+    }
+
     public static class IEnumerableExt {
         public static void forEach<T>(this IEnumerable<T> self, System.Action<T> action) {
             foreach(T item in self) {

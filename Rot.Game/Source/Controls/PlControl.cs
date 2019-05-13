@@ -3,57 +3,37 @@ using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Ui {
-	/// <summary> Data of on/off and binded key. Calls logic. </summary>
-	public class KeyMode {
-		VKey key;
-		public bool isOn { get; private set; }
-		public bool isOff => !this.isOn;
-
-		public enum Switch {
-			TurnOn,
-			TurnOff,
-			None,
-		}
-
-		public KeyMode(VKey key) {
-			this.key = key;
-		}
-
-		public Switch update(VInput input) {
-			var isDown = input.isDown(this.key);
-
-			if (isDown && this.isOff) {
-				return Switch.TurnOn;
-			} else if (!isDown && this.isOn) {
-				return Switch.TurnOff;
-			} else {
-				return Switch.None;
-			}
-		}
-	}
-
-	/// <summary> Created to decide action of an entity. Deleted after doing it. </summary>
+	/// <summary> Created to decide the action of an entity. Deleted after finishing it. </summary>
 	public class PlControl : Control {
-		EntityControlContext context;
-		KeyMode diaMode; // Filters cardinal directional input while it's on.
-		KeyMode dirMode; // Changes direction instead of walking while it's on.
+		EntityControlContext entityCtx;
+		/// <summary> Filters cardinal directional input while it's on. </summary>
+		KeyMode diaMode;
+		/// <summary> Changes direction instead of walking while it's on. </summary>
+		KeyMode dirMode;
+		bool isDone;
 
-		public PlControl(EntityControlContext context) {
-			this.context = context;
+		public PlControl(ControlContext cc, EntityControlContext ec) : base(cc) {
+			this.entityCtx = ec;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);
 		}
 
-		void decide(Cradle cradle, IAction action) {
-			this.context.decide(action);
-			cradle.removeTop(); // return to the `TickControl`
+		/// <summary> Decide action of the given entity and return to the `TickControl` </summary>
+		void conclude(Action action) {
+			this.entityCtx.decide(action);
+			this.isDone = true;
 		}
 
-		public override ControlResult update(ControlContext context) {
-			var input = context.input;
+		public override ControlResult update() {
+			var input = base.ctx.input;
 			this.updateModes(input);
 			this.handleInput(input);
-			return ControlResult.SeeYouNextFrame;
+			if (this.isDone) {
+				base.ctx.cradle.popAndRemove();
+				return ControlResult.Continue;
+			} else {
+				return ControlResult.SeeYouNextFrame;
+			}
 		}
 
 		void updateModes(VInput input) {
@@ -67,11 +47,9 @@ namespace Rot.Ui {
 			}
 		}
 
-		// TODO: rest
 		/// <summary> Dispatches a sub routine to the input </summary>
 		void handleInput(VInput input) {
 			var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir);
-
 			switch (top.kind) {
 				case VKeyResult.Kind.Dir:
 					this.handleDir(top.dir);
@@ -86,15 +64,17 @@ namespace Rot.Ui {
 			}
 		}
 
+		// TODO: rest
 		void handleDir(EDir dir) {
 			if (this.diaMode.isOn && dir.isCardinal) {
 				return; // filtered
 			}
 
 			if (dirMode.isOn) {
-				// .faceIn(dir); // just change direction
+				this.conclude(new Engine.Act.Face(this.entityCtx.actor, dir));
 			} else {
-				// this.conclude(CF.walk(plEntity, dir));
+				// TODO: don't consume turn if failed
+				this.conclude(new Engine.Act.Walk(this.entityCtx.actor, dir));
 			}
 		}
 
@@ -181,4 +161,33 @@ namespace Rot.Ui {
 	//         return new Actions.SearchGround(actor, this.game);
 	//     }
 	// }
+
+	/// <summary> Data of on/off and a binded key. </summary>
+	public class KeyMode {
+		VKey key;
+		public bool isOn { get; private set; }
+		public bool isOff => !this.isOn;
+
+		public enum Switch {
+			TurnOn,
+			TurnOff,
+			None,
+		}
+
+		public KeyMode(VKey key) {
+			this.key = key;
+		}
+
+		public Switch update(VInput input) {
+			var isDown = input.isDown(this.key);
+
+			if (isDown && this.isOff) {
+				return Switch.TurnOn;
+			} else if (!isDown && this.isOn) {
+				return Switch.TurnOff;
+			} else {
+				return Switch.None;
+			}
+		}
+	}
 }

@@ -17,10 +17,11 @@ namespace Rot.Engine {
             return new Order(Order.Kind.Process);
         }
 
-        public static Order chain(IAction next) {
+        public static Order chain(Action next) {
             return new Order(Order.Kind.Chain, next);
         }
 
+        /// <summary> Alternated the action which didn't consume trun </summary>
         public static Order another() {
             return new Order(Order.Kind.Another);
         }
@@ -29,7 +30,7 @@ namespace Rot.Engine {
         /// <summary> Specific orders to the game loop </summary>
         public class Order : RlActionReport {
             public Kind kind;
-            public IAction chainned; // Chain
+            public Action chainned; // Chain
 
             public enum Kind {
                 /// <summary> Every action sometime ends </summary>
@@ -42,7 +43,7 @@ namespace Rot.Engine {
                 Chain,
             }
 
-            public Order(Kind kind, IAction next = null) {
+            public Order(Kind kind, Action next = null) {
                 (this.kind, this.chainned) = (kind, next);
             }
         }

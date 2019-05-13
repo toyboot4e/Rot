@@ -12,6 +12,8 @@ namespace Rot.Engine {
         readonly Vec2 mVec;
 
         public Vec2 vec => mVec;
+        public Vec2 xVec => mVec.xVec;
+        public Vec2 yVec => mVec.yVec;
         public Vector2 vector2 => mVec.vector2;
         public int x => mVec.x;
         public int y => mVec.y;

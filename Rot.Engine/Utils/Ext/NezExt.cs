@@ -31,8 +31,13 @@ namespace Rot.Engine {
         public static T add<T>(this Entity self, T component) where T : Component {
             return self.addComponent(component);
         }
+
         public static T add<T>(this Entity self) where T : Component, new() {
             return self.addComponent<T>();
+        }
+
+        public static void addAll(this Entity self, params Component[] cs) {
+            cs.forEach(c => self.addComponent(c));
         }
 
         public static T get<T>(this Entity self) where T : Component => self.getComponent<T>();
@@ -60,12 +65,15 @@ namespace Rot.Engine {
             self.y = y;
             return self;
         }
-
     }
 
     public static class TiledMapExt {
         public static TiledTileLayer tiles(this TiledMap self, int layer) {
             return self.getLayer(layer) as TiledTileLayer;
+        }
+
+        public static TiledTileLayer layerCollision(this TiledMap self) {
+            return self.getLayer("collision") as TiledTileLayer;
         }
 
         // true: blocked
@@ -79,10 +87,6 @@ namespace Rot.Engine {
             } else {
                 self.layerCollision().removeTile(x, y);
             }
-        }
-
-        public static TiledTileLayer layerCollision(this TiledMap self) {
-            return self.getLayer("collision") as TiledTileLayer;
         }
 
         public static void clearCollisionLayer(this TiledMap self) {
@@ -102,6 +106,5 @@ namespace Rot.Engine {
                 }
             }
         }
-
     }
 }

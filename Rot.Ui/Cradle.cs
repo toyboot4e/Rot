@@ -3,8 +3,31 @@ using System.Collections.Generic;
 using Rot.Engine;
 
 namespace Rot.Ui {
+    /// <summary> Controls work with this </summary>
+    public struct ControlContext {
+        public Cradle cradle;
+        public VInput input;
+
+        public ControlContext(Cradle cradle, VInput input) {
+            this.cradle = cradle;
+            this.input = input;
+        }
+
+        public void update() {
+            this.input.update();
+            this.cradle.update();
+        }
+    }
+
+    /// <summary> A state that controls the game </summary>
     public abstract class Control {
-        public virtual ControlResult update(ControlContext context) {
+        protected ControlContext ctx;
+
+        public Control(ControlContext context) {
+            this.ctx = context;
+        }
+
+        public virtual ControlResult update() {
             return ControlResult.SeeYouNextFrame;
         }
         public virtual void onPushed() { }
@@ -17,33 +40,23 @@ namespace Rot.Ui {
         Continue,
     }
 
-    public struct ControlContext {
-        public Cradle cradle;
-        public VInput input;
-
-        public ControlContext(Cradle cradle, VInput input) {
-            this.cradle = cradle;
-            this.input = input;
-        }
-    }
-
+    /// <summary> Basically a stack of `Control`s with `storage` to store them </summary>
     public class Cradle {
         public Dictionary<Type, Control> storage { get; private set; }
         public Stack<Control> stack;
 
-        public Cradle(VInput input) {
+        public Cradle() {
             this.storage = new Dictionary<Type, Control>();
             this.stack = new Stack<Control>();
         }
 
-        public void update(VInput input) {
-            var context = new ControlContext(this, input);
+        public void update() {
             while (true) {
                 var peek = this.stack.safePeek();
                 if (peek == null) {
                     break;
                 }
-                switch (peek.update(context)) {
+                switch (peek.update()) {
                     case ControlResult.SeeYouNextFrame:
                         return;
                     case ControlResult.Continue:
@@ -107,12 +120,13 @@ namespace Rot.Ui {
             return child;
         }
 
-        public T remove<T>(T child) where T : Control {
-            if (this.storage.ContainsValue(child)) {
-                this.storage.Remove(typeof(T));
+        /// <summary> Removes `child` dynamically checking its type </summary>
+        public Control remove(Control child) {
+            if (this.storage.Remove(child.GetType())) {
                 return child;
+            } else {
+                return null;
             }
-            return null;
         }
 
         public T remove<T>() where T : Control {
@@ -133,7 +147,7 @@ namespace Rot.Ui {
             return this.push(this.add(child));
         }
 
-        public Control removeTop() {
+        public Control popAndRemove() {
             return this.remove(this.pop());
         }
         #endregion

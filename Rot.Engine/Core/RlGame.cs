@@ -48,18 +48,14 @@ namespace Rot.Engine {
 
     public class RlGame {
         RlGameLoop loop;
+        public RlEventHub evHub { get; private set; }
 
-        public RlGame(ActorScheduler scheduler) {
-            // TODO: invalidating null scheduler
-            this.loop = new RlGameLoop(scheduler: scheduler);
+        public RlGame(ActionContext ctx, ActorScheduler scheduler) {
+            this.loop = new RlGameLoop(ctx, scheduler);
         }
 
         public RlReport tick() {
             return this.loop.tick();
-        }
-
-        public void setActorScheduler(ActorScheduler scheduler) {
-            this.loop.bindScheduler(scheduler);
         }
     }
 }

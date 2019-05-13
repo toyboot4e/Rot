@@ -2,14 +2,12 @@ using Nez;
 using Rot.Ui;
 
 namespace Rot.Game {
-    /// <summary> Framework of game flow. </summary>
+    /// <summary> Framework of game flow / wrapper of the `ControlContext`. </summary>
     public class ControlSceneComponent : Nez.SceneComponent {
-        public VInput input { get; private set; }
-        public Cradle cradle { get; private set; }
+        public ControlContext context;
 
         public ControlSceneComponent() {
-            this.input = new VInput();
-            this.cradle = new Cradle(this.input);
+            this.context = new ControlContext(new Cradle(), new VInput());
         }
 
         public static ControlSceneComponent create(Scene scene) {
@@ -18,8 +16,7 @@ namespace Rot.Game {
         }
 
         public override void update() {
-            this.input.update();
-            this.cradle.update(this.input);
+            this.context.update();
         }
     }
 }

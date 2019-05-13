@@ -5,7 +5,7 @@ using Nez;
 using Nez.ImGuiTools;
 using Rot.Ui;
 
-namespace Rot.Game {
+namespace Rot.Game.Debug {
     /// <summary> Shows internal game states via Nez.ImGuiTools </summary>
     public class RlInspector : Component {
         Cradle cradle;

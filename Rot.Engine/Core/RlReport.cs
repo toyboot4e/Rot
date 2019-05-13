@@ -35,7 +35,7 @@ namespace Rot.Engine {
         // Emitted before doing the [State] for the action.
         public class Action : RlReport {
             public Kind kind;
-            public IAction action;
+            public Engine.Action action;
 
             public enum Kind {
                 Begin,
@@ -43,11 +43,11 @@ namespace Rot.Engine {
                 End,
             }
 
-            public static Action begin(IAction action) => new Action(Kind.Begin, action);
-            public static Action end(IAction action) => new Action(Kind.End, action);
-            public static Action process(IAction action) => new Action(Kind.Process, action);
+            public static Action begin(Engine.Action action) => new Action(Kind.Begin, action);
+            public static Action end(Engine.Action action) => new Action(Kind.End, action);
+            public static Action process(Engine.Action action) => new Action(Kind.Process, action);
 
-            public Action(Kind state, IAction action) {
+            public Action(Kind state, Engine.Action action) {
                 (this.kind, this.action) = (state, action);
             }
         }

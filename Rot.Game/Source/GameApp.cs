@@ -1,3 +1,4 @@
+using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
 
@@ -15,8 +16,11 @@ namespace Rot.Game {
 
             scene = new RlScene();
 
-            var imGuiManager = new ImGuiManager();
+            // TODO: high resolution fonts and
+            var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
+            var imGuiManager = new ImGuiManager(options);
             Core.registerGlobalManager(imGuiManager);
+            ImGui.GetStyle().Alpha = 0.75f;
         }
     }
 }

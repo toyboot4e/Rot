@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Rot.Engine {
     public interface IBehavior {
-        IAction make();
+        Action make();
     }
 
     // FIXME: forbidding null behavior
@@ -23,7 +23,7 @@ namespace Rot.Engine {
             return this;
         }
 
-        IEnumerable<IAction> IActor.takeTurn() {
+        IEnumerable<Action> IActor.takeTurn() {
             this.energy.gain();
             if (!this.energy.canTakeTurn) {
                 yield break;
@@ -38,7 +38,7 @@ namespace Rot.Engine {
             }
         }
 
-        IAction IActor.anotherAction() {
+        Action IActor.anotherAction() {
             return this.behavior?.make() ?? null;
         }
     }

@@ -2,16 +2,16 @@ using Nez;
 
 namespace Rot.Engine {
     /// <summary> Context to decide action of an entity, outside of the Engine </summary>
-    public struct EntityControlContext {
-        public Entity controlled;
-        public IAction action;
+    public class EntityControlContext {
+        public Entity actor;
+        public Action action;
 
         public EntityControlContext(Entity entity) {
             Insist.isNotNull(entity);
-            (this.controlled, this.action) = (entity, null);
+            (this.actor, this.action) = (entity, null);
         }
 
-        public void decide(IAction action) {
+        public void decide(Action action) {
             this.action = action;
         }
     }
@@ -19,22 +19,22 @@ namespace Rot.Engine {
 
 namespace Rot.Engine.Act {
     /// <summary> An action decided by UI by emitting `EntityControlContext` </summary>
-    public class EntityControl : IAction {
-        EntityControlContext context;
+    public class EntityControl : Action {
+        EntityControlContext entityCtx;
 
         public EntityControl(Entity e) {
-            this.context = new EntityControlContext(e);
+            this.entityCtx = new EntityControlContext(e);
         }
 
-        RlActionReport IAction.perform() {
+        public override RlActionReport perform() {
             return new RlActionReport.TellUi(
-                new RlReport.DecideActionOfEntity(this.context),
+                new RlReport.DecideActionOfEntity(this.entityCtx),
                 RlActionReport.process());
         }
 
-        RlActionReport IAction.process() {
-            if (this.context.action != null) {
-                return RlActionReport.chain(this.context.action);
+        public override RlActionReport process() {
+            if (this.entityCtx.action != null) {
+                return RlActionReport.chain(this.entityCtx.action);
             } else {
                 Nez.Debug.log("caled EntityControl.process() before action is decided");
                 return RlActionReport.process();
@@ -44,14 +44,14 @@ namespace Rot.Engine.Act {
 }
 
 namespace Rot.Engine.Beh {
-    public class PlBehavior : IBehavior {
+    public class Player : IBehavior {
         Entity entity;
 
-        public PlBehavior(Entity e) {
+        public Player(Entity e) {
             this.entity = e;
         }
 
-        IAction IBehavior.make() {
+        Action IBehavior.make() {
             return new Act.EntityControl(entity);
         }
     }

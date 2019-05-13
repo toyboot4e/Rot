@@ -4,29 +4,41 @@ using Nez;
 
 namespace Rot.Engine {
     /// <summary> Creates modification and let UI visualize them. </summary>
-    public interface IAction {
-        RlActionReport perform();
-        RlActionReport process();
+    public abstract class Action {
+        protected ActionContext ctx;
+
+        /// <summary> Every action is set context in the game loop before it's performed </summary>
+        public void setContext(ActionContext context) {
+            this.ctx = context;
+        }
+
+        public abstract RlActionReport process();
+        public abstract RlActionReport perform();
+    }
+
+    /// <summary> Context provided for actions </summary>
+    public sealed class ActionContext {
+        public RlStage stage { get; private set; }
+        public RlEventHub evHub { get; private set; }
+
+        public ActionContext(RlStage stage) {
+            this.stage = stage;
+        }
     }
 
     public interface IActor {
         bool needsDeleting { get; }
-        IEnumerable<IAction> takeTurn();
+        IEnumerable<Action> takeTurn();
         /// <summary> Called to provide another action instead of one that didn't consume turn </summary>
-        IAction anotherAction();
+        Action anotherAction();
     }
 
+    /// <summary> Processes the roguelike game with `ActionContext` </summary>
     internal sealed class RlGameLoop {
-        ActorScheduler actorScheduler;
         IEnumerator<RlReport> gameLoop;
 
-        public RlGameLoop(ActorScheduler scheduler) {
-            this.bindScheduler(scheduler);
-        }
-
-        public void bindScheduler(ActorScheduler scheduler) {
-            this.actorScheduler = scheduler;
-            this.gameLoop = RlGameLoop.createGameLoop(scheduler)
+        public RlGameLoop(ActionContext ctx, ActorScheduler scheduler) {
+            this.gameLoop = RlGameLoop.createGameLoop(ctx, scheduler)
                 .GetEnumerator();
         }
 
@@ -42,7 +54,7 @@ namespace Rot.Engine {
         }
 
         /// <summary> The game loop around actors provided by the `scheduler` </summary>
-        static IEnumerable<RlReport> createGameLoop(ActorScheduler scheduler) {
+        static IEnumerable<RlReport> createGameLoop(ActionContext context, ActorScheduler scheduler) {
             while (scheduler == null) {
                 yield return RlReport.error("Not given scheduler!");
             }
@@ -56,17 +68,18 @@ namespace Rot.Engine {
                     continue;
                 }
 
-                foreach(var report in RlGameLoop.processActor(actor)) {
+                foreach(var report in RlGameLoop.processActor(context, actor)) {
                     yield return report;
                 }
             }
         }
 
-        static IEnumerable<RlReport> processActor(IActor actor) {
+        static IEnumerable<RlReport> processActor(ActionContext context, IActor actor) {
             yield return RlReport.Actor.Kind.TakeTurn.into(actor);
 
+            // null actions are not reported (Act.None is reported though)
             foreach(var action in actor.takeTurn().Where(a => a != null)) {
-                foreach(var report in RlGameLoop.performAction(actor, action)) {
+                foreach(var report in RlGameLoop.performAction(context, actor, action)) {
                     yield return report;
                 }
             }
@@ -74,8 +87,9 @@ namespace Rot.Engine {
             yield return RlReport.Actor.Kind.EndTurn.into(actor);
         }
 
-        static IEnumerable<RlReport> performAction(IActor actor, IAction action) {
-            Perform : yield return RlReport.Action.begin(action);
+        static IEnumerable<RlReport> performAction(ActionContext context, IActor actor, Action action) {
+            Perform : action.setContext(context);
+            yield return RlReport.Action.begin(action);
             var report = action.perform();
 
             HandleActionReport : switch (report) {
@@ -110,7 +124,6 @@ namespace Rot.Engine {
                     throw new System.Exception($"invalid case: {report}");
             }
 
-            // process
             Process : yield return RlReport.Action.process(action);
             report = action.process();
             goto HandleActionReport;
