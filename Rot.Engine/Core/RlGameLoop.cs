@@ -39,7 +39,7 @@ namespace Rot.Engine {
 
     /// <summary> Processes the roguelike game with `ActionContext` </summary>
     internal sealed class RlGameLoop {
-        IEnumerator<RlReport> gameLoop;
+        IEnumerator<TickReport> gameLoop;
 
         public RlGameLoop(ActionContext ctx, ActorScheduler scheduler) {
             this.gameLoop = RlGameLoop.createGameLoop(ctx, scheduler)
@@ -47,20 +47,20 @@ namespace Rot.Engine {
         }
 
         /// <summary> Ticks the game loop </summary>
-        public RlReport tick() {
+        public TickReport tick() {
             if (this.gameLoop == null) {
-                return RlReport.error("Not given scheduler!");
+                return TickReport.error("Not given scheduler!");
             }
             if (gameLoop.MoveNext() == false) {
-                return RlReport.error("The game loop is finished!");
+                return TickReport.error("The game loop is finished!");
             }
             return gameLoop.Current;
         }
 
         /// <summary> The game loop around actors provided by the `scheduler` </summary>
-        static IEnumerable<RlReport> createGameLoop(ActionContext context, ActorScheduler scheduler) {
+        static IEnumerable<TickReport> createGameLoop(ActionContext context, ActorScheduler scheduler) {
             while (scheduler == null) {
-                yield return RlReport.error("Not given scheduler!");
+                yield return TickReport.error("Not given scheduler!");
             }
 
             while (true) {
@@ -68,7 +68,7 @@ namespace Rot.Engine {
 
                 var actor = scheduler.next();
                 if (actor == null) {
-                    yield return RlReport.error("Given null as an actor in the RlGameLoop.");
+                    yield return TickReport.error("Given null as an actor in the RlGameLoop.");
                     continue;
                 }
 
@@ -78,8 +78,8 @@ namespace Rot.Engine {
             }
         }
 
-        static IEnumerable<RlReport> processActor(ActionContext context, IActor actor) {
-            yield return RlReport.Actor.Kind.TakeTurn.into(actor);
+        static IEnumerable<TickReport> processActor(ActionContext context, IActor actor) {
+            yield return TickReport.Actor.Kind.TakeTurn.into(actor);
 
             // null actions are not reported (Act.None is reported though)
             foreach(var action in actor.takeTurn().Where(a => a != null)) {
@@ -88,12 +88,12 @@ namespace Rot.Engine {
                 }
             }
 
-            yield return RlReport.Actor.Kind.EndTurn.into(actor);
+            yield return TickReport.Actor.Kind.EndTurn.into(actor);
         }
 
-        static IEnumerable<RlReport> performAction(ActionContext context, IActor actor, Action action) {
+        static IEnumerable<TickReport> performAction(ActionContext context, IActor actor, Action action) {
             Perform : action.setContext(context);
-            yield return RlReport.Action.begin(action);
+            yield return TickReport.Action.begin(action);
             var report = action.perform();
 
             HandleActionReport : switch (report) {
@@ -111,12 +111,12 @@ namespace Rot.Engine {
                             goto Process;
 
                         case RlActionReport.Order.Kind.Another:
-                            yield return RlReport.Action.end(action);
+                            yield return TickReport.Action.end(action);
                             action = actor.anotherAction();
                             goto Perform;
 
                         case RlActionReport.Order.Kind.Chain:
-                            yield return RlReport.Action.end(action);
+                            yield return TickReport.Action.end(action);
                             action = order.chainned;
                             goto Perform;
 
@@ -128,7 +128,7 @@ namespace Rot.Engine {
                     throw new System.Exception($"invalid case: {report}");
             }
 
-            Process : yield return RlReport.Action.process(action);
+            Process : yield return TickReport.Action.process(action);
             report = action.process();
             goto HandleActionReport;
         }

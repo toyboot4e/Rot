@@ -1,15 +1,15 @@
 namespace Rot.Engine {
     public static class RlReportGenExt {
         // FIXME: the hack. Maybe by deleting IActor?
-        public static RlReport.Actor into(this RlReport.Actor.Kind self, Engine.IActor actor) {
-            return new RlReport.Actor(self, actor as Engine.Actor);
+        public static TickReport.Actor into(this TickReport.Actor.Kind self, Engine.IActor actor) {
+            return new TickReport.Actor(self, actor as Engine.Actor);
         }
     }
 
-    public abstract class RlReport {
+    public abstract class TickReport {
         public static Error error(string message) => new Error(message);
 
-        public class Error : RlReport {
+        public class Error : TickReport {
             public string message;
 
             public Error(string message) {
@@ -17,7 +17,7 @@ namespace Rot.Engine {
             }
         }
 
-        public class Actor : RlReport {
+        public class Actor : TickReport {
             public Kind kind;
             public Engine.Actor actor;
 
@@ -33,7 +33,7 @@ namespace Rot.Engine {
         }
 
         // Emitted before doing the [State] for the action.
-        public class Action : RlReport {
+        public class Action : TickReport {
             public Kind kind;
             public Engine.Action action;
 
@@ -52,15 +52,11 @@ namespace Rot.Engine {
             }
         }
 
-        public class DecideActionOfEntity : RlReport {
+        public class DecideActionOfEntity : TickReport {
             public EntityControlContext context;
             public DecideActionOfEntity(EntityControlContext context) {
                 this.context = context;
             }
-        }
-
-        public class Event : RlReport {
-            public RlEvent ev;
         }
     }
 }

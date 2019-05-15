@@ -6,7 +6,7 @@ namespace Rot.Engine {
 
         #region generators
         public static RlActionReport error(string message) {
-            return new RlActionReport.TellUi(RlReport.error(message), Order.finish());
+            return new RlActionReport.TellUi(TickReport.error(message), Order.finish());
         }
 
         public static Order finish(bool consumesTurn = true) {
@@ -50,9 +50,9 @@ namespace Rot.Engine {
 
         /// <summary> Probablly an error or "decide action of the actor" thing </summary>
         public class TellUi : RlActionReport {
-            public RlReport report;
+            public TickReport report;
             public Order order;
-            public TellUi(RlReport report, Order order) {
+            public TellUi(TickReport report, Order order) {
                 (this.report, this.order) = (report, order);
             }
         }

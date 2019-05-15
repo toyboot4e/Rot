@@ -28,7 +28,7 @@ namespace Rot.Engine.Act {
 
         public override RlActionReport perform() {
             return new RlActionReport.TellUi(
-                new RlReport.DecideActionOfEntity(this.entityCtx),
+                new TickReport.DecideActionOfEntity(this.entityCtx),
                 RlActionReport.process());
         }
 

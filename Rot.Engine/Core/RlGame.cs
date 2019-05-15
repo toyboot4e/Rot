@@ -48,13 +48,12 @@ namespace Rot.Engine {
 
     public class RlGame {
         RlGameLoop loop;
-        public RlEventHub evHub { get; private set; }
 
         public RlGame(ActionContext ctx, ActorScheduler scheduler) {
             this.loop = new RlGameLoop(ctx, scheduler);
         }
 
-        public RlReport tick() {
+        public TickReport tick() {
             return this.loop.tick();
         }
     }
