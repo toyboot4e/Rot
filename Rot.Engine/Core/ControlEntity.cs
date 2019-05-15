@@ -1,7 +1,7 @@
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Context to decide action of an entity, outside of the Engine </summary>
+    /// <summary> Context to let UI decide action of an entity </summary>
     public class EntityControlContext {
         public Entity actor;
         public Action action;
@@ -44,6 +44,7 @@ namespace Rot.Engine.Act {
 }
 
 namespace Rot.Engine.Beh {
+    /// <summary> Just creates actions decided by UI.abstract </summary>
     public class Player : IBehavior {
         Entity entity;
 

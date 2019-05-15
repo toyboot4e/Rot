@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Rot.Game {
+namespace Rot.Ui {
     // The higher, the deeper.
     public static class Layers {
         public static int Stage => 1000;

@@ -2,6 +2,7 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
+    /// <summary> Handles roguelike rules like walking </summary>
     public static class RlLogic {
         public static bool canWalkIn(Entity e, EDir dir) {
             var body = e.get<Body>();

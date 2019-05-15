@@ -5,10 +5,15 @@ using Nez;
 namespace Rot.Engine {
     /// <summary> Creates modification and let UI visualize them. </summary>
     public abstract class Action {
+        /// <summary> Extra capability for logic of <c>Action</c>s </summary>
+        /// <remark>
+        /// This capability is injected in the game loop. You can exclude this field
+        /// If you separate <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
+        /// </remark>
         protected ActionContext ctx;
 
         /// <summary> Every action is set context in the game loop before it's performed </summary>
-        public void setContext(ActionContext context) {
+        internal void setContext(ActionContext context) {
             this.ctx = context;
         }
 
@@ -16,10 +21,9 @@ namespace Rot.Engine {
         public abstract RlActionReport perform();
     }
 
-    /// <summary> Context provided for actions </summary>
+    /// <summary> Privides some capabilities with <c>Action<c>s. </summary>
     public sealed class ActionContext {
         public RlStage stage { get; private set; }
-        public RlEventHub evHub { get; private set; }
 
         public ActionContext(RlStage stage) {
             this.stage = stage;
@@ -29,7 +33,7 @@ namespace Rot.Engine {
     public interface IActor {
         bool needsDeleting { get; }
         IEnumerable<Action> takeTurn();
-        /// <summary> Called to provide another action instead of one that didn't consume turn </summary>
+        /// <summary> Provide another action instead of one didn't consume turn </summary>
         Action anotherAction();
     }
 

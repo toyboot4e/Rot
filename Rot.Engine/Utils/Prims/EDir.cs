@@ -59,7 +59,7 @@ namespace Rot.Engine {
                 case 7:
                     return EDir.NW;
                 default:
-                    throw new Exception("Dir.random error");
+                    return EDir.None;
             }
         }
 
@@ -77,7 +77,7 @@ namespace Rot.Engine {
             }
         }
         /// <summary> Follows numpads. </summary>
-        public int numpadIndex => 7 + (x + 1) - 3 * (y + 1);
+        public int numpadIndex => 5 + x + y * (-3);
 
         // -> [Self]1
         public static IList<EDir> all => new List<EDir> { N, NE, E, SE, S, SW, W, NW };

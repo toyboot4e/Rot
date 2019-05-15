@@ -63,6 +63,11 @@ namespace Rot.Engine {
             }
         }
 
+        // map tairs
+        public static IEnumerable<IEnumerable<U>> mapT<T, U>(this IEnumerable<IEnumerable<T>> self, System.Func<T, U> map) {
+            return self.Select(e => e.Select(map));
+        }
+
         public static void flatenForEach<T>(this IEnumerable<IEnumerable<T>> self, System.Action<T> action) {
             foreach(var enumerable in self) {
                 foreach(T item in enumerable) {

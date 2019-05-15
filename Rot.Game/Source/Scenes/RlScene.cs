@@ -22,6 +22,10 @@ namespace Rot.Game {
             };
             renderers.forEach(r => base.addRenderer(r));
 
+            // this.initRoguelike();
+        }
+
+        public override void onStart() {
             this.initRoguelike();
         }
 
@@ -43,31 +47,43 @@ namespace Rot.Game {
         }
 
         void makeGame() {
-            var stage = this.makeStage();
-            var entities = this.makeEntities(stage);
+            var(stage, tiled) = this.makeStage();
+            var entities = this.makeEntities(stage, tiled);
             var ctx = new ActionContext(stage);
             this.game = new RlGame(ctx, entities);
         }
 
-        TiledRlStage makeStage() {
+        (TiledRlStage, TiledMap) makeStage() {
             var tiled = base.content.Load<TiledMap>(Content.Stages.test);
-            this.createEntity("tiled").addComponent(new TiledMapComponent(tiled));
-            return new TiledRlStage(tiled);
+            var tiledComp = this.createEntity("tiled").addComponent(new TiledMapComponent(tiled));
+            tiledComp.setLayerDepth(ZOrders.Stage).setRenderLayer(Layers.Stage);
+            return (new TiledRlStage(tiled), tiled);
         }
 
-        RotEntityList makeEntities(RlStage stage) {
+        RotEntityList makeEntities(RlStage stage, TiledMap tiled) {
             var entities = new RotEntityList();
+            // TODO: hodling PosUtil
+            var posUtil = new PosUtil(tiled, this.camera);
             for (int i = 0; i < 5; i++) {
                 var e = base.createEntity($"actor_{i}");
-                var pos = new Vec2(5 + i, 5 + i);
+
                 e.add(new RlContext(stage));
+
                 e.add(new Actor(null));
+
+                var pos = new Vec2(5 + i, 5 + i);
                 e.add(new Body(pos, dir : EDir.random, isBlocker : true));
                 if (i == 0) {
                     e.get<Actor>().setBehavior(new Engine.Beh.Player(e));
                 } else {
                     e.get<Actor>().setBehavior(new Engine.Beh.None());
                 }
+
+                var chip = CharachipFactory.wodi8(Content.Charachips.Patched.gremlin_black);
+                var body = e.get<Body>();
+                var image = CharaChip.fromSprite(e, posUtil, chip);
+                image.setDir(body.facing).setToGridPos(body.pos);
+
                 entities.Add(e);
             }
 
