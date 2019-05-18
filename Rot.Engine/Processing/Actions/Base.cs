@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-namespace Rot.Engine.Act.Base {
-    /// <summary> Forces derived classes to end the action when `perform`ed </summary>
+namespace Rot.Engine.Act {
+    /// <summary> Forces derived classes to end the action when it's `perform`ed </summary>
     public abstract class Perform : Action {
         public override RlActionReport process() {
             throw new System.Exception($"Called unimplmented {this.GetType().Name}.process()");
@@ -49,6 +49,18 @@ namespace Rot.Engine.Act.Base {
             } else {
                 return report;
             }
+        }
+    }
+
+    public class EvAction<T> : Perform where T : RlEvent {
+        public T ev { get; private set; }
+
+        public EvAction(T ev) {
+            this.ev = ev;
+        }
+
+        public override RlActionReport perform() {
+            return RlActionReport.ev(ev, RlActionReport.Order.finish());
         }
     }
 }

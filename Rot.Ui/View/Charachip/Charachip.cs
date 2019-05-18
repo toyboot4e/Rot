@@ -1,0 +1,40 @@
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Nez;
+using Nez.Sprites;
+using Nez.Textures; // Sprite<T>
+using Nez.Tweens;
+using Rot.Engine;
+
+namespace Rot.Ui {
+	// TODO: disposable
+	public class CharaChip : Component {
+		PosUtil posUtil;
+		public Sprite<EnumDir> chip { get; private set; }
+
+		CharaChip(PosUtil posUtil) {
+			this.posUtil = posUtil;
+		}
+
+		public static CharaChip fromSprite(Entity entity, PosUtil posUtil, Sprite<EnumDir> chip) {
+			var self = entity.add(new CharaChip(posUtil));
+			self.chip = entity.add(chip);
+			return self;
+		}
+
+		public CharaChip setToGridPos(Vec2 gridPos) {
+			var worldPos = this.posUtil.gridToWorldCentered(gridPos);
+			this.entity.setLocalPosition(worldPos);
+			// this.chip?.tweenLocalOffset(this.basePos, 0f);
+			return this;
+		}
+
+		public CharaChip setDir(EDir dir) {
+			var animDir = EnumDirUtil.fromEDir(dir);
+			this.chip.play(animDir);
+			return this;
+		}
+	}
+}

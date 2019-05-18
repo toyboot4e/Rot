@@ -4,11 +4,8 @@ namespace Rot.Engine {
     /// <summary> An `Order` or `TellUi` </summary>
     public abstract class RlActionReport {
 
-        #region generators
-        public static RlActionReport error(string message) {
-            return new RlActionReport.TellUi(TickReport.error(message), Order.finish());
-        }
-
+        #region GenHelpers
+        // Order
         public static Order finish(bool consumesTurn = true) {
             return new Order(Order.Kind.Finish);
         }
@@ -21,9 +18,17 @@ namespace Rot.Engine {
             return new Order(Order.Kind.Chain, next);
         }
 
-        /// <summary> Alternated the action which didn't consume trun </summary>
         public static Order another() {
             return new Order(Order.Kind.Another);
+        }
+
+        // TellUi
+        public static RlActionReport error(string message) {
+            return new RlActionReport.TellUi.Error(message);
+        }
+
+        public static TellUi.Ev ev(RlEvent ev, Order order) {
+            return new TellUi.Ev(ev, order);
         }
         #endregion
 
@@ -35,11 +40,11 @@ namespace Rot.Engine {
             public enum Kind {
                 /// <summary> Every action sometime ends </summary>
                 Finish,
-                /// <summary> The action didn't consume turn </summary>
+                /// <summary> Let behavior make another action </summary>
                 Another,
-                /// <summary> `process` the action until is finished </summary>
+                /// <summary> `process` the action frame by frame until it's finished </summary>
                 Process,
-                /// <summary> Alternate the action with another </summary>
+                /// <summary> Chains another action </summary>
                 Chain,
             }
 
@@ -48,12 +53,33 @@ namespace Rot.Engine {
             }
         }
 
-        /// <summary> Probablly an error or "decide action of the actor" thing </summary>
-        public class TellUi : RlActionReport {
-            public TickReport report;
-            public Order order;
+        public abstract class TellUi : RlActionReport {
+            public TickReport reportForUi;
+            public Order orderToEngine;
+
             public TellUi(TickReport report, Order order) {
-                (this.report, this.order) = (report, order);
+                (this.reportForUi, this.orderToEngine) = (report, order);
+            }
+
+            public class ControlEntity : TellUi {
+                public ControlEntity(EntityController ctrl) : base(
+                    new TickReport.DecideActionOfEntity(ctrl),
+                    Order.process()
+                ) { }
+            }
+
+            public class Ev : TellUi {
+                public Ev(RlEvent ev, Order order) : base(
+                    new TickReport.Ev(ev),
+                    order
+                ) { }
+            }
+
+            public class Error : TellUi {
+                public Error(string message) : base(
+                    new TickReport.Error(message),
+                    Order.finish()
+                ) { }
             }
         }
     }

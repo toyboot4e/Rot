@@ -7,8 +7,8 @@ namespace Rot.Engine {
     public abstract class Action {
         /// <summary> Extra capability for logic of <c>Action</c>s </summary>
         /// <remark>
-        /// This capability is injected in the game loop. You can exclude this field
-        /// If you separate <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
+        /// This is injected in the game loop. You can exclude this field if you separate
+        /// <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
         /// </remark>
         protected ActionContext ctx;
 
@@ -98,8 +98,8 @@ namespace Rot.Engine {
 
             HandleActionReport : switch (report) {
                 case RlActionReport.TellUi tellUi:
-                    yield return tellUi.report;
-                    report = tellUi.order;
+                    yield return tellUi.reportForUi;
+                    report = tellUi.orderToEngine;
                     goto HandleActionReport; // handle the order
 
                 case RlActionReport.Order order:

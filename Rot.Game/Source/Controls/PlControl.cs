@@ -5,14 +5,14 @@ using Rot.Ui;
 namespace Rot.Ui {
 	/// <summary> Created to decide the action of an entity. Deleted after finishing it. </summary>
 	public class PlControl : Control {
-		EntityControlContext entityCtx;
+		EntityController entityCtx;
 		/// <summary> Filters cardinal directional input while it's on. </summary>
 		KeyMode diaMode;
 		/// <summary> Changes direction instead of walking while it's on. </summary>
 		KeyMode dirMode;
 		bool isDone;
 
-		public PlControl(ControlContext cc, EntityControlContext ec) : base(cc) {
+		public PlControl(ControlContext cc, EntityController ec) : base(cc) {
 			this.entityCtx = ec;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);

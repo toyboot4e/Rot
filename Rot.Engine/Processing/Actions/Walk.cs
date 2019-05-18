@@ -2,14 +2,14 @@ using Nez;
 
 namespace Rot.Engine.Act {
     /// <summary> Same as null expect that it's reported </summary>
-    public class None : Base.Perform {
+    public class None : Perform {
         public None() { }
         public override RlActionReport perform() {
             return RlActionReport.finish();
         }
     }
 
-    public class Walk : Base.Perform {
+    public class Walk : Perform {
         Entity actor;
         EDir dir;
 
@@ -20,16 +20,18 @@ namespace Rot.Engine.Act {
         public override RlActionReport perform() {
             var body = this.actor.get<Body>();
             if (RlLogic.canWalkIn(this.actor, dir)) {
-                body.setDir(this.dir).setPos(body.pos + this.dir.vec);
-                return RlActionReport.finish();
+                return RlActionReport.ev(
+                    new Ev.Walk(this.actor, this.dir),
+                    RlActionReport.Order.finish());
             } else {
-                body.setDir(this.dir);
-                return RlActionReport.another();
+                return RlActionReport.ev(
+                    new Ev.Face(this.actor, this.dir),
+                    RlActionReport.Order.finish());
             }
         }
     }
 
-    public class Face : Base.Perform {
+    public class Face : Perform {
         Entity actor;
         EDir dir;
         bool consumesTurn;
