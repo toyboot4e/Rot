@@ -19,7 +19,7 @@ namespace Rot.Ui {
         }
     }
 
-    /// <summary> A state that controls the game </summary>
+    /// <summary> A state that controls the game. Belongs to some <c>Cradle</c>. </summary>
     public abstract class Control {
         protected ControlContext ctx;
 
@@ -54,7 +54,7 @@ namespace Rot.Ui {
             while (true) {
                 var peek = this.stack.safePeek();
                 if (peek == null) {
-                    break;
+                    throw new System.Exception("the cradle has no top control");
                 }
                 switch (peek.update()) {
                     case ControlResult.SeeYouNextFrame:
@@ -106,12 +106,6 @@ namespace Rot.Ui {
         public T add<T>(T child) where T : Control {
             this.storage.Add(typeof(T), child);
             return child;
-        }
-
-        public void addAll(params Control[] ctrls) {
-            for (var i = 0; i < ctrls.Length; i++) {
-                this.add(ctrls[i]);
-            }
         }
 
         public T add<T>() where T : Control, new() {

@@ -10,6 +10,8 @@ using Rot.Engine;
 
 namespace Rot.Ui {
 	// TODO: disposable
+	// TODO: sharing frame count among directions
+	/// <summary> Image with optional direction for an entity </summary>
 	public class CharaChip : Component {
 		PosUtil posUtil;
 		public Sprite<EnumDir> chip { get; private set; }
@@ -32,6 +34,11 @@ namespace Rot.Ui {
 		}
 
 		public CharaChip setDir(EDir dir) {
+			// prevents stoping walking animation
+			if (EnumDirUtil.fromEDir(dir) == this.chip.currentAnimation) {
+				return this;
+			}
+
 			var animDir = EnumDirUtil.fromEDir(dir);
 			this.chip.play(animDir);
 			return this;

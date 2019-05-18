@@ -1,6 +1,6 @@
 using Nez;
 
-namespace Rot.Engine.Ev {
+namespace Rot.Engine.RlEv {
     public class Log : RlEvent {
         public string message;
 

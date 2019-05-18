@@ -9,7 +9,6 @@ namespace Rot.Game {
             this.game = game;
         }
 
-        // FIXME: proper timing
         public override ControlResult update() {
             var report = game.tick();
 
@@ -27,7 +26,7 @@ namespace Rot.Game {
                         case TickReport.Action.Kind.Process:
                             break;
                     }
-                    return ControlResult.SeeYouNextFrame;
+                    return ControlResult.Continue;
 
                 case TickReport.Actor actorReport:
                     // not so important (the actor may not have enough power to act)
@@ -48,9 +47,13 @@ namespace Rot.Game {
                     // maybe avoid stack overflow
                     return ControlResult.SeeYouNextFrame;
 
-                case TickReport.DecideActionOfEntity decide:
-                    base.ctx.cradle.addAndPush(new PlControl(base.ctx, decide.context));
-                    return ControlResult.SeeYouNextFrame;
+                case TickReport.ControlEntity decide:
+                    base.ctx.cradle.addAndPush(new PlControl(base.ctx, decide.controller));
+                    return ControlResult.Continue;
+
+                case TickReport.Ev evReport:
+                    Nez.Debug.log($"event: {evReport.ev}");
+                    return base.ctx.cradle.get<RlEventControl>().handleEvent(evReport.ev);
 
                 default:
                     throw new System.Exception($"invalid case: {report}");

@@ -52,15 +52,17 @@ namespace Rot.Engine {
             }
         }
 
-        public class DecideActionOfEntity : TickReport {
-            public EntityController context;
-            public DecideActionOfEntity(EntityController context) {
-                this.context = context;
+        /// <summary> Decide an action of an entity </summary>
+        public class ControlEntity : TickReport {
+            public EntityController controller;
+            public ControlEntity(EntityController context) {
+                this.controller = context;
             }
         }
 
         public class Ev : TickReport {
             public RlEvent ev;
+
             public Ev(RlEvent ev) {
                 this.ev = ev;
             }

@@ -3,9 +3,9 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Creates modification and let UI visualize them. </summary>
+    /// <summary> Maybe creates <c>RlEvent</c>s </summary>
     public abstract class Action {
-        /// <summary> Extra capability for logic of <c>Action</c>s </summary>
+        /// <summary> Extra capability for <c>Action</c> logic </summary>
         /// <remark>
         /// This is injected in the game loop. You can exclude this field if you separate
         /// <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
@@ -124,6 +124,13 @@ namespace Rot.Engine {
                             throw new System.Exception($"invalid case: {report}");
                     }
 
+                case RlActionReport.Ev evReport:
+                    foreach(var r in executeEvent(context, evReport.ev)) {
+                        yield return r;
+                    }
+                    report = evReport.order;
+                    goto HandleActionReport;
+
                 default:
                     throw new System.Exception($"invalid case: {report}");
             }
@@ -131,6 +138,11 @@ namespace Rot.Engine {
             Process : yield return TickReport.Action.process(action);
             report = action.process();
             goto HandleActionReport;
+        }
+
+        static IEnumerable<TickReport> executeEvent(ActionContext context, RlEvent ev) {
+            yield return new TickReport.Ev(ev);
+            ev.execute();
         }
     }
 }

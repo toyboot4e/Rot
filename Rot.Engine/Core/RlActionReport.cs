@@ -22,13 +22,16 @@ namespace Rot.Engine {
             return new Order(Order.Kind.Another);
         }
 
-        // TellUi
         public static RlActionReport error(string message) {
             return new RlActionReport.TellUi.Error(message);
         }
 
-        public static TellUi.Ev ev(RlEvent ev, Order order) {
-            return new TellUi.Ev(ev, order);
+        public static Ev ev(RlEvent ev, Order order) {
+            return new Ev(ev, order);
+        }
+
+        public static Ev ev(RlEvent ev) {
+            return new Ev(ev, Order.finish());
         }
         #endregion
 
@@ -53,6 +56,16 @@ namespace Rot.Engine {
             }
         }
 
+        public class Ev : RlActionReport {
+            public RlEvent ev;
+            public Order order;
+
+            public Ev(RlEvent ev, Order order) {
+                this.ev = ev;
+                this.order = order;
+            }
+        }
+
         public abstract class TellUi : RlActionReport {
             public TickReport reportForUi;
             public Order orderToEngine;
@@ -63,15 +76,8 @@ namespace Rot.Engine {
 
             public class ControlEntity : TellUi {
                 public ControlEntity(EntityController ctrl) : base(
-                    new TickReport.DecideActionOfEntity(ctrl),
+                    new TickReport.ControlEntity(ctrl),
                     Order.process()
-                ) { }
-            }
-
-            public class Ev : TellUi {
-                public Ev(RlEvent ev, Order order) : base(
-                    new TickReport.Ev(ev),
-                    order
                 ) { }
             }
 

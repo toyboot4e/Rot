@@ -1,0 +1,50 @@
+using Nez;
+using Nez.Tweens;
+using Rot.Engine;
+using RlEv = Rot.Engine.RlEv;
+
+namespace Rot.Ui {
+    /// <summary> Creates animations for <c>RlEvent</c>s </summmary>
+    public class RlEventVisualizer {
+        PosUtil posUtil;
+        VInput input;
+        WalkAnimationConfig walkAnimConfig;
+        RlEventViewUtils viewUtil;
+
+        public RlEventVisualizer(VInput i, PosUtil p) {
+            this.posUtil = p;
+            this.input = i;
+            this.walkAnimConfig = new WalkAnimationConfig(input);
+            this.viewUtil = new RlEventViewUtils(p, i);
+        }
+
+        // static bool handled = false;
+        // public void visualize(RlEvent ev) {
+        //     if (handled) {
+        //         handled = false;
+        //         return;
+        //     }
+        //     handled = true;
+        //     this.visualize((dynamic) ev);
+        //     handled = false;
+        // }
+
+        // TODO: making RlEventHub
+        public Animation visualize(RlEvent ev) {
+            switch (ev) {
+                case RlEv.Walk walk:
+                    return this.visualize(walk);
+
+                default:
+                    return null;
+            }
+        }
+
+        public Animation visualize(RlEv.Walk walk) {
+            var body = walk.entity.get<Body>();
+            var next = body.pos + walk.dir.vec;
+            var tween = this.viewUtil.createWalkMotion(this.walkAnimConfig, walk.entity, next);
+            return Animation.tween(tween);
+        }
+    }
+}
