@@ -5,7 +5,7 @@ namespace Rot.Engine {
     public class Body : Nez.Component {
         public Location location { get; private set; }
         public Vec2 pos { get; private set; } = Vec2.zero;
-        public EDir facing { get; private set; } = EDir.None;
+        public EDir facing { get; private set; } = EDir.Ground;
         public bool isBlocker { get; private set; }
 
         public enum Location {

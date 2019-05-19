@@ -45,7 +45,7 @@ namespace Rot.Ui {
         public EaseType easeType;
         public float duration {
             get {
-                if (this.input.isDown(VKey.SpeedUp)) {
+                if (this.input.isKeyDown(VKey.SpeedUp)) {
                     return _duration / 2f;
                 } else {
                     return _duration;

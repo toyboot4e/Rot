@@ -21,7 +21,7 @@ namespace Rot.Engine.Act {
 
             public Line(EDir dir, int len) {
                 Insist.isTrue(len > 0);
-                Insist.isTrue(dir != EDir.None);
+                Insist.isTrue(dir != EDir.Ground);
                 (this.dir, this.len) = (dir, len);
             }
         }

@@ -8,7 +8,6 @@ using Rot.Engine; // Dir
 
 namespace Rot.Ui {
     public enum VKey {
-        None,
         AxisKey,
         Select,
         Cancel,
@@ -20,7 +19,7 @@ namespace Rot.Ui {
         RestATurn,
     }
 
-    /// <summary> Represents one of the VKey, EDir, or none. </summary>
+    /// <summary> Represents one of VKey, EDir, or none. </summary>
     public struct VKeyResult {
         public enum Kind {
             Key,
@@ -29,10 +28,11 @@ namespace Rot.Ui {
         }
 
         public readonly Kind kind;
-        public readonly VKey key;
+        public readonly VKey? key;
+        public VKey asKey => (VKey) this.key;
         public readonly EDir dir;
 
-        VKeyResult(Kind kind, VKey key, EDir dir) {
+        VKeyResult(Kind kind, VKey? key, EDir dir) {
             this.kind = kind;
             this.dir = dir;
             this.key = key;
@@ -43,25 +43,27 @@ namespace Rot.Ui {
         public bool isNone => this.kind == Kind.None;
 
         public static VKeyResult newKey(VKey key) {
-            return new VKeyResult(Kind.Key, key, EDir.None);
+            return new VKeyResult(Kind.Key, key, EDir.Ground);
         }
 
         public static VKeyResult newDir(EDir dir) {
-            return new VKeyResult(Kind.Dir, VKey.AxisKey, dir);
+            return new VKeyResult(Kind.Dir, null, dir);
         }
 
-        public static VKeyResult noneKey() {
-            return new VKeyResult(Kind.None, VKey.None, EDir.None);
+        public static VKeyResult none() {
+            return new VKeyResult(Kind.None, null, EDir.Ground);
         }
     }
 
     /// <summary> The internal data representation of VInput. </summary>
     public class VInputBase {
+        /// <summary> Rounded axix input / directional input </summary>
         public VDirInput vDir = new VDirInput();
-        // TODO: using proper data structure
+        /// <summary> Virtual buttons except AXIS/DIRECTIONAL INPUT </summary>
         protected Dictionary<VKey, VSingleButton> _buttons = new Dictionary<VKey, VSingleButton>();
 
         public VInputBase() {
+            // Note that _buttons[VKey.AxisKey] is not used
             foreach(var key in EnumUtil.allOf<VKey>()) {
                 this._buttons.Add(key, new VSingleButton());
             }
@@ -72,27 +74,53 @@ namespace Rot.Ui {
             _buttons.Values.forEach(b => b.update());
         }
 
-        /// <summary> Consumes the specified key and returns whethere it's consumed or not. </summary>
-        public bool consumeKey(VKey key) {
-            bool result = false;
+        /// <summary> Consumes a specific key and returns whether it was pressed or not. </summary>
+        public bool consume(VKey key) {
             if (key == VKey.AxisKey) {
-                result = this.vDir.isPressed;
-                this.vDir.consumeBuffer();
-            } else if (key != VKey.None) {
-                result = this.isPressed(key);
+                return this.consumeDir();
             }
+            var bt = this._buttons[key];
+            bool result = bt.isPressed;
             this._buttons[key].consumeBuffer();
             return result;
         }
 
-        public bool isDown(VKey key) => this._buttons[key].isDown;
+        /// <summary> Consumes directional input and returns whether it was pressed or not. </summary>
+        public bool consumeDir() {
+            bool result = this.vDir.isPressed;
+            this.vDir.consumeBuffer();
+            return result;
+        }
+
+        public bool isDown(VKey key) {
+            if (key == VKey.AxisKey) {
+                return this.vDir.isDown;
+            } else {
+                return this.isKeyDown(key);
+            }
+        }
+
+        public bool isPressed(VKey key) {
+            if (key == VKey.AxisKey) {
+                return this.vDir.isPressed;
+            } else {
+                return this.isKeyPressed(key);
+            }
+        }
+
         public bool isDirDown => this.vDir.isDown;
-        public bool isPressed(VKey key) => this._buttons[key].isPressed;
-        public bool isReleased(VKey key) => this._buttons[key].isReleased;
-        protected uint buf(VKey key) => this._buttons[key].buf;
+        public bool isDirPressed => this.vDir.isPressed;
+
+        /// <summary> You can't use VKey.AxisDir here </summary>
+        public bool isKeyDown(VKey key) => this._buttons[key].isDown;
+        /// <summary> You can't use VKey.AxisDir here </summary>
+        public bool isKeyPressed(VKey key) => this._buttons[key].isPressed;
+        /// <summary> You can't use VKey.AxisDir here </summary>
+        public bool isKeyReleased(VKey key) => this._buttons[key].isReleased;
+        /// <summary> Buffer of specific VKey except directional input </summary>
+        protected uint keyBuf(VKey key) => this._buttons[key].buf;
     }
 
-    /// <summary> The interface of VInput </summary>
     public class VInput : VInputBase {
         public VInput() {
             // TODO: fix the hard coding
@@ -109,7 +137,7 @@ namespace Rot.Ui {
         /// <summary> Returns the pressed EDir or EDir.None </summary>
         public EDir consumeDirPressed() {
             var dir = base.vDir.dirPressed;
-            if (dir != EDir.None) {
+            if (dir != EDir.Ground) {
                 base.vDir.consumeBuffer();
             }
             return dir;
@@ -128,25 +156,43 @@ namespace Rot.Ui {
         /// <summary> Gets prior pressed key, ignoring some specified keys. </summary>
         public VKeyResult topPressedIgnoring(params VKey[] keys) {
             var top = this.topDownIgnoring(keys);
-            if (top.isDir && base.vDir.isPressed || top.isKey && base.isPressed(top.key)) {
+            if (top.isNone) {
+                return top;
+            }
+            if (base.isPressed((VKey) top.key)) {
                 return top;
             } else {
-                return VKeyResult.noneKey();
+                return VKeyResult.none();
             }
         }
 
         /// <summary> Gets prior down key, ignoring some specified keys. </summary>
         public VKeyResult topDownIgnoring(params VKey[] keys) {
-            // try to find the pressed key
             VKey top = EnumUtil.allOf<VKey>()
                 .Where(k => !keys.contains(k) && buttons[k].isDown)
                 .minByOrDefault(k => buttons[k].buf);
-            if (base.vDir.buf > 0 && (base.buf(top) == 0 || base.vDir.buf < base.buf(top))) {
-                // directional key
-                return VKeyResult.newDir(this.dirDown);
-            } else {
-                // key or none key
+
+            var keyBuf = this.keyBuf(top);
+            var dirBuf = this.vDir.buf;
+
+            if (dirBuf == 0 || keys.Contains(VKey.AxisKey)) {
+                // not a dir key
+                if (keyBuf == 0) {
+                    return VKeyResult.none();
+                } else {
+                    return VKeyResult.newKey(top);
+                }
+            }
+
+            // may be dir key
+            if (keyBuf == 0) {
+                return VKeyResult.none();
+            }
+            if (keyBuf < dirBuf) {
                 return VKeyResult.newKey(top);
+            } else {
+                return VKeyResult.newDir(this.dirDown);
+
             }
         }
 
@@ -154,7 +200,7 @@ namespace Rot.Ui {
         public bool consumeAnyOf(params VKey[] keys) {
             bool isConsumed = false;
             foreach(var key in keys) {
-                isConsumed |= base.consumeKey(key);
+                isConsumed |= base.consume(key);
             }
             return isConsumed;
         }
@@ -166,7 +212,7 @@ namespace Rot.Ui {
         public VKeyResult consumeTopPressedIgnoring(params VKey[] keys) {
             var result = topPressedIgnoring(keys);
             if (!result.isNone) {
-                base.consumeKey(result.key);
+                base.consume((VKey) result.key);
             };
             return result;
         }

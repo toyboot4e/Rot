@@ -28,7 +28,7 @@ namespace Rot.Engine {
         }
 
         // -> Self
-        public static EDir None => new EDir(new Vec2(0, 0));
+        public static EDir Ground => new EDir(new Vec2(0, 0));
         public static EDir N => new EDir(new Vec2(0, -1));
         public static EDir NE => new EDir(new Vec2(1, -1));
         public static EDir E => new EDir(new Vec2(1, 0));
@@ -59,7 +59,7 @@ namespace Rot.Engine {
                 case 7:
                     return EDir.NW;
                 default:
-                    return EDir.None;
+                    return EDir.Ground;
             }
         }
 
@@ -107,7 +107,7 @@ namespace Rot.Engine {
                 else if (this == SW) return W;
                 else if (this == W) return NW;
                 else if (this == NW) return N;
-                else return None;
+                else return Ground;
             }
         }
 
@@ -121,7 +121,7 @@ namespace Rot.Engine {
                 else if (this == SW) return S;
                 else if (this == W) return SW;
                 else if (this == NW) return W;
-                else return None;
+                else return Ground;
             }
         }
         public EDir r90 => EDir.fromXy(-this.y, this.x);
@@ -162,7 +162,7 @@ namespace Rot.Engine {
             else if (this == SW) return "SW";
             else if (this == W) return "W";
             else if (this == NW) return "NW";
-            else if (this == None) return "None";
+            else if (this == Ground) return "None";
 
             throw new System.Exception("Dir.ToString(): the size is over one.");
         }

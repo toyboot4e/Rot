@@ -28,10 +28,12 @@ namespace Rot.Ui {
 			var input = base.ctx.input;
 			this.updateModes(input);
 			this.handleInput(input);
+
 			if (this.isDone) {
 				base.ctx.cradle.popAndRemove();
 				return ControlResult.Continue;
 			} else {
+				Nez.Debug.log($"NO ACTION IN PL CONTROL (top: {input.topDown()}");
 				return ControlResult.SeeYouNextFrame;
 			}
 		}
@@ -49,18 +51,14 @@ namespace Rot.Ui {
 
 		/// <summary> Dispatches a sub routine to the input </summary>
 		void handleInput(VInput input) {
-			var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir);
-			switch (top.kind) {
-				case VKeyResult.Kind.Dir:
-					this.handleDir(top.dir);
-					break;
-
-				case VKeyResult.Kind.Key:
-					this.handleDir(top.dir);
-					break;
-
-				case VKeyResult.Kind.None:
-					break;
+			// pressed VKey or down axis input
+			var top = input.topPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
+			if (!top.isNone) {
+				this.handleVKey(top.asKey, input);
+				return;
+			}
+			if (input.isDirDown) {
+				this.handleDir(input.dirDown);
 			}
 		}
 
@@ -179,7 +177,7 @@ namespace Rot.Ui {
 		}
 
 		public Switch update(VInput input) {
-			var isDown = input.isDown(this.key);
+			var isDown = input.isKeyDown(this.key);
 
 			if (isDown && this.isOff) {
 				return Switch.TurnOn;

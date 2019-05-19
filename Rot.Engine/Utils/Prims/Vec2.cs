@@ -112,7 +112,7 @@ namespace Rot.Engine {
         public Vector2 vector2 => new Vector2(x, y);
         public EDir toDir() {
             if (this.x == 0) {
-                if (this.y == 0) return EDir.None;
+                if (this.y == 0) return EDir.Ground;
                 if (this.y < 0) return EDir.N;
                 if (this.y > 0) return EDir.S;
             }
