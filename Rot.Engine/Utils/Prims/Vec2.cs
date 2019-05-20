@@ -108,6 +108,9 @@ namespace Rot.Engine {
             new Vec2(1, 1),
         };
 
+        public double rad => Math.Atan2(y, x);
+        public double deg => rad * 180 / Math.PI;
+
         // &Self -> Other
         public Vector2 vector2 => new Vector2(x, y);
         public EDir toDir() {

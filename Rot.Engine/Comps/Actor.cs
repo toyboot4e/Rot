@@ -4,6 +4,7 @@ using System.Linq;
 namespace Rot.Engine {
     public interface IBehavior {
         Action make();
+        Action alternate();
     }
 
     // FIXME: forbidding null behavior
@@ -38,8 +39,8 @@ namespace Rot.Engine {
             }
         }
 
-        Action IActor.anotherAction() {
-            return this.behavior?.make() ?? null;
+        Action IActor.alternate() {
+            return this.behavior?.alternate() ?? null;
         }
     }
 

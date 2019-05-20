@@ -36,5 +36,9 @@ namespace Rot.Engine.Beh {
         Action IBehavior.make() {
             return new Act.DelegateToUi(entity);
         }
+
+        Action IBehavior.alternate() {
+            return new Act.DelegateToUi(entity);
+        }
     }
 }

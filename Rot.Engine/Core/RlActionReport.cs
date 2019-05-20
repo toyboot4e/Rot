@@ -18,8 +18,8 @@ namespace Rot.Engine {
             return new Order(Order.Kind.Chain, next);
         }
 
-        public static Order another() {
-            return new Order(Order.Kind.Another);
+        public static Order alternate() {
+            return new Order(Order.Kind.Alternate);
         }
 
         public static RlActionReport error(string message) {
@@ -33,6 +33,11 @@ namespace Rot.Engine {
         public static Ev ev(RlEvent ev) {
             return new Ev(ev, Order.finish());
         }
+
+        /// <summary> This is for actions which don't consume turn </summary>
+        public static Ev evAndAlternate(RlEvent ev) {
+            return new Ev(ev, Order.alternate());
+        }
         #endregion
 
         /// <summary> Specific orders to the game loop </summary>
@@ -44,7 +49,7 @@ namespace Rot.Engine {
                 /// <summary> Every action sometime ends </summary>
                 Finish,
                 /// <summary> Let behavior make another action </summary>
-                Another,
+                Alternate,
                 /// <summary> `process` the action frame by frame until it's finished </summary>
                 Process,
                 /// <summary> Chains another action </summary>

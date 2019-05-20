@@ -7,5 +7,8 @@ namespace Rot.Engine.Beh {
         public Action make() {
             return new Act.None();
         }
+        public Action alternate() {
+            return null;
+        }
     }
 }

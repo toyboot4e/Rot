@@ -81,15 +81,24 @@ namespace Rot.Ui {
             }
             var bt = this._buttons[key];
             bool result = bt.isPressed;
-            this._buttons[key].consumeBuffer();
+            this._buttons[key].consumePulseBuffer();
             return result;
         }
 
         /// <summary> Consumes directional input and returns whether it was pressed or not. </summary>
         public bool consumeDir() {
             bool result = this.vDir.isPressed;
-            this.vDir.consumeBuffer();
+            this.vDir.consumePulseBuffer();
             return result;
+        }
+
+        /// <summary> Returns the pressed EDir or EDir.None </summary>
+        public EDir consumeDirPressed() {
+            var dir = this.vDir.dirPressed;
+            if (dir != EDir.Ground) {
+                this.vDir.consumePulseBuffer();
+            }
+            return dir;
         }
 
         public bool isDown(VKey key) {
@@ -134,15 +143,6 @@ namespace Rot.Ui {
         public EDir dirDown => base.vDir.dirDown;
         public EDir dirPressed => base.vDir.dirPressed;
 
-        /// <summary> Returns the pressed EDir or EDir.None </summary>
-        public EDir consumeDirPressed() {
-            var dir = base.vDir.dirPressed;
-            if (dir != EDir.Ground) {
-                base.vDir.consumeBuffer();
-            }
-            return dir;
-        }
-
         /// <summary> Gets prior down key. </summary>
         public VKeyResult topDown() {
             return this.topDownIgnoring();
@@ -159,7 +159,7 @@ namespace Rot.Ui {
             if (top.isNone) {
                 return top;
             }
-            if (base.isPressed((VKey) top.key)) {
+            if (base.isPressed(top.asKey)) {
                 return top;
             } else {
                 return VKeyResult.none();
@@ -210,16 +210,23 @@ namespace Rot.Ui {
         }
 
         public VKeyResult consumeTopPressedIgnoring(params VKey[] keys) {
-            var result = topPressedIgnoring(keys);
-            if (!result.isNone) {
-                base.consume((VKey) result.key);
-            };
-            return result;
+            var result = topDownIgnoring(keys);
+            if (result.isNone) {
+                return result;
+            }
+            var key = result.asKey;
+            bool isPressed = base.isPressed(key);
+            base.consume(key);
+            if (isPressed) {
+                return result;
+            } else {
+                return VKeyResult.none();
+            }
         }
 
         public void consumeAll() {
-            base._buttons.Values.forEach(bt => bt.consumeBuffer());
-            base.vDir.consumeBuffer();
+            base._buttons.Values.forEach(bt => bt.consumePulseBuffer());
+            base.vDir.consumePulseBuffer();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Rot.Ui {
         public bool isPressed => this.isPulsing;
         public bool consume() {
             if (this.isPressed) {
-                this.consumeBuffer();
+                this.consumePulseBuffer();
                 return true;
             } else {
                 return false;
@@ -28,7 +28,16 @@ namespace Rot.Ui {
             this.buf = isPressedRaw ? 1 : isDown ? this.buf + 1 : 0;
             base.updatePulse(isDown, isPressedRaw);
         }
+
+        /// <summary> HACK to avoid stack overflow </summary>
+        public void clearBuf() {
+            this.buf = 0;
+            this.isDown = false;
+            this.isReleased = false;
+            this.isPressedRaw = false;
+        }
     }
+
     /// <summary> e.g. Select keys </summary>
     public class VSingleButton : VBufButtonTemplate {
         public BufNode node { get; private set; }
@@ -44,6 +53,7 @@ namespace Rot.Ui {
             }
         }
     }
+
     public class VEightDirButtonButton : VBufButtonTemplate, IValueButton<EDir> {
         BufSelecterNode<ValueBufNode<EDir>> selecterNode = new BufSelecterNode<ValueBufNode<EDir>>();
         public List<ValueBufNode<EDir>> nodes => this.selecterNode.nodes;
@@ -59,6 +69,7 @@ namespace Rot.Ui {
         public EDir valueDown => this.nodeDown?.value ?? default(EDir);
         public EDir valuePressed => this.nodePressed?.value ?? default(EDir);
     }
+
     public class VIntAxisButton : VBufButtonTemplate, IValueButton<int> {
         public VIntAxisNode nodes { get; private set; }
         public VIntAxisButton(VIntAxisNode axis = null) {
@@ -71,20 +82,24 @@ namespace Rot.Ui {
         public int valueDown => this.nodes.valueDown;
         public int valuePressed => this.isPressed ? this.valueDown : 0;
     }
+
     public class VAxisDirButton : VBufButtonTemplate, IValueButton<EDir> {
         public VIntAxisButton xAxis { get; private set; } = new VIntAxisButton();
         public VIntAxisButton yAxis { get; private set; } = new VIntAxisButton();
+
         protected override(bool, bool) onUpdate() {
             xAxis.update();
             yAxis.update();
             var(xBuf, yBuf) = (xAxis.buf, yAxis.buf);
             return (xBuf + yBuf > 0, xBuf == 1 || yBuf == 1);
         }
+
         public override RepeatPulse setRepeat(float firstRepeatTime, float multiRepeatTime) {
             this.xAxis.setRepeat(firstRepeatTime, multiRepeatTime);
             this.yAxis.setRepeat(firstRepeatTime, multiRepeatTime);
             return base.setRepeat(firstRepeatTime, multiRepeatTime);
         }
+
         public EDir valueDown => EDir.fromXy(xAxis.valueDown, yAxis.valueDown);
         public EDir valuePressed => EDir.fromXy(xAxis.valuePressed, yAxis.valuePressed);
     }

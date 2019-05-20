@@ -34,7 +34,7 @@ namespace Rot.Engine {
         bool needsDeleting { get; }
         IEnumerable<Action> takeTurn();
         /// <summary> Provide another action instead of one didn't consume turn </summary>
-        Action anotherAction();
+        Action alternate();
     }
 
     /// <summary> Processes the roguelike game with `ActionContext` </summary>
@@ -92,7 +92,8 @@ namespace Rot.Engine {
         }
 
         static IEnumerable<TickReport> performAction(ActionContext context, IActor actor, Action action) {
-            Perform : action.setContext(context);
+            Perform : if (action == null) { yield break; }
+            action.setContext(context);
             yield return TickReport.Action.begin(action);
             var report = action.perform();
 
@@ -110,9 +111,9 @@ namespace Rot.Engine {
                         case RlActionReport.Order.Kind.Process:
                             goto Process;
 
-                        case RlActionReport.Order.Kind.Another:
+                        case RlActionReport.Order.Kind.Alternate:
                             yield return TickReport.Action.end(action);
-                            action = actor.anotherAction();
+                            action = actor.alternate();
                             goto Perform;
 
                         case RlActionReport.Order.Kind.Chain:

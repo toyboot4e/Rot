@@ -44,7 +44,7 @@ namespace Rot.Engine.Act {
         }
 
         RlActionReport wrap(RlActionReport report) {
-            if (report == RlActionReport.another()) {
+            if (report == RlActionReport.alternate()) {
                 return RlActionReport.finish();
             } else {
                 return report;

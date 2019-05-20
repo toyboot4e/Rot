@@ -22,7 +22,8 @@ namespace Rot.Engine.Act {
             if (RlLogic.canWalkIn(this.actor, dir)) {
                 return RlActionReport.ev(new RlEv.Walk(this.actor, this.dir));
             } else {
-                return RlActionReport.ev(new RlEv.Face(this.actor, this.dir));
+                // not consumes turn
+                return RlActionReport.evAndAlternate(new RlEv.Face(this.actor, this.dir));
             }
         }
     }
@@ -36,8 +37,7 @@ namespace Rot.Engine.Act {
         }
 
         public override RlActionReport perform() {
-            this.actor.get<Body>().setDir(this.dir);
-            return RlActionReport.ev(new RlEv.Face(this.actor, this.dir));
+            return RlActionReport.evAndAlternate(new RlEv.Face(this.actor, this.dir));
         }
     }
 }

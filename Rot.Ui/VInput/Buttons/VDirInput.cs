@@ -5,6 +5,7 @@ namespace Rot.Ui {
     public class VDirInput : VBufButtonTemplate {
         public VAxisDirButton axisDir { get; private set; } = new VAxisDirButton();
         public VEightDirButtonButton eDir { get; private set; } = new VEightDirButtonButton();
+
         // TODO: iterating only once
         protected override(bool, bool) onUpdate() {
             this.axisDir.update();
@@ -15,13 +16,16 @@ namespace Rot.Ui {
                 return (this.axisDir.isDown || this.eDir.isDown, false);
             }
         }
+
         public override RepeatPulse setRepeat(float firstRepeatTime, float multiRepeatTime) {
             this.axisDir.setRepeat(firstRepeatTime, multiRepeatTime);
             this.eDir.setRepeat(firstRepeatTime, multiRepeatTime);
             return base.setRepeat(firstRepeatTime, multiRepeatTime);
         }
+
         public EDir dirDown => this.btDown?.valueDown ?? default(EDir);
         public EDir dirPressed => this.btPressed?.valueDown ?? default(EDir);
+
         IValueButton<EDir> btDown {
             get {
                 int dBuf = (int) this.axisDir.buf - (int) this.eDir.buf;

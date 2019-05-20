@@ -33,7 +33,6 @@ namespace Rot.Ui {
 				base.ctx.cradle.popAndRemove();
 				return ControlResult.Continue;
 			} else {
-				Nez.Debug.log($"NO ACTION IN PL CONTROL (top: {input.topDown()}");
 				return ControlResult.SeeYouNextFrame;
 			}
 		}
@@ -52,12 +51,11 @@ namespace Rot.Ui {
 		/// <summary> Dispatches a sub routine to the input </summary>
 		void handleInput(VInput input) {
 			// pressed VKey or down axis input
-			var top = input.topPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
+			var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
 			if (!top.isNone) {
 				this.handleVKey(top.asKey, input);
-				return;
-			}
-			if (input.isDirDown) {
+			} else if (input.isDirDown) {
+				input.vDir.clearBuf();
 				this.handleDir(input.dirDown);
 			}
 		}
@@ -169,7 +167,7 @@ namespace Rot.Ui {
 		public enum Switch {
 			TurnOn,
 			TurnOff,
-			None,
+			NoChange,
 		}
 
 		public KeyMode(VKey key) {
@@ -180,11 +178,13 @@ namespace Rot.Ui {
 			var isDown = input.isKeyDown(this.key);
 
 			if (isDown && this.isOff) {
+				this.isOn = true;
 				return Switch.TurnOn;
 			} else if (!isDown && this.isOn) {
+				this.isOn = false;
 				return Switch.TurnOff;
 			} else {
-				return Switch.None;
+				return Switch.NoChange;
 			}
 		}
 	}

@@ -1,3 +1,5 @@
+using Math = System.Math;
+using System.Collections;
 using Nez;
 using Nez.Tweens;
 using Rot.Engine;
@@ -36,6 +38,16 @@ namespace Rot.Ui {
         public void changeDir(Entity entity, EDir dir) {
             var chip = entity.get<CharaChip>();
             chip.setDir(dir);
+        }
+
+        public ITweenable createTurnMotion(Entity e, EDir to) {
+            var body = e.get<Body>();
+            if (body.facing == to) {
+                return null;
+            }
+            // FIXME: hard coding
+            var anim = new TurnAnimTween(e, to, EaseType.Linear, 0.02f);
+            return anim;
         }
     }
 

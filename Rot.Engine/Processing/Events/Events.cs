@@ -20,6 +20,7 @@ namespace Rot.Engine.RlEv {
 
         public override void execute() {
             var body = this.entity.get<Body>();
+            body.setDir(this.dir);
             body.setPos(body.pos.offset(this.dir.vec));
         }
     }

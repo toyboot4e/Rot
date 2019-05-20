@@ -1,3 +1,4 @@
+using System.Collections;
 using Nez;
 using Nez.Tweens;
 
@@ -24,9 +25,24 @@ namespace Rot.Ui {
 
         public override void play() {
             this.tween.start();
-            // XXX: this hack enables tweens to be started at once
+            // HACK: this enables tweens to be started at once
             this.tween.tick();
             this.isStarted = true;
+        }
+    }
+
+    public class CoroutineAnimation : Animation {
+        IEnumerator coroutine;
+
+        public CoroutineAnimation(IEnumerator coroutine) {
+            this.coroutine = coroutine;
+        }
+
+        Nez.Systems.CoroutineManager mgr => Nez.Core.getGlobalManager<Nez.Systems.CoroutineManager>();
+
+        public override void play() {
+            Nez.Core.startCoroutine(this.coroutine);
+            // FIXME: tick in now or not?
         }
     }
 }

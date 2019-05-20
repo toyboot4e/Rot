@@ -35,6 +35,9 @@ namespace Rot.Ui {
                 case RlEv.Walk walk:
                     return this.visualize(walk);
 
+                case RlEv.Face face:
+                    return this.visualize(face);
+
                 default:
                     return null;
             }
@@ -43,8 +46,18 @@ namespace Rot.Ui {
         public Animation visualize(RlEv.Walk walk) {
             var body = walk.entity.get<Body>();
             var next = body.pos + walk.dir.vec;
+
             var tween = this.viewUtil.createWalkMotion(this.walkAnimConfig, walk.entity, next);
             return Animation.tween(tween);
+        }
+
+        public Animation visualize(RlEv.Face face) {
+            var tween = this.viewUtil.createTurnMotion(face.entity, face.dir);
+            if (tween != null) {
+                return Animation.tween(tween);
+            } else {
+                return null;
+            }
         }
     }
 }

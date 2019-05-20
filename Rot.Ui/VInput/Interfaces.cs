@@ -12,6 +12,7 @@
 
     public interface IBufNode : IPrimNode {
         uint buf { get; }
+        void clearBuf();
         void update();
     }
 
@@ -30,7 +31,8 @@
     public interface IBufButton {
         void update();
         uint buf { get; }
-        void consumeBuffer();
+        void clearBuf();
+        void consumePulseBuffer();
     }
 
     public interface IValueButton<T> {

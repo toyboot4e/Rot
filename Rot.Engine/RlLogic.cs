@@ -17,6 +17,7 @@ namespace Rot.Engine {
             if (dir.isCardinal) {
                 return stage.tilesAt(target).arePassable;
             } else {
+                // FIXME: there's bug with intercardinal walking
                 return new Vec2[] { dir.vec, dir.xVec, dir.yVec }
                     .Select(v => v.offset(pos))
                     .All(p => stage.tilesAt(pos).arePassable);

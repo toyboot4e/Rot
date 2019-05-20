@@ -6,7 +6,7 @@ namespace Rot.Ui {
         float firstRepeatTime;
         float multiRepeatTime;
         float lenPulse; // length of first pulses (repeats have no length)
-        public RepeatPulse setLenPulse( float len ) {
+        public RepeatPulse setLenPulse(float len) {
             this.lenPulse = len;
             return this;
         }
@@ -21,7 +21,7 @@ namespace Rot.Ui {
         public bool isPulsing { get; private set; }
         //public bool isPulsing => this._bufferCounter > 0 || this.isRepeating;
 
-        public virtual RepeatPulse setRepeat( float firstRepeatTime, float multiRepeatTime ) {
+        public virtual RepeatPulse setRepeat(float firstRepeatTime, float multiRepeatTime) {
             this.firstRepeatTime = firstRepeatTime;
             this.multiRepeatTime = multiRepeatTime;
             //this.isRepeating &= _willRepeat;
@@ -30,15 +30,15 @@ namespace Rot.Ui {
         }
 
         /// <summary> To be called every frame. </summary>
-        protected void updatePulse( bool isDown, bool isPressedRaw ) {
+        protected void updatePulse(bool isDown, bool isPressedRaw) {
             //this.isRepeating = false; // only true at the frame it's repeated
             // handling not down / pressed / just down
-            if( !isDown ) {
+            if (!isDown) {
                 _bufferCounter = 0;
                 this.isPulsing = false;
                 _repeatCounter = 0;
                 return;
-            } else if( isPressedRaw ) {
+            } else if (isPressedRaw) {
                 _bufferCounter = this.lenPulse;
                 this.isPulsing = true;
                 _repeatCounter = firstRepeatTime;
@@ -48,19 +48,19 @@ namespace Rot.Ui {
                 this.isPulsing = this._bufferCounter > 0;
             }
 
-            if( !_willRepeat) {
+            if (!_willRepeat) {
                 return;
             }
             //updating repeat pulse
             _repeatCounter -= Time.unscaledDeltaTime;
-            if( _repeatCounter <= 0 ) {
+            if (_repeatCounter <= 0) {
                 //this.isRepeating = _willRepeat;
                 this.isPulsing = _willRepeat;
                 _repeatCounter = multiRepeatTime;
             }
         }
 
-        public void consumeBuffer() {
+        public void consumePulseBuffer() {
             this._bufferCounter = 0;
             this.isPulsing = false;
         }

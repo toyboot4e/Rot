@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using ImGuiNET;
+using Nez.ImGuiTools;
+using Nez.ImGuiTools.ObjectInspectors;
+using Nez.ImGuiTools.TypeInspectors;
 using Rot.Engine;
 
 namespace Rot.Engine {
     /// <summary>
     /// One of the eight directions: almost an enum. Can be None.
     /// </summary>
-    public struct EDir : IEquatable<EDir> {
+    [Nez.CustomInspector(typeof(EDirInspector))]
+    // TODO: make it struct even with Nez.ImGui
+    public class EDir : IEquatable<EDir> {
         readonly Vec2 mVec;
 
         public Vec2 vec => mVec;
@@ -139,6 +145,8 @@ namespace Rot.Engine {
         }
 
         public bool Equals(EDir other) {
+            // if EDir is a class:
+            if (other is null) return false;
             return mVec.Equals(other.mVec);
         }
 
@@ -165,6 +173,20 @@ namespace Rot.Engine {
             else if (this == Ground) return "None";
 
             throw new System.Exception("Dir.ToString(): the size is over one.");
+        }
+    }
+
+    class EDirInspector : AbstractTypeInspector {
+        public override void drawMutable() {
+            var dir = getValue<EDir>();
+            if (dir == null) {
+                if (ImGui.Button("Create Object")) {
+                    dir = EDir.fromXy(1, 0);
+                    setValue(dir);
+                }
+            } else {
+                ImGui.LabelText("dir", dir.ToString());
+            }
         }
     }
 }
