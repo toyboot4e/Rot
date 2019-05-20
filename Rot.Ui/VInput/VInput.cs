@@ -184,9 +184,9 @@ namespace Rot.Ui {
                 }
             }
 
-            // may be dir key
+            // Now, dirBuf != 0
             if (keyBuf == 0) {
-                return VKeyResult.none();
+                return VKeyResult.newDir(this.dirDown);
             }
             if (keyBuf < dirBuf) {
                 return VKeyResult.newKey(top);

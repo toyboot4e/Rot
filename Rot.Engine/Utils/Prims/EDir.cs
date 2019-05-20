@@ -89,13 +89,13 @@ namespace Rot.Engine {
         public static IList<EDir> all => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
         public static IList<EDir> clockwise => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
         public static IList<EDir> Counterclockwise => new List<EDir> { N, NW, W, SW, S, SE, E, NE };
-        public static IList<EDir> cardinal => new List<EDir> { N, S, E, W };
-        public static IList<EDir> diagonal => new List<EDir> { NE, NW, SE, SW };
+        public static IList<EDir> cardinals => new List<EDir> { N, S, E, W };
+        public static IList<EDir> diagonals => new List<EDir> { NE, NW, SE, SW };
 
         // &Self -> bool
-        public bool isCardinal => this.isIn(EDir.cardinal);
-        public bool isDiagonal => this.isIn(EDir.diagonal);
-        bool isIn(IEnumerable<EDir> a) {
+        public bool isCardinal => this.belongsTo(EDir.cardinals);
+        public bool isDiagonal => this.belongsTo(EDir.diagonals);
+        bool belongsTo(IEnumerable<EDir> a) {
             var t = this;
             return a.Any(d => d == t);
         }
