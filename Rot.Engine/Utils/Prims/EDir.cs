@@ -95,9 +95,9 @@ namespace Rot.Engine {
         // &Self -> bool
         public bool isCardinal => this.belongsTo(EDir.cardinals);
         public bool isDiagonal => this.belongsTo(EDir.diagonals);
-        bool belongsTo(IEnumerable<EDir> a) {
+        bool belongsTo(IEnumerable<EDir> set) {
             var t = this;
-            return a.Any(d => d == t);
+            return set.Any(d => d == t);
         }
 
         // Self -> Self

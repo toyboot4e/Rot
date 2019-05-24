@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.ImGuiTools;
 using Nez.Tiled;
@@ -14,7 +15,9 @@ namespace Rot.Game {
         PosUtil posUtil;
 
         public override void initialize() {
-            setDesignResolution(Screen.width, Screen.height, Scene.SceneResolutionPolicy.None);
+            var policy = Scene.SceneResolutionPolicy.None;
+            // var policy = Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
+            setDesignResolution(Screen.width, Screen.height, policy);
 
             var renderers = new Renderer[] {
                 new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage),
@@ -24,6 +27,7 @@ namespace Rot.Game {
             renderers.forEach(r => base.addRenderer(r));
 
             // this.initRoguelike();
+            // Graphics.instance.batcher.shouldRoundDestinations = false;
         }
 
         public override void onStart() {
@@ -47,23 +51,24 @@ namespace Rot.Game {
         }
 
         void makeGame() {
-            var(stage, tiled) = this.makeStage();
-            var entities = this.makeEntities(stage, tiled);
+            var(stage, tiledComp) = this.makeStage();
+            var entities = this.makeEntities(stage, tiledComp);
             var ctx = new ActionContext(stage);
             this.game = new RlGame(ctx, entities);
         }
 
-        (TiledRlStage, TiledMap) makeStage() {
+        (TiledRlStage, TiledMapComponent) makeStage() {
             var tiled = base.content.Load<TiledMap>(Content.Stages.test);
             this.posUtil = new PosUtil(tiled, this.camera);
 
             var tiledComp = this.createEntity("tiled").addComponent(new TiledMapComponent(tiled));
             tiledComp.setLayerDepth(ZOrders.Stage).setRenderLayer(Layers.Stage);
 
-            return (new TiledRlStage(tiled), tiled);
+            return (new TiledRlStage(tiled), tiledComp);
         }
 
-        RotEntityList makeEntities(RlStage stage, TiledMap tiled) {
+        RotEntityList makeEntities(RlStage stage, TiledMapComponent tiledComp) {
+            var tiled = tiledComp.tiledMap;
             var entities = new RotEntityList();
             for (int i = 0; i < 5; i++) {
                 var e = base.createEntity($"actor_{i}");
@@ -90,6 +95,12 @@ namespace Rot.Game {
 
             var pl = entities[0];
             pl.get<Actor>().setBehavior(new Engine.Beh.Player(pl));
+
+            var topLeft = new Vector2(tiled.tileWidth, tiled.tileWidth);
+            var bottomRight = new Vector2(tiled.tileWidth * (tiled.width - 1), tiled.tileWidth * (tiled.height - 1));
+            tiledComp.entity.add(new CameraBounds(topLeft, bottomRight));
+
+            this.camera.entity.add(new FollowCamera(pl));
 
             return entities;
         }

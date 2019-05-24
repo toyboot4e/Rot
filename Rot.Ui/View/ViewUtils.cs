@@ -3,6 +3,7 @@ using System.Collections;
 using Nez;
 using Nez.Tweens;
 using Rot.Engine;
+using Tw = Rot.Ui.Tweens;
 
 namespace Rot.Ui {
     /// <summay> Internal utilities for visualizing <c>RlEvent</c>s </summary>
@@ -22,20 +23,15 @@ namespace Rot.Ui {
             var from = body.pos;
 
             var nextDir = EDir.towards(to - from);
-            // Nez.Debug.log($"{body.facing} -> {nextDir}");
-            // if (body.facing != nextDir) {
-            this.changeDir(entity, nextDir);
-            // }
+            this.onChangeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);
-            var tween = entity.transform
-                .tweenPositionTo(nextPosWorld, config.duration)
-                .setEaseType(config.easeType);
+            var tween = new Tw.Walk(entity.transform, config.duration, nextPosWorld);
             return tween;
         }
 
         /// <summary> Changes the direction of image of the entity </summary>
-        public void changeDir(Entity entity, EDir dir) {
+        public void onChangeDir(Entity entity, EDir dir) {
             var chip = entity.get<CharaChip>();
             chip.setDir(dir);
         }
@@ -45,16 +41,18 @@ namespace Rot.Ui {
             if (body.facing == to) {
                 return null;
             }
+
             // FIXME: hard coding
-            var anim = new TurnAnimTween(e, to, EaseType.Linear, 0.02f);
+            var anim = new Tw.Turn(e, to, EaseType.Linear, 0.02f);
             return anim;
         }
     }
 
     public class WalkAnimationConfig {
         VInput input;
-
         public EaseType easeType;
+        float _duration;
+
         public float duration {
             get {
                 if (this.input.isKeyDown(VKey.SpeedUp)) {
@@ -64,9 +62,8 @@ namespace Rot.Ui {
                 }
             }
         }
-        float _duration;
 
-        public WalkAnimationConfig(VInput input, EaseType easeType = EaseType.Linear, float duration = 0.1f) {
+        public WalkAnimationConfig(VInput input, EaseType easeType = EaseType.Linear, float duration = 0.128f) {
             this.input = input;
             this.easeType = easeType;
             this._duration = duration;

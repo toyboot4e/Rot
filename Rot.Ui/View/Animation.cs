@@ -7,16 +7,36 @@ namespace Rot.Ui {
     public abstract class Animation {
         public virtual bool isFinished { get; }
         public abstract void play();
+        public virtual void update() { }
+    }
+}
+namespace Rot.Ui.Anim {
+    public class DurDecor : Animation {
+        float duration;
+        float elapsedTime;
+        Animation anim;
 
-        public static TweenAnimation tween(ITweenable tween) {
-            return new TweenAnimation(tween);
+        public DurDecor(Animation another, float duration) {
+            this.duration = duration;
+            this.anim = another;
+        }
+
+        public override bool isFinished => elapsedTime >= duration;
+        public override void play() {
+            this.anim.play();
+        }
+
+        public override void update() {
+            // var deltaTime = _isTimeScaleIndependent ? Time.unscaledDeltaTime : Time.deltaTime;
+            float deltaTime = Time.deltaTime; // scaled delta tim
+            this.elapsedTime += deltaTime;
         }
     }
 
-    public class TweenAnimation : Animation {
+    public class Tween : Animation {
         ITweenable tween;
 
-        public TweenAnimation(ITweenable tween) {
+        public Tween(ITweenable tween) {
             this.tween = tween;
         }
 
@@ -31,10 +51,10 @@ namespace Rot.Ui {
         }
     }
 
-    public class CoroutineAnimation : Animation {
+    public class Coroutine : Animation {
         IEnumerator coroutine;
 
-        public CoroutineAnimation(IEnumerator coroutine) {
+        public Coroutine(IEnumerator coroutine) {
             this.coroutine = coroutine;
         }
 

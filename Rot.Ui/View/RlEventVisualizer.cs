@@ -48,13 +48,16 @@ namespace Rot.Ui {
             var next = body.pos + walk.dir.vec;
 
             var tween = this.viewUtil.createWalkMotion(this.walkAnimConfig, walk.entity, next);
-            return Animation.tween(tween);
+            var tweenAnim = new Anim.Tween(tween);
+            return tweenAnim;
+            var anim = new Anim.DurDecor(tweenAnim, 0.12f - 0.005f);
+            return anim;
         }
 
         public Animation visualize(RlEv.Face face) {
             var tween = this.viewUtil.createTurnMotion(face.entity, face.dir);
             if (tween != null) {
-                return Animation.tween(tween);
+                return new Anim.Tween(tween);
             } else {
                 return null;
             }

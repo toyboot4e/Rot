@@ -18,6 +18,7 @@ namespace Rot.Game {
         }
 
         public override ControlResult update() {
+            this.anim.update();
             if (this.anim.isFinished) {
                 this.anim = null;
                 base.ctx.cradle.pop();

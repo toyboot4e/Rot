@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework.Graphics;
 using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
@@ -9,18 +10,30 @@ namespace Rot.Game {
         override protected void Initialize() {
             base.Initialize();
 
+            // TODO: smooth movement
+            base.IsFixedTimeStep = true; // 60fps
+            this.setFps(60);
+
 #if DEBUG
             // Enables VSCode debug console to see the debug log.
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
 #endif
 
-            scene = new RlScene();
+            Core.scene = new RlScene();
 
-            // TODO: high resolution fonts and
+            // TODO: high resolution fonts
             var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.registerGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;
+        }
+
+        public void setFps(int fps) {
+            base.TargetElapsedTime = System.TimeSpan.FromTicks((long) 10_000_000 / (long) fps);
+        }
+
+        public void setEnableVSync(bool isEnabled) {
+            Nez.Screen.synchronizeWithVerticalRetrace = isEnabled;
         }
     }
 }
