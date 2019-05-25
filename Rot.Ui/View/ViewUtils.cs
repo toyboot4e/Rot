@@ -19,10 +19,9 @@ namespace Rot.Ui {
         /// <summary> Walk animations are made before walking </summary>
         public ITweenable createWalkMotion(WalkAnimationConfig config, Entity entity, Vec2 to) {
             var body = entity.get<Body>();
-
             var from = body.pos;
-
             var nextDir = EDir.towards(to - from);
+            // FIXME: lazily change facing or outsource ot
             this.onChangeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);

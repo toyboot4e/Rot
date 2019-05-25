@@ -14,13 +14,12 @@ namespace Rot.Engine {
     public interface RlTiles {
         Vec2 pos { get; }
         RlStage stage { get; }
-        bool arePassable { get; }
+        bool arePassable();
     }
 
     public static class RlStageExt {
-        public static bool contains(this RlStage self, Vec2 pos) {
-            return self.bounds.contains(pos);
-        }
+        public static bool contains(this RlStage self, Vec2 pos) =>
+            self.bounds.contains(pos);
     }
 
     public static class RlTilesExt {
@@ -28,6 +27,6 @@ namespace Rot.Engine {
             self.stage.contains(self.pos);
 
         public static bool areBlocking(this RlTiles self) =>
-            !self.arePassable;
+            !self.arePassable();
     }
 }

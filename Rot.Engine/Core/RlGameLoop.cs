@@ -3,40 +3,6 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Maybe creates <c>RlEvent</c>s </summary>
-    public abstract class Action {
-        /// <summary> Extra capability for <c>Action</c> logic </summary>
-        /// <remark>
-        /// This is injected in the game loop. You can exclude this field if you separate
-        /// <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
-        /// </remark>
-        protected ActionContext ctx;
-
-        /// <summary> Every action is set context in the game loop before it's performed </summary>
-        internal void setContext(ActionContext context) {
-            this.ctx = context;
-        }
-
-        public abstract RlActionReport process();
-        public abstract RlActionReport perform();
-    }
-
-    /// <summary> Privides some capabilities with <c>Action<c>s. </summary>
-    public sealed class ActionContext {
-        public RlStage stage { get; private set; }
-
-        public ActionContext(RlStage stage) {
-            this.stage = stage;
-        }
-    }
-
-    public interface IActor {
-        bool needsDeleting { get; }
-        IEnumerable<Action> takeTurn();
-        /// <summary> Provide another action instead of one didn't consume turn </summary>
-        Action alternate();
-    }
-
     /// <summary> Processes the roguelike game with `ActionContext` </summary>
     internal sealed class RlGameLoop {
         IEnumerator<TickReport> gameLoop;

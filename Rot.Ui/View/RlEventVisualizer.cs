@@ -50,8 +50,6 @@ namespace Rot.Ui {
             var tween = this.viewUtil.createWalkMotion(this.walkAnimConfig, walk.entity, next);
             var tweenAnim = new Anim.Tween(tween);
             return tweenAnim;
-            var anim = new Anim.DurDecor(tweenAnim, 0.12f - 0.005f);
-            return anim;
         }
 
         public Animation visualize(RlEv.Face face) {

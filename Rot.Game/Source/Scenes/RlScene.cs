@@ -53,7 +53,7 @@ namespace Rot.Game {
         void makeGame() {
             var(stage, tiledComp) = this.makeStage();
             var entities = this.makeEntities(stage, tiledComp);
-            var ctx = new ActionContext(stage);
+            var ctx = new ActionContext(stage, entities);
             this.game = new RlGame(ctx, entities);
         }
 

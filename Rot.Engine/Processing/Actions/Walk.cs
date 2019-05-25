@@ -19,7 +19,7 @@ namespace Rot.Engine.Act {
 
         public override RlActionReport perform() {
             var body = this.actor.get<Body>();
-            if (RlLogic.canWalkIn(this.actor, dir)) {
+            if (this.ctx.logic.canWalkIn(this.actor, dir)) {
                 return RlActionReport.ev(new RlEv.Walk(this.actor, this.dir));
             } else {
                 // not consumes turn
