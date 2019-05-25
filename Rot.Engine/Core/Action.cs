@@ -1,6 +1,26 @@
+using System.Collections.Generic;
+using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
+    /// <summary> Maybe creates <c>RlEvent</c>s </summary>
+    public abstract class Action {
+        /// <summary> Extra capability for <c>Action</c> logic </summary>
+        /// <remark>
+        /// This is injected in the game loop. You can exclude this field if you separate
+        /// <c>Action</c>s' logic from data, or if you pass `ActionContext` as an argument,
+        /// </remark>
+        protected RlGameContext ctx;
+
+        /// <summary> Every action is set context in the game loop before it's performed </summary>
+        internal void setContext(RlGameContext context) {
+            this.ctx = context;
+        }
+
+        public abstract RlActionReport process();
+        public abstract RlActionReport perform();
+    }
+
     /// <summary> An `Order` or `TellUi` </summary>
     public abstract class RlActionReport {
 

@@ -9,16 +9,18 @@ namespace Rot.Ui.Tweens {
 
         static EDir[] createDirMap(EDir from, EDir to) {
             int deg = (int) (to.vec.deg - from.vec.deg);
+
+            // forces clockwise turning when the direction is opposite
+            deg += 360;
+            deg %= 360;
+
             var deltaStep = deg / 45;
+            // Nez.Debug.log($"deg: {deg}, step: {deltaStep}");
             if (deltaStep == 0) {
                 return null;
             }
 
-            // cycling it from [-7, 7] to [-4, -4]
-            // deltaStep += 9;
-            // deltaStep %= 9;
-            // deltaStep -= 9;
-
+            // cycling: [-7, 7] -> [-4, -4]
             if (deltaStep > 4) {
                 deltaStep -= 8;
             } else if (deltaStep < -4) {

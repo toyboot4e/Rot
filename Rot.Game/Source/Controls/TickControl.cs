@@ -3,9 +3,9 @@ using Rot.Ui;
 
 namespace Rot.Game {
     public class TickControl : Ui.Control {
-        RlGame game;
+        RlGameState game;
 
-        public TickControl(ControlContext cc, RlGame game) : base(cc) {
+        public TickControl(ControlContext cc, RlGameState game) : base(cc) {
             this.game = game;
         }
 
@@ -48,7 +48,8 @@ namespace Rot.Game {
                     return ControlResult.SeeYouNextFrame;
 
                 case TickReport.ControlEntity decide:
-                    base.ctx.cradle.addAndPush(new PlControl(base.ctx, decide.controller));
+                    var ctrl = base.ctx.cradle.push<PlControl>();
+                    ctrl.setController(decide.controller);
                     return ControlResult.Continue;
 
                 case TickReport.Ev evReport:

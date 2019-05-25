@@ -4,9 +4,9 @@ using Nez;
 namespace Rot.Engine {
     /// <summary> Handles roguelike rules such as walking </summary>
     public class RlLogic {
-        ActionContext ctx;
+        RlGameContext ctx;
 
-        public RlLogic(ActionContext ctx) {
+        public RlLogic(RlGameContext ctx) {
             this.ctx = ctx;
         }
 
@@ -14,7 +14,7 @@ namespace Rot.Engine {
             var body = e.get<Body>();
             var from = body.pos;
             var to = from + dir.vec;
-            var stage = e.get<RlContext>().stage;
+            var stage = this.ctx.stage;
 
             if (!stage.contains(to) || this.isBlockedAt(to)) {
                 return false;

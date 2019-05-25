@@ -88,6 +88,7 @@ namespace Rot.Ui {
 
         public T push<T>() where T : Control {
             Control c;
+            // FIXME: accurate type dictionary
             if (!this.storage.TryGetValue(typeof(T), out c)) {
                 throw new Exception();
             }

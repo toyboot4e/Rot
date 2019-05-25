@@ -4,13 +4,20 @@ using Nez;
 using Rot.Engine;
 
 namespace Rot.Engine {
+    public interface IActor {
+        bool needsDeleting { get; }
+        IEnumerable<Action> takeTurn();
+        /// <summary> Provide another action instead of one didn't consume turn </summary>
+        Action alternate();
+    }
+
     /// <summary> Injected to the `RlGame` </summary>
     public interface ActorScheduler {
         IActor next();
         void updateList();
     }
 
-    /// <summary> Ease for prototyping: a collection that implements ActorScheduler </summary>
+    /// <summary> Ease for prototyping </summary>
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;
 
@@ -43,18 +50,6 @@ namespace Rot.Engine {
         void incIndex() {
             this.index += 1;
             this.index %= base.Count;
-        }
-    }
-
-    public class RlGame {
-        RlGameLoop loop;
-
-        public RlGame(ActionContext ctx, ActorScheduler scheduler) {
-            this.loop = new RlGameLoop(ctx, scheduler);
-        }
-
-        public TickReport tick() {
-            return this.loop.tick();
         }
     }
 }

@@ -1,27 +1,32 @@
+using System.Linq;
 using Nez;
 using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Ui {
-	/// <summary> Created to decide the action of an entity. Deleted after finishing it. </summary>
+	/// <summary> Created to decide the action of an entity </summary>
 	public class PlControl : Control {
-		EntityController entityCtx;
+		EntityController ctrl;
+		RlGameContext ctx;
 		/// <summary> Filters cardinal directional input while it's on. </summary>
 		KeyMode diaMode;
 		/// <summary> Changes direction instead of walking while it's on. </summary>
 		KeyMode dirMode;
 		bool isDone;
 
-		public PlControl(ControlContext cc, EntityController ec) : base(cc) {
-			this.entityCtx = ec;
+		public PlControl(ControlContext cc, RlGameContext ctx) : base(cc) {
+			this.ctx = ctx;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);
 		}
 
+		public void setController(EntityController ctrl) {
+			this.ctrl = ctrl;
+		}
+
 		/// <summary> Decide action of the given entity and return to the `TickControl` </summary>
 		void conclude(Action action) {
-			this.entityCtx.decide(action);
-			this.isDone = true;
+			this.ctrl.decide(action);
 		}
 
 		public override ControlResult update() {
@@ -29,8 +34,9 @@ namespace Rot.Ui {
 			this.updateModes(input);
 			this.handleInput(input);
 
-			if (this.isDone) {
-				base.ctx.cradle.popAndRemove();
+			if (this.ctrl.isDecided) {
+				this.ctrl = null;
+				base.ctx.cradle.pop();
 				return ControlResult.Continue;
 			} else {
 				return ControlResult.SeeYouNextFrame;
@@ -48,13 +54,14 @@ namespace Rot.Ui {
 			}
 		}
 
-		/// <summary> Dispatches a sub routine to the input </summary>
+		/// <summary> Mayve dispatches a sub routine to the input </summary>
 		void handleInput(VInput input) {
 			// pressed VKey or down axis input
 			var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
-			if (!top.isNone) {
+			if (top.isKey) {
 				this.handleVKey(top.asKey, input);
 			} else if (input.isDirDown) {
+				// FIXME: なぜ壁に頭をぶつけ続けることが無いのか……？
 				input.vDir.clearBuf();
 				this.handleDir(input.dirDown);
 			}
@@ -67,10 +74,10 @@ namespace Rot.Ui {
 			}
 
 			if (dirMode.isOn) {
-				this.conclude(new Engine.Act.Face(this.entityCtx.actor, dir));
+				this.conclude(new Engine.Act.Face(this.ctrl.actor, dir));
 			} else {
 				// TODO: don't consume turn if failed
-				this.conclude(new Engine.Act.Walk(this.entityCtx.actor, dir));
+				this.conclude(new Engine.Act.Walk(this.ctrl.actor, dir));
 			}
 		}
 
@@ -97,66 +104,21 @@ namespace Rot.Ui {
 			}
 		}
 
-		Entity findOnlyNighbor(Entity entity) {
-			var body = entity.get<Body>();
-			var pos = body.pos;
-			// var stage = body.stage;
-			// try {
-			//     return pos.neighbors
-			//         .Select(v => stage.tokenAt(v)) // Vec2 -> Entity
-			//         .SingleOrDefault(e => e != null && e.hasAnyOf<Interactable, Item, Stats>());
-			// } catch {
-			//     return null;
-			// }
-			return null;
-		}
+		// /// <summary> Returns the only interactable entity or null </summary>
+		// Entity findOnlyNighbor(Entity entity) {
+		// 	var body = entity.get<Body>();
+		// 	var pos = body.pos;
+		// 	var stage = this.ctx.stage;
+		// 	try {
+		// 		return pos.neighbors
+		// 			.Select(v => stage.tokenAt(v)) // Vec2 -> Entity
+		// 			.SingleOrDefault(e => e != null && e.hasAnyOf<Interactable, Item, Stats>());
+		// 	} catch {
+		// 		return null;
+		// 	}
+		// 	return null;
+		// }
 	}
-
-	// public class CommandFactory {
-	//     public CommandFactory() { }
-
-	//     // Attack, interact or swing.
-	//     public Engine.IAction interact(Entity actor) {
-	//         var dir = actor.body().facing;
-	//         return interactIn(actor, dir);
-	//     }
-
-	//     public Engine.IAction interactIn(Entity actor, Engine.EDir dir) {
-	//         var action = this.tryInvoke(actor, dir, (i) => i.onInteract(actor)) ??
-	//             AF.swing(actor, dir);
-	//         return action;
-	//     }
-	//     public Engine.IAction walk(Entity actor, Engine.EDir dir) {
-
-	//         var body = actor.get<Body>();
-	//         if (body.canWalkIn(dir)) {
-	//             return AF.walk(actor, dir);
-	//         } else {
-	//             var ctrl = new ActorCtrl(actor);
-	//             ctrl.faceIn(dir);
-	//             return this.tryInvoke(actor, dir, (i) => i.onCollision(actor));
-	//         }
-	//     }
-
-	//     // May attack or call an event function: onInteract() or onCollision().
-	//     Engine.IAction tryInvoke(Entity actor, Engine.EDir dir, System.Func<Interactable, IAction> f) {
-	//         var nextPos = actor.body().pos + dir.vec;
-	//         var interactable = stage.tokenAt(nextPos) ?
-	//             .get<Interactable>() ?? null;
-	//         if (interactable != null) {
-	//             return f.Invoke(interactable);
-	//         }
-	//         var battler = stage.battlerTokenAt(nextPos);
-	//         if (battler != null) {
-	//             return AF.meleeAttack(actor, dir);
-	//         }
-	//         return null;
-	//     }
-
-	//     public Engine.IAction searchGround(Entity actor) {
-	//         return new Actions.SearchGround(actor, this.game);
-	//     }
-	// }
 
 	/// <summary> Data of on/off and a binded key. </summary>
 	public class KeyMode {

@@ -3,28 +3,42 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Processes the roguelike game with `ActionContext` </summary>
-    internal sealed class RlGameLoop {
-        IEnumerator<TickReport> gameLoop;
+    public sealed class RlGameContext {
+        public RlStage stage { get; private set; }
+        public IList<Entity> entities { get; private set; }
+        public RlLogic logic { get; private set; }
 
-        public RlGameLoop(ActionContext ctx, ActorScheduler scheduler) {
-            this.gameLoop = RlGameLoop.createGameLoop(ctx, scheduler)
+        public RlGameContext(RlStage stage, IList<Entity> es) {
+            this.stage = stage;
+            this.entities = es;
+            this.logic = new RlLogic(this);
+        }
+
+        public IEnumerable<Entity> entitiesAt(Vec2 pos) {
+            return this.entities.Where(e => e.get<Body>().pos == pos);
+        }
+    }
+
+    /// <summary> An tickable state </summary>
+    public sealed class RlGameState {
+        IEnumerator<TickReport> state;
+
+        public RlGameState(RlGameContext ctx, ActorScheduler scheduler) {
+            this.state = RlGameState.create(ctx, scheduler)
                 .GetEnumerator();
         }
 
-        /// <summary> Ticks the game loop </summary>
         public TickReport tick() {
-            if (this.gameLoop == null) {
-                return TickReport.error("Not given scheduler!");
+            if (this.state == null) {
+                return TickReport.error("There's no game state!");
             }
-            if (gameLoop.MoveNext() == false) {
+            if (state.MoveNext() == false) {
                 return TickReport.error("The game loop is finished!");
             }
-            return gameLoop.Current;
+            return state.Current;
         }
 
-        /// <summary> The game loop around actors provided by the `scheduler` </summary>
-        static IEnumerable<TickReport> createGameLoop(ActionContext context, ActorScheduler scheduler) {
+        static IEnumerable<TickReport> create(RlGameContext context, ActorScheduler scheduler) {
             while (scheduler == null) {
                 yield return TickReport.error("Not given scheduler!");
             }
@@ -38,18 +52,18 @@ namespace Rot.Engine {
                     continue;
                 }
 
-                foreach(var report in RlGameLoop.processActor(context, actor)) {
+                foreach(var report in RlGameState.processActor(context, actor)) {
                     yield return report;
                 }
             }
         }
 
-        static IEnumerable<TickReport> processActor(ActionContext context, IActor actor) {
+        static IEnumerable<TickReport> processActor(RlGameContext context, IActor actor) {
             yield return TickReport.Actor.Kind.TakeTurn.into(actor);
 
             // null actions are not reported (Act.None is reported though)
             foreach(var action in actor.takeTurn().Where(a => a != null)) {
-                foreach(var report in RlGameLoop.performAction(context, actor, action)) {
+                foreach(var report in RlGameState.performAction(context, actor, action)) {
                     yield return report;
                 }
             }
@@ -57,7 +71,7 @@ namespace Rot.Engine {
             yield return TickReport.Actor.Kind.EndTurn.into(actor);
         }
 
-        static IEnumerable<TickReport> performAction(ActionContext context, IActor actor, Action action) {
+        static IEnumerable<TickReport> performAction(RlGameContext context, IActor actor, Action action) {
             Perform : if (action == null) { yield break; }
             action.setContext(context);
             yield return TickReport.Action.begin(action);
@@ -92,7 +106,7 @@ namespace Rot.Engine {
                     }
 
                 case RlActionReport.Ev evReport:
-                    foreach(var r in executeEvent(context, evReport.ev)) {
+                    foreach(var r in handleEvent(context, evReport.ev)) {
                         yield return r;
                     }
                     report = evReport.order;
@@ -107,7 +121,7 @@ namespace Rot.Engine {
             goto HandleActionReport;
         }
 
-        static IEnumerable<TickReport> executeEvent(ActionContext context, RlEvent ev) {
+        static IEnumerable<TickReport> handleEvent(RlGameContext context, RlEvent ev) {
             yield return new TickReport.Ev(ev);
             ev.execute();
         }

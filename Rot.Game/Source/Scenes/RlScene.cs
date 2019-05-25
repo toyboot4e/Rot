@@ -10,7 +10,8 @@ using Rot.Ui;
 
 namespace Rot.Game {
     public class RlScene : Scene {
-        RlGame game; // owns: RlStage, entities
+        RlGameState game; // owns: RlStage, entities
+        RlGameContext ctx;
         ControlSceneComponent controller;
         PosUtil posUtil;
 
@@ -48,13 +49,14 @@ namespace Rot.Game {
             cradle.push(cradle.add(new TickControl(cc, this.game)));
             cradle.add(new RlEventControl(cc, this.posUtil));
             cradle.add(new AnimationControl(cc));
+            cradle.add(new PlControl(cc, this.ctx));
         }
 
         void makeGame() {
             var(stage, tiledComp) = this.makeStage();
             var entities = this.makeEntities(stage, tiledComp);
-            var ctx = new ActionContext(stage, entities);
-            this.game = new RlGame(ctx, entities);
+            this.ctx = new RlGameContext(stage, entities);
+            this.game = new RlGameState(this.ctx, entities);
         }
 
         (TiledRlStage, TiledMapComponent) makeStage() {
@@ -72,8 +74,6 @@ namespace Rot.Game {
             var entities = new RotEntityList();
             for (int i = 0; i < 5; i++) {
                 var e = base.createEntity($"actor_{i}");
-
-                e.add(new RlContext(stage));
 
                 e.add(new Actor(null));
 
