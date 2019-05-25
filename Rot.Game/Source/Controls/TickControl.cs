@@ -5,7 +5,7 @@ namespace Rot.Game {
     public class TickControl : Ui.Control {
         RlGameState game;
 
-        public TickControl(ControlContext cc, RlGameState game) : base(cc) {
+        public TickControl(RlGameState game) {
             this.game = game;
         }
 

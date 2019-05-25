@@ -7,8 +7,11 @@ namespace Rot.Game {
     public class RlEventControl : Control {
         RlEventVisualizer impl;
 
-        public RlEventControl(ControlContext ctx, PosUtil p) : base(ctx) {
-            this.impl = new RlEventVisualizer(ctx.input, p);
+        public RlEventControl() { }
+
+        protected override void onInjectedContext() {
+            var(input, posUtil) = (base.ctx.input, base.ctx.posUtil);
+            this.impl = new RlEventVisualizer(input, posUtil);
         }
 
         public ControlResult handleEvent(RlEvent ev) {

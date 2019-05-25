@@ -10,10 +10,9 @@ using Rot.Ui;
 
 namespace Rot.Game {
     public class RlScene : Scene {
-        RlGameState game; // owns: RlStage, entities
-        RlGameContext ctx;
-        ControlSceneComponent controller;
-        PosUtil posUtil;
+        RlGameState game;
+        RlGameContext gameCtx;
+        ControlSceneComponent ctrl;
 
         public override void initialize() {
             var policy = Scene.SceneResolutionPolicy.None;
@@ -35,38 +34,30 @@ namespace Rot.Game {
             this.initRoguelike();
         }
 
-        #region InitRogue
+        #region Initializers
         void initRoguelike() {
-            this.makeGame();
-            this.controller = ControlSceneComponent.create(this);
-            var ctx = this.controller.context;
-            this.makeControl(ctx);
-            RlInspector.create(this, ctx.cradle, ctx.input);
+            var(stage, tiled, tiledComp) = this.makeStage();
+            this.makeGame(stage, tiledComp);
+            var posUtil = new PosUtil(tiled, this.camera);
+            this.ctrl = base.add(new ControlSceneComponent(posUtil));
+            var ctrlCtx = this.ctrl.ctx;
+            this.makeControl(ctrlCtx);
+            RlInspector.create(this, ctrlCtx.cradle, ctrlCtx.input);
         }
 
-        void makeControl(ControlContext cc) {
-            var cradle = cc.cradle;
-            cradle.push(cradle.add(new TickControl(cc, this.game)));
-            cradle.add(new RlEventControl(cc, this.posUtil));
-            cradle.add(new AnimationControl(cc));
-            cradle.add(new PlControl(cc, this.ctx));
-        }
-
-        void makeGame() {
-            var(stage, tiledComp) = this.makeStage();
-            var entities = this.makeEntities(stage, tiledComp);
-            this.ctx = new RlGameContext(stage, entities);
-            this.game = new RlGameState(this.ctx, entities);
-        }
-
-        (TiledRlStage, TiledMapComponent) makeStage() {
+        (TiledRlStage, TiledMap, TiledMapComponent) makeStage() {
             var tiled = base.content.Load<TiledMap>(Content.Stages.test);
-            this.posUtil = new PosUtil(tiled, this.camera);
 
             var tiledComp = this.createEntity("tiled").addComponent(new TiledMapComponent(tiled));
             tiledComp.setLayerDepth(ZOrders.Stage).setRenderLayer(Layers.Stage);
 
-            return (new TiledRlStage(tiled), tiledComp);
+            return (new TiledRlStage(tiled), tiled, tiledComp);
+        }
+
+        void makeGame(TiledRlStage stage, TiledMapComponent tiledComp) {
+            var entities = this.makeEntities(stage, tiledComp);
+            this.gameCtx = new RlGameContext(stage, entities);
+            this.game = new RlGameState(this.gameCtx, entities);
         }
 
         RotEntityList makeEntities(RlStage stage, TiledMapComponent tiledComp) {
@@ -87,7 +78,7 @@ namespace Rot.Game {
 
                 var chip = CharachipFactory.wodi8(Content.Charachips.Patched.gremlin_black);
                 var body = e.get<Body>();
-                var image = CharaChip.fromSprite(e, this.posUtil, chip);
+                var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
                 image.setDir(body.facing).setToGridPos(body.pos);
 
                 entities.Add(e);
@@ -103,6 +94,14 @@ namespace Rot.Game {
             this.camera.entity.add(new FollowCamera(pl));
 
             return entities;
+        }
+
+        void makeControl(ControlContext cc) {
+            var cradle = cc.cradle;
+            cradle.addAndPush(new TickControl(game));
+            cradle.add(new RlEventControl());
+            cradle.add(new AnimationControl());
+            cradle.add(new PlControl(this.gameCtx));
         }
         #endregion
     }

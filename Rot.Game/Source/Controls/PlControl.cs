@@ -14,7 +14,7 @@ namespace Rot.Ui {
 		KeyMode dirMode;
 		bool isDone;
 
-		public PlControl(ControlContext cc, RlGameContext ctx) : base(cc) {
+		public PlControl(RlGameContext ctx) {
 			this.ctx = ctx;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);

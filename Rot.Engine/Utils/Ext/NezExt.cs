@@ -25,6 +25,10 @@ namespace Rot.Engine {
         public static void removeEntity(this Scene self, Entity entity) {
             self.entities.remove(entity);
         }
+
+        public static T add<T>(this Scene self, T comp) where T : SceneComponent {
+            return self.addSceneComponent(comp);
+        }
     }
 
     public static class EntityExt {

@@ -130,6 +130,7 @@ namespace Rot.Ui {
         protected uint keyBuf(VKey key) => this._buttons[key].buf;
     }
 
+    // TODO: attribute-button map -> button-attribute map
     public class VInput : VInputBase {
         public VInput() {
             // TODO: fix the hard coding

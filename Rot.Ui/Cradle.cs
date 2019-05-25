@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using Rot.Engine;
 
 namespace Rot.Ui {
-    /// <summary> Controls work with this </summary>
+    /// <summary> Injected to <c>Control</c>s </summary>
     public struct ControlContext {
         public Cradle cradle;
         public VInput input;
+        public PosUtil posUtil;
 
-        public ControlContext(Cradle cradle, VInput input) {
+        public ControlContext(Cradle cradle, VInput input, PosUtil posUtil) {
             this.cradle = cradle;
             this.input = input;
+            this.posUtil = posUtil;
         }
 
         public void update() {
@@ -19,13 +21,19 @@ namespace Rot.Ui {
         }
     }
 
-    /// <summary> A state that controls the game. Belongs to some <c>Cradle</c>. </summary>
+    /// <summary> State </summary>
     public abstract class Control {
+        /// <summary> Injected when pushed to the Cradle state machine </summary>
         protected ControlContext ctx;
 
-        public Control(ControlContext context) {
-            this.ctx = context;
+        public Control() { }
+
+        internal void injectContext(ControlContext ctx) {
+            this.ctx = ctx;
+            this.onInjectedContext();
         }
+
+        protected virtual void onInjectedContext() { }
 
         public virtual ControlResult update() {
             return ControlResult.SeeYouNextFrame;
@@ -40,14 +48,19 @@ namespace Rot.Ui {
         Continue,
     }
 
-    /// <summary> Basically a stack of `Control`s with `storage` to store them </summary>
+    /// <summary> Stack-based state machine </summary>
     public class Cradle {
         public Dictionary<Type, Control> storage { get; private set; }
         public Stack<Control> stack;
+        ControlContext ctx;
 
         public Cradle() {
             this.storage = new Dictionary<Type, Control>();
             this.stack = new Stack<Control>();
+        }
+
+        public void setContext(ControlContext ctx) {
+            this.ctx = ctx;
         }
 
         public void update() {
@@ -65,8 +78,9 @@ namespace Rot.Ui {
             }
         }
 
-        #region StackOperations
+        #region Stack
         public T push<T>(T c) where T : Control {
+            c.injectContext(this.ctx);
             c.onPushed();
             this.stack.Push(c);
             return c;
@@ -85,18 +99,9 @@ namespace Rot.Ui {
         public bool peekIsType<T>() where T : Control {
             return this.peek() is T;
         }
-
-        public T push<T>() where T : Control {
-            Control c;
-            // FIXME: accurate type dictionary
-            if (!this.storage.TryGetValue(typeof(T), out c)) {
-                throw new Exception();
-            }
-            return push(c as T);
-        }
         #endregion
 
-        #region StackOperations
+        #region Storage
         public T get<T>() where T : Control {
             Control control;
             this.storage.TryGetValue(typeof(T), out control);
@@ -109,34 +114,44 @@ namespace Rot.Ui {
             return child;
         }
 
-        public T add<T>() where T : Control, new() {
-            var child = new T();
-            this.storage.Add(typeof(T), child);
-            return child;
-        }
+        public Control remove(Control ctrl) {
+            if (this.stack.Contains(ctrl)) {
+                throw new System.Exception("Tried to remove control in the stack");
+            }
 
-        /// <summary> Removes `child` dynamically checking its type </summary>
-        public Control remove(Control child) {
-            if (this.storage.Remove(child.GetType())) {
-                return child;
+            if (this.storage.Remove(ctrl.GetType())) {
+                return ctrl;
             } else {
                 return null;
             }
         }
 
-        public T remove<T>() where T : Control {
-            Control control;
-            this.storage.TryGetValue(typeof(T), out control);
-            if (control == null) throw new Exception("Cradle: tried to remove unexisting child");
-            if (this.stack.Contains(control)) {
-                throw new System.Exception("Tried to remove control in the stack");
-            }
-            this.storage.Remove(typeof(T));
-            return control as T;
-        }
         #endregion
 
-        #region SyntaxSugar
+        #region Extentions
+        public T push<T>() where T : Control {
+            Control c;
+            if (!this.storage.TryGetValue(typeof(T), out c)) {
+                throw new Exception();
+            }
+            return push(c as T);
+        }
+
+        public T add<T>() where T : Control, new() {
+            return this.add(new T());
+        }
+
+        public T remove<T>() where T : Control {
+            Control ctrl;
+            this.storage.TryGetValue(typeof(T), out ctrl);
+
+            if (ctrl == null) {
+                throw new Exception("Cradle: tried to remove unexisting child");
+            }
+
+            return this.remove(ctrl) as T;
+        }
+
         public T addAndPush<T>() where T : Control, new() {
             return this.push(this.add<T>());
         }

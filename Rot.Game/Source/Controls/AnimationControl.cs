@@ -9,7 +9,7 @@ namespace Rot.Game {
         Animation anim;
         Anim.Combined combined;
 
-        public AnimationControl(ControlContext ctx) : base(ctx) {
+        public AnimationControl() {
             this.combined = new Anim.Combined();
         }
 
