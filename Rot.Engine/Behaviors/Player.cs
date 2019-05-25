@@ -1,5 +1,24 @@
 using Nez;
 
+namespace Rot.Engine.Beh {
+    /// <summary> Just creates actions decided by UI.abstract </summary>
+    public class Player : IBehavior {
+        Entity entity;
+
+        public Player(Entity e) {
+            this.entity = e;
+        }
+
+        Action IBehavior.make() {
+            return new Act.DelegateToUi(entity);
+        }
+
+        Action IBehavior.alternate() {
+            return new Act.DelegateToUi(entity);
+        }
+    }
+}
+
 namespace Rot.Engine.Act {
     /// <summary> An action decided by UI through <c>Entity.EntityController</c> </summary>
     public class DelegateToUi : Action {
@@ -20,25 +39,6 @@ namespace Rot.Engine.Act {
                 Nez.Debug.log("caled EntityControl.process() before action is decided");
                 return RlActionReport.process();
             }
-        }
-    }
-}
-
-namespace Rot.Engine.Beh {
-    /// <summary> Just creates actions decided by UI.abstract </summary>
-    public class Player : IBehavior {
-        Entity entity;
-
-        public Player(Entity e) {
-            this.entity = e;
-        }
-
-        Action IBehavior.make() {
-            return new Act.DelegateToUi(entity);
-        }
-
-        Action IBehavior.alternate() {
-            return new Act.DelegateToUi(entity);
         }
     }
 }

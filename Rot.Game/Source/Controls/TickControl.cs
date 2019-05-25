@@ -50,6 +50,10 @@ namespace Rot.Game {
                 case TickReport.ControlEntity decide:
                     var ctrl = base.ctx.cradle.push<PlControl>();
                     ctrl.setController(decide.controller);
+
+                    // FIXME: begin combined animation before view or input
+                    base.ctx.cradle.get<AnimationControl>().beginCombinedIfAny();
+
                     return ControlResult.Continue;
 
                 case TickReport.Ev evReport:

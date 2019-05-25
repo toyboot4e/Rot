@@ -78,11 +78,11 @@ namespace Rot.Game {
                 e.add(new Actor(null));
 
                 var pos = new Vec2(5 + i, 5 + i);
-                e.add(new Body(pos, dir : EDir.random, isBlocker : true));
+                e.add(new Body(pos, dir : EDir.random(), isBlocker : true));
                 if (i == 0) {
                     e.get<Actor>().setBehavior(new Engine.Beh.Player(e));
                 } else {
-                    e.get<Actor>().setBehavior(new Engine.Beh.None());
+                    e.get<Actor>().setBehavior(new Engine.Beh.RandomWalk(e));
                 }
 
                 var chip = CharachipFactory.wodi8(Content.Charachips.Patched.gremlin_black);

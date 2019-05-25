@@ -128,6 +128,9 @@ namespace Rot.Ui {
             Control control;
             this.storage.TryGetValue(typeof(T), out control);
             if (control == null) throw new Exception("Cradle: tried to remove unexisting child");
+            if (this.stack.Contains(control)) {
+                throw new System.Exception("Tried to remove control in the stack");
+            }
             this.storage.Remove(typeof(T));
             return control as T;
         }

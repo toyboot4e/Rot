@@ -44,7 +44,7 @@ namespace Rot.Engine {
         public static EDir W => new EDir(new Vec2(-1, 0));
         public static EDir NW => new EDir(new Vec2(-1, -1));
 
-        public static EDir random => EDir.fromInt(Nez.Random.range(0, 7));
+        public static EDir random() => EDir.fromInt(Nez.Random.range(0, 7));
 
         public static EDir fromInt(int n) {
             switch (n) {

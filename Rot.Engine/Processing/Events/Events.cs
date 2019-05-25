@@ -48,6 +48,16 @@ namespace Rot.Engine.RlEv {
         }
     }
 
+    public class MeleeAttack : RlEvent {
+        public Entity attacker { get; private set; }
+        public EDir dir { get; private set; }
+
+        public MeleeAttack(Entity attacker, EDir dir) {
+            this.attacker = attacker;
+            this.dir = dir;
+        }
+    }
+
     public class Hit : RlEvent {
         Entity entity;
         public readonly int amount;

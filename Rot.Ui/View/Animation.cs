@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Nez;
 using Nez.Tweens;
 
@@ -6,33 +8,24 @@ namespace Rot.Ui {
     /// <summary> Generic animation to be <c>play</c>ed by <c>AnimationControl</c> </summary>
     public abstract class Animation {
         public virtual bool isFinished { get; }
+        public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
+
+        public Animation setKind(AnimationKind kind) {
+            this.kind = kind;
+            return this;
+        }
+
         public abstract void play();
         public virtual void update() { }
     }
-}
-namespace Rot.Ui.Anim {
-    public class DurDecor : Animation {
-        float duration;
-        float elapsedTime;
-        Animation anim;
 
-        public DurDecor(Animation another, float duration) {
-            this.duration = duration;
-            this.anim = another;
-        }
-
-        public override bool isFinished => elapsedTime >= duration;
-        public override void play() {
-            this.anim.play();
-        }
-
-        public override void update() {
-            // var deltaTime = _isTimeScaleIndependent ? Time.unscaledDeltaTime : Time.deltaTime;
-            float deltaTime = Time.deltaTime; // scaled delta tim
-            this.elapsedTime += deltaTime;
-        }
+    public enum AnimationKind {
+        Blocking,
+        Combined,
     }
+}
 
+namespace Rot.Ui.Anim {
     public class Tween : Animation {
         ITweenable tween;
 
@@ -63,6 +56,84 @@ namespace Rot.Ui.Anim {
         public override void play() {
             Nez.Core.startCoroutine(this.coroutine);
             // FIXME: tick in now or not?
+        }
+    }
+
+    public class Combined : Animation {
+        public List<Animation> anims { get; private set; }
+
+        public Combined() {
+            this.anims = new List<Animation>();
+        }
+
+        public override bool isFinished {
+            get => this.anims.All(a => a.isFinished);
+        }
+
+        public override void update() {
+            this.anims.ForEach(a => a.update());
+        }
+
+        public override void play() {
+            this.anims.ForEach(a => a.play());
+        }
+
+        public void clear() {
+            this.anims.Clear();
+        }
+
+        public Combined add(Animation anim) {
+            this.anims.Add(anim);
+            return this;
+        }
+    }
+
+    public class Queue : Animation {
+        public List<Animation> anims { get; private set; }
+        public int index { get; private set; }
+
+        public Queue() {
+            this.anims = new List<Animation>();
+        }
+
+        public override bool isFinished {
+            get => this.index >= this.anims.Count;
+        }
+
+        bool incIndexThenContinue() {
+            this.index++;
+            return this.isFinished;
+        }
+
+        public override void update() {
+            if (this.anims.Count == 0) {
+                return;
+            }
+
+            var anim = this.anims[this.index];
+            anim.update();
+            while (anim.isFinished && this.incIndexThenContinue()) {
+                anim = this.anims[this.index];
+                anim.play();
+                anim.update();
+                continue;
+            }
+        }
+
+        public override void play() {
+            this.anims[this.index].play();
+        }
+
+        public void clear() {
+            this.anims.Clear();
+            this.index = 0;
+        }
+
+        public Queue enqueue(params Animation[] anims) {
+            foreach(var anim in anims) {
+                this.anims.Add(anim);
+            }
+            return this;
         }
     }
 }

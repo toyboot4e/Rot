@@ -5,14 +5,14 @@ using Rot.Ui;
 namespace Rot.Game {
     /// <summary> Visualizes <c>RlEvent</c>s </summary>
     public class RlEventControl : Control {
-        RlEventVisualizer v;
+        RlEventVisualizer impl;
 
         public RlEventControl(ControlContext ctx, PosUtil p) : base(ctx) {
-            this.v = new RlEventVisualizer(ctx.input, p);
+            this.impl = new RlEventVisualizer(ctx.input, p);
         }
 
         public ControlResult handleEvent(RlEvent ev) {
-            var anim = this.v.visualize(ev);
+            var anim = this.impl.visualize(ev);
             if (anim == null) {
                 return ControlResult.Continue;
             } else {
