@@ -47,9 +47,9 @@ namespace Rot.Engine {
             return !this.isPassableAt(pos);
         }
 
-        // FIXME: only tiles are considered as diagonal blockers
         public bool isDiagonallyPassableAt(Vec2 pos) {
-            return this.ctx.stage.tilesAt(pos).arePassable();
+            var stage = this.ctx.stage;
+            return stage.tilesAt(pos).arePassable() && this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
         }
 
         public bool isDiagonallyBlocedAt(Vec2 pos) {
