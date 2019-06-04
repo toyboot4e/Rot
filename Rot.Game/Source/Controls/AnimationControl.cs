@@ -18,11 +18,12 @@ namespace Rot.Game {
                 this.combined.add(anim);
                 return ControlResult.Continue;
             } else {
+                base.ctrlCtx.cradle.push<AnimationControl>();
                 this.anim = this.combined.anims.Count == 0 ?
                     anim :
                     new Anim.Queue().enqueue(this.combined, anim);
                 this.anim.play();
-                base.ctx.cradle.push(this);
+                base.ctrlCtx.cradle.push(this);
                 return ControlResult.Continue;
             }
         }
@@ -33,7 +34,7 @@ namespace Rot.Game {
             } else {
                 this.anim = this.combined;
                 this.anim.play();
-                this.ctx.cradle.push<AnimationControl>();
+                this.ctrlCtx.cradle.push<AnimationControl>();
             }
         }
 
@@ -42,11 +43,16 @@ namespace Rot.Game {
             if (!this.anim.isFinished) {
                 return ControlResult.SeeYouNextFrame;
             } else {
-                this.anim = null;
-                this.combined.clear();
-                base.ctx.cradle.pop();
+                this.clear();
+                base.ctrlCtx.cradle.pop();
                 return ControlResult.Continue;
             }
+        }
+
+        void clear() {
+            this.anim.onClear();
+            this.anim = null;
+            this.combined.clear();
         }
     }
 }

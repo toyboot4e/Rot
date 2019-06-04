@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Nez;
-using Nez.Tiled;
 using Rot.Engine;
 
 namespace Rot.Engine {
@@ -60,55 +59,6 @@ namespace Rot.Engine {
     public static class ComponentExt {
         public static void removeFromEntity(this Component self) {
             self.entity?.removeComponent(self);
-        }
-    }
-
-    public static class TiledTileExt {
-        public static TiledTile setPos(this TiledTile self, int x, int y) {
-            self.x = x;
-            self.y = y;
-            return self;
-        }
-    }
-
-    public static class TiledMapExt {
-        public static TiledTileLayer tiles(this TiledMap self, int layer) {
-            return self.getLayer(layer) as TiledTileLayer;
-        }
-
-        public static TiledTileLayer layerCollision(this TiledMap self) {
-            return self.getLayer("collision") as TiledTileLayer;
-        }
-
-        // true: blocked
-        public static bool collision(this TiledMap self, int x, int y) {
-            return self.layerCollision().getTile(x, y) == null ? true : false;
-        }
-
-        public static void setCollision(this TiledMap self, int x, int y, bool willBlocked) {
-            if (willBlocked) {
-                self.layerCollision().setTile(new TiledTile(1).setPos(x, y));
-            } else {
-                self.layerCollision().removeTile(x, y);
-            }
-        }
-
-        public static void clearCollisionLayer(this TiledMap self) {
-            clearLayer(self.layerCollision());
-        }
-
-        static void clearLayer(TiledTileLayer layer) {
-            for (int i = 0; i < layer.width * layer.height; i++) {
-                layer.tiles[i] = null;
-            }
-        }
-
-        static void clearLayers(params TiledTileLayer[] layers) {
-            foreach(var layer in layers) {
-                for (int i = 0; i < layer.width * layer.height; i++) {
-                    layer.tiles[i] = null;
-                }
-            }
         }
     }
 }

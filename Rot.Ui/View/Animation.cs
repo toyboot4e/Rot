@@ -17,6 +17,7 @@ namespace Rot.Ui {
 
         public abstract void play();
         public virtual void update() { }
+        public virtual void onClear() { }
     }
 
     public enum AnimationKind {
@@ -79,6 +80,9 @@ namespace Rot.Ui.Anim {
         }
 
         public void clear() {
+            foreach(var anim in this.anims) {
+                anim.onClear();
+            }
             this.anims.Clear();
         }
 
@@ -134,6 +138,19 @@ namespace Rot.Ui.Anim {
                 this.anims.Add(anim);
             }
             return this;
+        }
+    }
+
+    public abstract class Block : Animation {
+        System.Func<bool> f;
+        public override bool isFinished => this.f?.Invoke() ?? true;
+
+        public Block(System.Func<bool> f) {
+            this.f = f;
+        }
+
+        public override void onClear() {
+            this.f = null;
         }
     }
 }

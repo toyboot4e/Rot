@@ -24,20 +24,18 @@ namespace Rot.Ui {
     /// <summary> State </summary>
     public abstract class Control {
         /// <summary> Injected when pushed to the Cradle state machine </summary>
-        protected ControlContext ctx;
+        protected ControlContext ctrlCtx;
 
         public Control() { }
 
         internal void injectContext(ControlContext ctx) {
-            this.ctx = ctx;
+            this.ctrlCtx = ctx;
             this.onInjectedContext();
         }
 
         protected virtual void onInjectedContext() { }
 
-        public virtual ControlResult update() {
-            return ControlResult.SeeYouNextFrame;
-        }
+        public abstract ControlResult update();
         public virtual void onPushed() { }
         public virtual void onPoped() { }
         public virtual void onRemoved() { }
@@ -80,7 +78,6 @@ namespace Rot.Ui {
 
         #region Stack
         public T push<T>(T c) where T : Control {
-            c.injectContext(this.ctx);
             c.onPushed();
             this.stack.Push(c);
             return c;
@@ -109,9 +106,10 @@ namespace Rot.Ui {
             return control as T;
         }
 
-        public T add<T>(T child) where T : Control {
-            this.storage.Add(typeof(T), child);
-            return child;
+        public T add<T>(T ctrl) where T : Control {
+            this.storage.Add(typeof(T), ctrl);
+            ctrl.injectContext(this.ctx);
+            return ctrl;
         }
 
         public Control remove(Control ctrl) {
@@ -146,7 +144,7 @@ namespace Rot.Ui {
             this.storage.TryGetValue(typeof(T), out ctrl);
 
             if (ctrl == null) {
-                throw new Exception("Cradle: tried to remove unexisting child");
+                throw new Exception("Cradle: tried to remove unexisting control");
             }
 
             return this.remove(ctrl) as T;
@@ -156,8 +154,8 @@ namespace Rot.Ui {
             return this.push(this.add<T>());
         }
 
-        public T addAndPush<T>(T child) where T : Control {
-            return this.push(this.add(child));
+        public T addAndPush<T>(T ctrl) where T : Control {
+            return this.push(this.add(ctrl));
         }
 
         public Control popAndRemove() {

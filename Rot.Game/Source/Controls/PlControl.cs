@@ -1,21 +1,22 @@
 using System.Linq;
 using Nez;
 using Rot.Engine;
+using RlEv = Rot.Engine.RlEv;
 using Rot.Ui;
 
 namespace Rot.Ui {
 	/// <summary> Created to decide the action of an entity </summary>
 	public class PlControl : Control {
 		EntityController ctrl;
-		RlGameContext ctx;
+		RlGameContext gameCtx;
+
 		/// <summary> Filters cardinal directional input while it's on. </summary>
 		KeyMode diaMode;
 		/// <summary> Changes direction instead of walking while it's on. </summary>
 		KeyMode dirMode;
-		bool isDone;
 
-		public PlControl(RlGameContext ctx) {
-			this.ctx = ctx;
+		public PlControl(RlGameContext gameCtx) {
+			this.gameCtx = gameCtx;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);
 		}
@@ -24,68 +25,67 @@ namespace Rot.Ui {
 			this.ctrl = ctrl;
 		}
 
-		/// <summary> Decide action of the given entity and return to the `TickControl` </summary>
-		void conclude(Action action) {
-			this.ctrl.decide(action);
-		}
-
 		public override ControlResult update() {
-			var input = base.ctx.input;
-			this.updateModes(input);
-			this.handleInput(input);
+			var input = base.ctrlCtx.input;
 
-			if (this.ctrl.isDecided) {
+			var ev = this.updateModes(input) ?? this.handleInput(input);
+			if (ev != null) {
+				this.ctrl.decide(ev);
 				this.ctrl = null;
-				base.ctx.cradle.pop();
-				return ControlResult.Continue;
-			} else {
-				return ControlResult.SeeYouNextFrame;
+				base.ctrlCtx.cradle.pop();
 			}
+
+			return ControlResult.SeeYouNextFrame;
 		}
 
-		void updateModes(VInput input) {
+		RlEvent updateModes(VInput input) {
 			this.diaMode.update(input);
 
 			var result = this.dirMode.update(input);
-			if (result == KeyMode.Switch.TurnOn) {
-				// var entity =
-				// var target = this.findOnlyNighbor(this.context.controllerd);
-				// .faceIn(target)
+			if (result == KeyMode.Switch.TurnOn &&
+				this.findOnlyNighbor(this.ctrl.actor) is Entity neighbor) {
+				var entity = this.ctrl.actor;
+				var dir = this.gameCtx.logic.dirTo(entity, neighbor);
+				return new RlEv.Face(entity, dir);
 			}
+
+			return null;
 		}
 
 		/// <summary> Mayve dispatches a sub routine to the input </summary>
-		void handleInput(VInput input) {
+		RlEvent handleInput(VInput input) {
 			// pressed VKey or down axis input
 			var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
 			if (top.isKey) {
-				this.handleVKey(top.asKey, input);
+				return this.handleVKey(top.asKey, input);
 			} else if (input.isDirDown) {
 				// FIXME: なぜ壁に頭をぶつけ続けることが無いのか……？
 				input.vDir.clearBuf();
-				this.handleDir(input.dirDown);
+				return this.handleDir(input.dirDown);
+			} else {
+				return null;
 			}
 		}
 
 		// TODO: rest
-		void handleDir(EDir dir) {
+		RlEvent handleDir(EDir dir) {
 			if (this.diaMode.isOn && dir.isCardinal) {
-				return; // filtered
+				return null;
 			}
 
-			if (dirMode.isOn) {
-				this.conclude(new Engine.Act.Face(this.ctrl.actor, dir));
-			} else {
-				// TODO: don't consume turn if failed
-				this.conclude(new Engine.Act.Walk(this.ctrl.actor, dir));
-			}
+			return dirMode.isOn ?
+				(RlEvent) new RlEv.Face(this.ctrl.actor, dir) :
+				(RlEvent) new RlEv.Walk(this.ctrl.actor, dir);
 		}
 
-		void handleVKey(VKey key, VInput input) {
+		RlEvent handleVKey(VKey key, VInput input) {
+			var e = this.ctrl.actor;
+			var dir = e.get<Body>().facing;
+
+			RlEvent ev = null;
 			switch (key) {
 				case VKey.Select:
-					// Return if take turn or not
-					// this.conclude(CF.interact(plEntity));
+					ev = new RlEv.MeleeAttack(e);
 					break;
 
 				case VKey.Cancel:
@@ -93,7 +93,6 @@ namespace Rot.Ui {
 					break;
 
 				case VKey.Ground:
-					// this.conclude(CF.searchGround(plEntity));
 					break;
 
 				case VKey.RestATurn:
@@ -102,22 +101,28 @@ namespace Rot.Ui {
 				default:
 					break;
 			}
+
+			return ev;
 		}
 
-		// /// <summary> Returns the only interactable entity or null </summary>
-		// Entity findOnlyNighbor(Entity entity) {
-		// 	var body = entity.get<Body>();
-		// 	var pos = body.pos;
-		// 	var stage = this.ctx.stage;
-		// 	try {
-		// 		return pos.neighbors
-		// 			.Select(v => stage.tokenAt(v)) // Vec2 -> Entity
-		// 			.SingleOrDefault(e => e != null && e.hasAnyOf<Interactable, Item, Stats>());
-		// 	} catch {
-		// 		return null;
-		// 	}
-		// 	return null;
-		// }
+		/// <summary> Returns the only interactable entity or null </summary>
+		Entity findOnlyNighbor(Entity entity) {
+			var body = entity.get<Body>();
+			var pos = body.pos;
+			var stage = this.gameCtx.stage;
+			var logic = this.gameCtx.logic;
+
+			var es = pos.neighbors
+				.Select(v => this.gameCtx.entitiesAt(v))
+				// FIXME: detecting interactable/attackable entities
+				.filterT(e => e.has<Body>());
+
+			if (es.FirstOrDefault() is Entity e1) {
+				return es.ElementAtOrDefault(1) == null ? e1 : null;
+			} else {
+				return null;
+			}
+		}
 	}
 
 	/// <summary> Data of on/off and a binded key. </summary>

@@ -1,32 +1,49 @@
 using Rot.Engine;
+using RlEv = Rot.Engine.RlEv;
+using System.Collections.Generic;
 using Rot.Ui;
 
 namespace Rot.Game {
+    // TODO: separate entity control
+    // TODO: separate view
     public class TickControl : Ui.Control {
         RlGameState game;
+        RlGameContext gameCtx;
+        RlEventControl evCtrl;
 
-        public TickControl(RlGameState game) {
+        public TickControl(RlGameState game, RlGameContext gameCtx) {
             this.game = game;
+            this.gameCtx = gameCtx;
+            this.gameCtx.evHub.subscribe<RlEv.ControlEntity>(0, this.handleEntityControl);
+        }
+
+        IEnumerable<RlEvent> handleEntityControl(RlEv.ControlEntity ctrl) {
+            // FIXME: turn consuption
+            var cradle = this.ctrlCtx.cradle;
+            var plCtrl = cradle.push<PlControl>();
+
+            // FIXME: hack for stopping
+            cradle.get<AnimationControl>().beginCombinedIfAny();
+
+            var c = new EntityController(ctrl.entity);
+            plCtrl.setController(c);
+            while (c.action == null) {
+                yield return null;
+            }
+            yield return c.action;
+        }
+
+        protected override void onInjectedContext() {
+            this.evCtrl = new RlEventControl(base.ctrlCtx);
         }
 
         public override ControlResult update() {
-            var report = game.tick();
+            var report = this.game.tick();
 
             switch (report) {
-                case TickReport.Action actionReport:
-                    var action = actionReport.action;
-                    switch (actionReport.kind) {
-                        case TickReport.Action.Kind.Begin:
-                            Nez.Debug.log($"action: {action}");
-                            break;
-
-                        case TickReport.Action.Kind.End:
-                            break;
-
-                        case TickReport.Action.Kind.Process:
-                            break;
-                    }
-                    return ControlResult.Continue;
+                case TickReport.Ev evReport:
+                    Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
+                    return this.evCtrl.handleEvent(evReport.ev);
 
                 case TickReport.Actor actorReport:
                     // not so important (the actor may not have enough power to act)
@@ -47,21 +64,30 @@ namespace Rot.Game {
                     // maybe avoid stack overflow
                     return ControlResult.SeeYouNextFrame;
 
-                case TickReport.ControlEntity decide:
-                    var ctrl = base.ctx.cradle.push<PlControl>();
-                    ctrl.setController(decide.controller);
-
-                    // FIXME: begin combined animation before view or input
-                    base.ctx.cradle.get<AnimationControl>().beginCombinedIfAny();
-
-                    return ControlResult.Continue;
-
-                case TickReport.Ev evReport:
-                    Nez.Debug.log($"event: {evReport.ev}");
-                    return base.ctx.cradle.get<RlEventControl>().handleEvent(evReport.ev);
-
                 default:
                     throw new System.Exception($"invalid case: {report}");
+            }
+        }
+    }
+
+    public class RlEventControl {
+        ControlContext ctrlCtx;
+        RlEventVisualizer visualizer;
+
+        public RlEventControl(ControlContext ctx) {
+            this.ctrlCtx = ctx;
+            var(input, posUtil) = (ctx.input, ctx.posUtil);
+            this.visualizer = new RlEventVisualizer(input, posUtil);
+        }
+
+        public ControlResult handleEvent(RlEvent ev) {
+            var anim = this.visualizer.visualize(ev);
+            if (anim == null) {
+                return ControlResult.Continue;
+            } else {
+                var cradle = this.ctrlCtx.cradle;
+                var animCtrl = cradle.get<AnimationControl>();
+                return animCtrl.begin(anim);
             }
         }
     }

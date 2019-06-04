@@ -10,6 +10,15 @@ namespace Rot.Engine {
             this.ctx = ctx;
         }
 
+        #region Facing
+        public EDir dirTo(Entity from, Entity to) {
+            var posFrom = from.get<Body>().pos;
+            var posTo = to.get<Body>().pos;
+            return EDir.fromVec(posTo - posFrom);
+        }
+        #endregion
+
+        #region Walk
         public bool canWalkIn(Entity e, EDir dir) {
             var body = e.get<Body>();
             var from = body.pos;
@@ -46,5 +55,10 @@ namespace Rot.Engine {
         public bool isDiagonallyBlocedAt(Vec2 pos) {
             return !this.isDiagonallyBlocedAt(pos);
         }
+
+        public Entity attackableAt(Vec2 pos) {
+            return this.ctx.entitiesAt(pos).FirstOrDefault(e => e.has<Performance>());
+        }
     }
+    #endregion
 }

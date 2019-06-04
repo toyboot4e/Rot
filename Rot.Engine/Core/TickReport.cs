@@ -8,6 +8,7 @@ namespace Rot.Engine {
 
     public abstract class TickReport {
         public static Error error(string message) => new Error(message);
+        public static Ev ev(RlEvent ev) => new Ev(ev);
 
         public class Error : TickReport {
             public string message;
@@ -26,37 +27,9 @@ namespace Rot.Engine {
                 EndTurn,
             }
 
-            /// <summary> To be created via Kind.into() extention </summary>
+            /// <summary> To be created via Kind.into() extension </summary>
             public Actor(Kind kind, Engine.Actor actor) {
                 (this.kind, this.actor) = (kind, actor);
-            }
-        }
-
-        // Emitted before doing the [State] for the action.
-        public class Action : TickReport {
-            public Kind kind;
-            public Engine.Action action;
-
-            public enum Kind {
-                Begin,
-                Process,
-                End,
-            }
-
-            public static Action begin(Engine.Action action) => new Action(Kind.Begin, action);
-            public static Action end(Engine.Action action) => new Action(Kind.End, action);
-            public static Action process(Engine.Action action) => new Action(Kind.Process, action);
-
-            public Action(Kind state, Engine.Action action) {
-                (this.kind, this.action) = (state, action);
-            }
-        }
-
-        /// <summary> Decide an action of an entity </summary>
-        public class ControlEntity : TickReport {
-            public EntityController controller;
-            public ControlEntity(EntityController context) {
-                this.controller = context;
             }
         }
 

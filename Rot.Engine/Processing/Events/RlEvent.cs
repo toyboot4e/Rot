@@ -2,12 +2,9 @@ using Nez;
 
 namespace Rot.Engine {
     /// <summary> Something to be handle by some `RlSystem` </summary>
-    public abstract class RlEvent {
-        /// <summary> Base handler of itself. Can be overrided externally </summary>
-        public virtual void execute() { }
-    }
+    public abstract class RlEvent { }
 
-    public class RlEventHandling {
+    public class RlEventResult {
         public Kind kind;
 
         public enum Kind {
@@ -15,14 +12,8 @@ namespace Rot.Engine {
             Handled,
         }
 
-        public RlEventHandling(Kind k) {
+        public RlEventResult(Kind k) {
             this.kind = k;
-        }
-    }
-
-    public static class RlEventHandlingGen {
-        public static RlEventHandling into(this RlEventHandling.Kind self) {
-            return new RlEventHandling(self);
         }
     }
 }
@@ -30,12 +21,13 @@ namespace Rot.Engine {
 namespace Rot.Engine.RlEv {
     /// <summary> Cause of a RlEvent </summary>
     public class Cause {
-        public static Action action(Engine.Action action) => new Action(action);
+        public static Ev action(RlEvent ev) => new Ev(ev);
 
-        public class Action {
-            Engine.Action action;
-            public Action(Engine.Action action) {
-                this.action = action;
+        public class Ev : Cause {
+            RlEvent ev;
+
+            public Ev(RlEvent ev) {
+                this.ev = ev;
             }
         }
     }

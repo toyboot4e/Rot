@@ -6,9 +6,8 @@ using Rot.Engine;
 namespace Rot.Engine {
     public interface IActor {
         bool needsDeleting { get; }
-        IEnumerable<Action> takeTurn();
-        /// <summary> Provide another action instead of one didn't consume turn </summary>
-        Action alternate();
+        IEnumerable<RlEvent> takeTurn();
+        // RlEvent alternate();
     }
 
     /// <summary> Injected to the `RlGame` </summary>
@@ -18,6 +17,7 @@ namespace Rot.Engine {
     }
 
     /// <summary> Ease for prototyping </summary>
+    // TODO: separating scheduler
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;
 

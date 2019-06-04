@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// Note that you can't call extension methods via `base` keyword.
+
 namespace Rot.Engine {
     public static class StringExt {
         /// <summary> Consider using $"{var}" or $@"{var}" instead </summary>
@@ -24,7 +26,10 @@ namespace Rot.Engine {
 
     public static class DeconstrucExt {
         // Enables foreach( var(key, value) in dict ) { .. }
-        public static void Deconstruct<T1, T2>(this KeyValuePair<T1, T2> tuple, out T1 key, out T2 value) {
+        public static void Deconstruct<T1, T2>(
+            this KeyValuePair<T1, T2> tuple,
+            out T1 key,
+            out T2 value) {
             key = tuple.Key;
             value = tuple.Value;
         }
@@ -42,52 +47,37 @@ namespace Rot.Engine {
 
     public static class SystemActionExt {
         /// <summary> Fn(Sub) -> Fn(Super) </sumary>
-        public static System.Action<Super> upcast<Super, Sub>(this System.Action<Sub> self) where Sub : class, Super {
+        public static System.Action<Super> upcast<Super, Sub>(
+            this System.Action<Sub> self)
+        where Sub : class, Super {
             return super => self.Invoke(super as Sub);
         }
 
         /// <summary> Fn(Super) -> Fn(Sub) </sumary>
-        public static System.Action<Sub> downcast<Super, Sub>(this System.Action<Super> self) where Sub : class, Super where Super : class {
+        public static System.Action<Sub> downcast<Super, Sub>(
+            this System.Action<Super> self)
+        where Sub : class, Super where Super : class {
             return sub => self.Invoke(sub as Super);
         }
 
-        public static void castCall<T, U>(this System.Action<T> self, U item) where T : class {
+        public static void castCall<T, U>(this System.Action<T> self, U item)
+        where T : class {
             self.Invoke(item as T);
         }
     }
 
     public static class IEnumerableExt {
-        public static void forEach<T>(this IEnumerable<T> self, System.Action<T> action) {
+        public static void forEach<T>(
+            this IEnumerable<T> self,
+            System.Action<T> action) {
             foreach(T item in self) {
                 action.Invoke(item);
             }
         }
 
-        // map tairs
-        public static IEnumerable<IEnumerable<U>> mapT<T, U>(this IEnumerable<IEnumerable<T>> self, System.Func<T, U> map) {
-            return self.Select(e => e.Select(map));
-        }
-
-        public static void flatenForEach<T>(this IEnumerable<IEnumerable<T>> self, System.Action<T> action) {
-            foreach(var enumerable in self) {
-                foreach(T item in enumerable) {
-                action.Invoke(item);
-                }
-            }
-        }
-
-        public static bool flattenAny<T>(this IEnumerable<IEnumerable<T>> self, System.Func<T, bool> f) {
-            foreach(var enumerable in self) {
-                foreach(T item in enumerable) {
-                if (f.Invoke(item)) {
-                return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public static T minByOrDefault<T, U>(this IEnumerable<T> self, Func<T, U> mapper)
+        public static T minByOrDefault<T, U>(
+            this IEnumerable<T> self,
+            Func<T, U> mapper)
         where U : IComparable {
             switch (self.Count()) {
                 case 0:
@@ -102,5 +92,41 @@ namespace Rot.Engine {
                     });
             }
         }
+
+        #region Tairs
+        public static IEnumerable<T> flatten<T>(
+            this IEnumerable<IEnumerable<T>> self
+        ) {
+            foreach(var e in self) {
+                foreach(var item in e) {
+                    yield return item;
+                }
+            }
+        }
+
+        public static IEnumerable<U> mapT<T, U>(
+            this IEnumerable<IEnumerable<T>> self,
+            System.Func<T, U> map) {
+            return self.flatten().Select(map);
+        }
+
+        public static void forEachT<T>(
+            this IEnumerable<IEnumerable<T>> self,
+            System.Action<T> action) {
+            self.flatten().forEach(item => action.Invoke(item));
+        }
+
+        public static bool anyT<T>(
+            this IEnumerable<IEnumerable<T>> self,
+            System.Func<T, bool> f) {
+            return self.flatten().Any(item => f(item));
+        }
+
+        public static IEnumerable<T> filterT<T>(
+            this IEnumerable<IEnumerable<T>> self,
+            System.Func<T, bool> f) {
+            return self.flatten().Where(item => f(item));
+        }
+        #endregion
     }
 }

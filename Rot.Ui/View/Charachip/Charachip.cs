@@ -21,8 +21,10 @@ namespace Rot.Ui {
 		}
 
 		public static CharaChip fromSprite(Entity entity, PosUtil posUtil, Sprite<EnumDir> chip) {
-			var self = entity.add(new CharaChip(posUtil));
-			self.chip = entity.add(chip);
+			var self = new CharaChip(posUtil);
+			entity.add(chip);
+			entity.add(self);
+			self.chip = chip;
 			return self;
 		}
 

@@ -12,9 +12,10 @@ namespace Rot.Engine {
     /// <summary>
     /// One of the eight directions: almost an enum. Can be None.
     /// </summary>
-    [Nez.CustomInspector(typeof(EDirInspector))]
     // TODO: make it struct even with Nez.ImGui
-    public class EDir : IEquatable<EDir> {
+    [Nez.CustomInspector(typeof(EDirInspector))]
+    public struct EDir : IEquatable<EDir> {
+        private const bool V = false;
         readonly Vec2 mVec;
 
         public Vec2 vec => mVec;
@@ -28,6 +29,7 @@ namespace Rot.Engine {
 
         public static EDir fromVec(Vec2 v) => EDir.all.FirstOrDefault(d => v == d.vec);
         public static EDir fromXy(int x, int y) => EDir.all.FirstOrDefault(d => x == d.x && y == d.y);
+
         EDir(Vec2 offset) : this(offset.x, offset.y) { }
         EDir(int x, int y) {
             mVec = new Vec2(x.clamp(-1, 1), y.clamp(-1, 1));
@@ -100,8 +102,6 @@ namespace Rot.Engine {
             return set.Any(d => d == t);
         }
 
-        // Self -> Self
-        public static EDir towards(Vec2 pos) => new EDir(pos.xSgn, pos.ySgn);
         public EDir r45 {
             get {
                 // can't switch(){}: no constants
@@ -146,7 +146,7 @@ namespace Rot.Engine {
 
         public bool Equals(EDir other) {
             // if EDir is a class:
-            if (other is null) return false;
+            // if (other is null) return false;
             return mVec.Equals(other.mVec);
         }
 

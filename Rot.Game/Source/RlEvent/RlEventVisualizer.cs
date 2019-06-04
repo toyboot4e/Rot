@@ -47,13 +47,13 @@ namespace Rot.Ui {
             var body = walk.entity.get<Body>();
             var next = body.pos + walk.dir.vec;
 
-            var tween = this.viewUtil.createWalkMotion(this.walkAnimConfig, walk.entity, next);
+            var tween = this.viewUtil.walk(this.walkAnimConfig, walk.entity, next);
             var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Combined);
             return tweenAnim;
         }
 
         public Animation visualize(RlEv.Face face) {
-            var tween = this.viewUtil.createTurnMotion(face.entity, face.dir);
+            var tween = this.viewUtil.turn(face.entity, face.dir);
             if (tween != null) {
                 return new Anim.Tween(tween).setKind(AnimationKind.Combined);
             } else {

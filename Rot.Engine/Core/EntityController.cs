@@ -4,14 +4,14 @@ namespace Rot.Engine {
     /// <summary> Context to let UI decide action of an entity </summary>
     public class EntityController {
         public Entity actor;
-        public Action action;
+        public RlEvent action;
 
         public EntityController(Entity entity) {
             Insist.isNotNull(entity);
             (this.actor, this.action) = (entity, null);
         }
 
-        public void decide(Action action) {
+        public void decide(RlEvent action) {
             this.action = action;
         }
 
