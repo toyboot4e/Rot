@@ -10,6 +10,9 @@ namespace Rot.Engine.RlEv {
         }
     }
 
+    /// <summary> Indicates that the action is not decided yet </summary>
+    public class NotYetDecided : RlEvent { }
+
     public class Log : RlEvent {
         public readonly string message;
 

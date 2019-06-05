@@ -21,7 +21,7 @@ namespace Rot.Ui {
             var body = entity.get<Body>();
             var from = body.pos;
             var nextDir = (EDir) EDir.fromVec(to - from);
-            // FIXME: lazily change facing or outsource ot
+            // FIXME: lazily change facing or outsource it
             this.changeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);

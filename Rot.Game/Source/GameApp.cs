@@ -10,7 +10,6 @@ namespace Rot.Game {
         override protected void Initialize() {
             base.Initialize();
 
-            // TODO: smooth movement
             base.IsFixedTimeStep = true; // 60fps
             this.setFps(60);
 
@@ -21,7 +20,6 @@ namespace Rot.Game {
 
             Core.scene = new RlScene();
 
-            // TODO: high resolution fonts
             var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.registerGlobalManager(imGuiManager);

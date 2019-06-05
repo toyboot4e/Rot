@@ -2,15 +2,15 @@ using System.Collections.Generic;
 
 namespace Rot.Engine {
     // Note that it doens't handle RlEv.EntityControl
-    public class DefaultSystems {
+    public class RlDefaultSystems {
         RlGameContext ctx;
 
-        public DefaultSystems(RlGameContext ctx) {
+        public RlDefaultSystems(RlGameContext ctx) {
             this.ctx = ctx;
-            this.configurate(ctx.evHub);
+            this.setup(ctx.evHub);
         }
 
-        void configurate(RlEventHub hub) {
+        void setup(RlEventHub hub) {
             hub.subscribe<RlEv.Walk>(0f, this.handle);
             hub.subscribe<RlEv.Face>(0f, this.handle);
         }
@@ -21,8 +21,14 @@ namespace Rot.Engine {
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Walk walk) {
+            if (!this.ctx.logic.canWalkIn(walk.entity, walk.dir)) {
+                yield return new RlEv.Face(walk.entity, walk.dir);
+                yield break;
+            }
+
             var body = walk.entity.get<Body>();
             var dir = walk.dir;
+
             body.setDir(dir);
             body.setPos(body.pos + dir.vec);
             yield break;

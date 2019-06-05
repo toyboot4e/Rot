@@ -18,18 +18,6 @@ namespace Rot.Ui {
             this.viewUtil = new RlEventViewUtils(p, i);
         }
 
-        // static bool handled = false;
-        // public void visualize(RlEvent ev) {
-        //     if (handled) {
-        //         handled = false;
-        //         return;
-        //     }
-        //     handled = true;
-        //     this.visualize((dynamic) ev);
-        //     handled = false;
-        // }
-
-        // TODO: making RlEventHub
         public Animation visualize(RlEvent ev) {
             switch (ev) {
                 case RlEv.Walk walk:

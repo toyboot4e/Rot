@@ -1,6 +1,4 @@
 using Rot.Engine;
-using RlEv = Rot.Engine.RlEv;
-using System.Collections.Generic;
 using Rot.Ui;
 
 namespace Rot.Game {
@@ -11,37 +9,22 @@ namespace Rot.Game {
         RlGameContext gameCtx;
         RlEventControl evCtrl;
 
-        public TickControl(RlGameState game, RlGameContext gameCtx) {
+        public TickControl(RlGameState game, RlGameContext gameCtx, RlEventControl evCtrl) {
             this.game = game;
             this.gameCtx = gameCtx;
-            this.gameCtx.evHub.subscribe<RlEv.ControlEntity>(0, this.handleEntityControl);
+            this.evCtrl = evCtrl;
         }
 
-        IEnumerable<RlEvent> handleEntityControl(RlEv.ControlEntity ctrl) {
-            // FIXME: turn consuption
-            var cradle = this.ctrlCtx.cradle;
-            var plCtrl = cradle.push<PlControl>();
-
-            // FIXME: hack for stopping
-            cradle.get<AnimationControl>().beginCombinedIfAny();
-
-            var c = new EntityController(ctrl.entity);
-            plCtrl.setController(c);
-            while (c.action == null) {
-                yield return null;
-            }
-            yield return c.action;
-        }
-
-        protected override void onInjectedContext() {
-            this.evCtrl = new RlEventControl(base.ctrlCtx);
-        }
+        // protected override void onContextInjected() {
+        // this.evCtrl = new RlEventControl(base.ctrlCtx, this.gameCtx.evHub);
+        // }
 
         public override ControlResult update() {
             var report = this.game.tick();
 
             switch (report) {
                 case TickReport.Ev evReport:
+                    // TODO: logging to Nez.ImGui
                     Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
                     return this.evCtrl.handleEvent(evReport.ev);
 
@@ -66,28 +49,6 @@ namespace Rot.Game {
 
                 default:
                     throw new System.Exception($"invalid case: {report}");
-            }
-        }
-    }
-
-    public class RlEventControl {
-        ControlContext ctrlCtx;
-        RlEventVisualizer visualizer;
-
-        public RlEventControl(ControlContext ctx) {
-            this.ctrlCtx = ctx;
-            var(input, posUtil) = (ctx.input, ctx.posUtil);
-            this.visualizer = new RlEventVisualizer(input, posUtil);
-        }
-
-        public ControlResult handleEvent(RlEvent ev) {
-            var anim = this.visualizer.visualize(ev);
-            if (anim == null) {
-                return ControlResult.Continue;
-            } else {
-                var cradle = this.ctrlCtx.cradle;
-                var animCtrl = cradle.get<AnimationControl>();
-                return animCtrl.begin(anim);
             }
         }
     }

@@ -99,9 +99,10 @@ namespace Rot.Game {
 
         void makeControl(ControlContext cc) {
             var cradle = cc.cradle;
-            cradle.addAndPush(new TickControl(this.gameState, this.gameCtx));
+            var evCtrl = new RlEventControl(cc, this.gameCtx.evHub);
+            cradle.addAndPush(new TickControl(this.gameState, this.gameCtx, evCtrl));
             cradle.add(new AnimationControl());
-            cradle.add(new PlControl(this.gameCtx));
+            cradle.add(new PlayerControl(this.gameCtx));
         }
         #endregion
     }

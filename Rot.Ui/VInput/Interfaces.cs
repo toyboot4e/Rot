@@ -1,6 +1,4 @@
 ﻿namespace Rot.Ui {
-    // nodes
-    // TODO: separating updatable (as concrete class?)
     public interface IPrimNode {
         bool isDown { get; }
         bool isPressedRaw { get; }

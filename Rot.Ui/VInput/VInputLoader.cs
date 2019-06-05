@@ -16,7 +16,6 @@ namespace Rot.Ui {
             vDir.setRepeat(0.1f, 0.1f);
         }
 
-        // TODO: datad-driven key binding (keys, reverse, repeat duration)
         static void setupDirButtons(VDirInput vDir) {
             var keyDirs = new [] {
                 EDir.NW, EDir.N, EDir.NE,

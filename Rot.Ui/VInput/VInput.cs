@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework; // Vector2
 using Nez; // VirtualButton
 using Rot.Engine; // Dir
 
-// TODO: abstracting directional input
-
 namespace Rot.Ui {
     public enum VKey {
         AxisKey,
@@ -133,7 +131,6 @@ namespace Rot.Ui {
     // TODO: attribute-button map -> button-attribute map
     public class VInput : VInputBase {
         public VInput() {
-            // TODO: fix the hard coding
             VInputLoader.setUp(base.vDir, buttons);
         }
 

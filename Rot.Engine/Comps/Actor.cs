@@ -6,7 +6,6 @@ namespace Rot.Engine {
         RlEvent make();
     }
 
-    // FIXME: forbidding null behavior
     /// <summary> Wrapper around IBehavior </sumary>
     public class Actor : Nez.Component, IActor {
         public bool needsDeleting { get; set; }
@@ -25,10 +24,9 @@ namespace Rot.Engine {
 
         IEnumerable<RlEvent> IActor.takeTurn() {
             this.energy.gain();
+
             if (!this.energy.canTakeTurn) {
                 yield break;
-                // yield return null;
-                // yield break;
             }
 
             foreach(var _ in this.energy.take_turns()) {
@@ -37,10 +35,6 @@ namespace Rot.Engine {
                 }
             }
         }
-
-        // RlEvent IActor.alternate() {
-        //     return this.behavior?.alternate() ?? null;
-        // }
     }
 
     public class Energy : Nez.Component {
@@ -69,10 +63,10 @@ namespace Rot.Engine {
             }
         }
 
-        public bool canTakeTurn => this.charge >= chargePerAction;
+        public bool canTakeTurn => this.charge >= Energy.chargePerAction;
 
         void consume() {
-            this.charge -= chargePerAction;
+            this.charge -= Energy.chargePerAction;
         }
     }
 }

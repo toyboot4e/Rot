@@ -12,7 +12,6 @@ namespace Rot.Engine {
     /// <summary>
     /// One of the eight directions: almost an enum. Can be None.
     /// </summary>
-    // TODO: make it struct even with Nez.ImGui
     [Nez.CustomInspector(typeof(EDirInspector))]
     public struct EDir : IEquatable<EDir> {
         private const bool V = false;
@@ -170,12 +169,13 @@ namespace Rot.Engine {
             else if (this == SW) return "SW";
             else if (this == W) return "W";
             else if (this == NW) return "NW";
-            else if (this == Ground) return "None";
+            else if (this == Ground) return "Ground";
 
             throw new System.Exception("Dir.ToString(): the size is over one.");
         }
     }
 
+    /// <summary> EDir inspector for Nez.ImGui </summary>
     class EDirInspector : AbstractTypeInspector {
         public override void drawMutable() {
             var dir = getValue<EDir>();

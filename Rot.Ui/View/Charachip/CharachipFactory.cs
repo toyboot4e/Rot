@@ -20,7 +20,6 @@ namespace Rot.Ui {
 		}
 	}
 
-	// TODO: data-driven settings: offset, div, etc.
 	public static class CharachipFactory {
 		public static Sprite<EnumDir> wodi8(string path) {
 			var texture = Nez.Core.scene.content.Load<Texture2D>(path);
@@ -30,7 +29,6 @@ namespace Rot.Ui {
 			chip.setLayerDepth(ZOrders.Charachip);
 			chip.setRenderLayer(Layers.Stage);
 
-			// FIXME: data-driven or posUtil dependent
 			if (texture.Height / 4 > 32) { // centering the image
 				var originY = texture.Height / 4 - 16;
 				subs.forEach(s => s.origin = new Vector2(s.origin.X, originY));
@@ -40,7 +38,6 @@ namespace Rot.Ui {
 			return chip;
 		}
 
-		// TODO: data-driven settings (fps, pingpong)
 		public static void setupWodi8Animation(Sprite<EnumDir> chip, List<Subtexture> subtextures) {
 			foreach(var dir in EnumUtil.allOf<EnumDir>()) {
 				var patterns = wodi8DirAnimMap[dir].Select(p => subtextures[p]).ToList();

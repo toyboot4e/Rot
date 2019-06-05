@@ -57,7 +57,6 @@ namespace Rot.Ui.Tweens {
 
         protected override void onFrameUpdate(int frame) {
             var dir = this.dirMap[frame];
-            // FIXME: use CharaImage instead
             var chip = this.entity.get<CharaChip>();
             chip.setDir(dir);
         }

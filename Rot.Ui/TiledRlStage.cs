@@ -15,7 +15,6 @@ namespace Rot.Ui {
         public RlTiles tilesAt(Vec2 pos) => new TiledRlTiles(pos, this);
     }
 
-    // TODO: implement using Tiled.
     public class TiledRlTiles : RlTiles {
         public Vec2 pos { get; private set; }
         public TiledRlStage stage { get; private set; }

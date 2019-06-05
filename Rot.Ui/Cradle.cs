@@ -30,10 +30,10 @@ namespace Rot.Ui {
 
         internal void injectContext(ControlContext ctx) {
             this.ctrlCtx = ctx;
-            this.onInjectedContext();
+            this.onContextInjected();
         }
 
-        protected virtual void onInjectedContext() { }
+        protected virtual void onContextInjected() { }
 
         public abstract ControlResult update();
         public virtual void onPushed() { }

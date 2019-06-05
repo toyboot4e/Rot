@@ -13,7 +13,7 @@ namespace Rot.Game {
             this.combined = new Anim.Combined();
         }
 
-        public ControlResult begin(Animation anim) {
+        public ControlResult beginOrCombine(Animation anim) {
             if (anim.kind == AnimationKind.Combined) {
                 this.combined.add(anim);
                 return ControlResult.Continue;
@@ -28,6 +28,7 @@ namespace Rot.Game {
             }
         }
 
+        /// <summary> Maybe pushes AnimationControl </summary>
         public void beginCombinedIfAny() {
             if (this.combined.anims.Count == 0) {
                 return;

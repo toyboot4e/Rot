@@ -1,11 +1,4 @@
 namespace Rot.Engine {
-    public static class RlReportGenExt {
-        // FIXME: the hack. Maybe by deleting IActor?
-        public static TickReport.Actor into(this TickReport.Actor.Kind self, Engine.IActor actor) {
-            return new TickReport.Actor(self, actor as Engine.Actor);
-        }
-    }
-
     public abstract class TickReport {
         public static Error error(string message) => new Error(message);
         public static Ev ev(RlEvent ev) => new Ev(ev);
@@ -26,6 +19,9 @@ namespace Rot.Engine {
                 TakeTurn,
                 EndTurn,
             }
+
+            public Actor takeTurn(Engine.Actor actor) => new Actor(Kind.TakeTurn, actor);
+            public Actor endTurn(Engine.Actor actor) => new Actor(Kind.EndTurn, actor);
 
             /// <summary> To be created via Kind.into() extension </summary>
             public Actor(Kind kind, Engine.Actor actor) {

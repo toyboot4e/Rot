@@ -5,9 +5,9 @@ using RlEv = Rot.Engine.RlEv;
 using Rot.Ui;
 
 namespace Rot.Ui {
-	/// <summary> Created to decide the action of an entity </summary>
-	public class PlControl : Control {
-		EntityController ctrl;
+	/// <summary> Decides an action of an entity </summary>
+	public class PlayerControl : Control {
+		EntityController controller;
 		RlGameContext gameCtx;
 
 		/// <summary> Filters cardinal directional input while it's on. </summary>
@@ -15,14 +15,14 @@ namespace Rot.Ui {
 		/// <summary> Changes direction instead of walking while it's on. </summary>
 		KeyMode dirMode;
 
-		public PlControl(RlGameContext gameCtx) {
+		public PlayerControl(RlGameContext gameCtx) {
 			this.gameCtx = gameCtx;
 			this.diaMode = new KeyMode(VKey.Dia);
 			this.dirMode = new KeyMode(VKey.Dir);
 		}
 
 		public void setController(EntityController ctrl) {
-			this.ctrl = ctrl;
+			this.controller = ctrl;
 		}
 
 		public override ControlResult update() {
@@ -30,8 +30,8 @@ namespace Rot.Ui {
 
 			var ev = this.updateModes(input) ?? this.handleInput(input);
 			if (ev != null) {
-				this.ctrl.decide(ev);
-				this.ctrl = null;
+				this.controller.decide(ev);
+				this.controller = null;
 				base.ctrlCtx.cradle.pop();
 			}
 
@@ -43,8 +43,8 @@ namespace Rot.Ui {
 
 			var result = this.dirMode.update(input);
 			if (result == KeyMode.Switch.TurnOn &&
-				this.findOnlyNighbor(this.ctrl.actor) is Entity neighbor) {
-				var entity = this.ctrl.actor;
+				this.findOnlyNighbor(this.controller.actor) is Entity neighbor) {
+				var entity = this.controller.actor;
 				var dir = this.gameCtx.logic.dirTo(entity, neighbor);
 				return new RlEv.Face(entity, dir);
 			}
@@ -59,7 +59,7 @@ namespace Rot.Ui {
 			if (top.isKey) {
 				return this.handleVKey(top.asKey, input);
 			} else if (input.isDirDown) {
-				// FIXME: なぜ壁に頭をぶつけ続けることが無いのか……？
+				// FIXME: 壁に頭をぶつけつづける？
 				input.vDir.clearBuf();
 				return this.handleDir(input.dirDown);
 			} else {
@@ -74,12 +74,12 @@ namespace Rot.Ui {
 			}
 
 			return dirMode.isOn ?
-				(RlEvent) new RlEv.Face(this.ctrl.actor, dir) :
-				(RlEvent) new RlEv.Walk(this.ctrl.actor, dir);
+				(RlEvent) new RlEv.Face(this.controller.actor, dir) :
+				(RlEvent) new RlEv.Walk(this.controller.actor, dir);
 		}
 
 		RlEvent handleVKey(VKey key, VInput input) {
-			var e = this.ctrl.actor;
+			var e = this.controller.actor;
 			var dir = e.get<Body>().facing;
 
 			RlEvent ev = null;
