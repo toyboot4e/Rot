@@ -1,16 +1,17 @@
 using Nez;
 using Rot.Engine;
+using Sys = Rot.Engine.Sys;
 using Rot.Ui;
 
 namespace Rot.Game {
     /// <summary> Framework of game flow / wrapper of the `ControlContext`. </summary>
     public class RlSystemComponent : Nez.SceneComponent {
         RlGameContext gameCtx;
-        RlDefaultSystems defaults;
+        Sys.RlDefaultSystems defaults;
 
         public RlSystemComponent(RlGameContext gameCtx) {
             this.gameCtx = gameCtx;
-            this.defaults = new RlDefaultSystems(this.gameCtx);
+            this.defaults = new Sys.RlDefaultSystems(this.gameCtx);
         }
     }
 }

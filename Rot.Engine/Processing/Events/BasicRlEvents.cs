@@ -46,7 +46,6 @@ namespace Rot.Engine.RlEv {
         public Face(Entity e, EDir d) {
             (this.entity, this.dir) = (e, d);
         }
-
     }
 
     public class MeleeAttack : RlEvent {
@@ -70,15 +69,5 @@ namespace Rot.Engine.RlEv {
             this.amount = amount;
             this.cause = cause;
         }
-    }
-
-    public class Dodge : RlEvent {
-        public readonly Entity dodger;
-        public readonly Cause cause;
-    }
-
-    public class GiveDamage : RlEvent {
-        public readonly Entity entity;
-        public readonly Cause cause;
     }
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Nez;
+using Rot.Engine.RlEv;
 
-namespace Rot.Engine {
+namespace Rot.Engine.Sys {
     // Note that it doens't handle RlEv.EntityControl
     public class RlDefaultSystems {
         RlGameContext ctx;
@@ -27,17 +29,43 @@ namespace Rot.Engine {
             }
 
             var body = walk.entity.get<Body>();
-            var dir = walk.dir;
 
-            body.setDir(dir);
-            body.setPos(body.pos + dir.vec);
+            var cause = Cause.ev(walk);
+            var prevDir = body.facing;
+            var prevPos = body.pos;
+            var nextDir = walk.dir;
+            var nextPos = body.pos + nextDir.vec;
+
+            yield return new RlEv.DirChanges(walk.entity, prevDir, nextDir, cause);
+            body.setDir(nextDir);
+
+            yield return new RlEv.PosChanges(walk.entity, prevPos, nextPos, cause);
+            body.setPos(nextPos);
+
             yield break;
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Face face) {
             var body = face.entity.get<Body>();
+
+            var cause = Cause.ev(face);
+            var prevDir = body.facing;
+            var nextDir = face.dir;
+            yield return new RlEv.DirChanges(face.entity, prevDir, nextDir, cause);
+
             body.setDir(face.dir);
+
             yield break;
         }
+    }
+
+    public class Dodge : RlEvent {
+        public readonly Entity entity;
+        public readonly Cause cause;
+    }
+
+    public class GiveDamage : RlEvent {
+        public readonly Entity entity;
+        public readonly Cause cause;
     }
 }

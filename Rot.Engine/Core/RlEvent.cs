@@ -21,14 +21,14 @@ namespace Rot.Engine {
 namespace Rot.Engine.RlEv {
     /// <summary> Cause of a RlEvent </summary>
     public class Cause {
-        public static Ev action(RlEvent ev) => new Ev(ev);
+        public readonly RlEvent e;
 
-        public class Ev : Cause {
-            RlEvent ev;
+        public static Cause ev(RlEvent ev) {
+            return new Cause(ev);
+        }
 
-            public Ev(RlEvent ev) {
-                this.ev = ev;
-            }
+        Cause(RlEvent ev) {
+            this.e = ev;
         }
     }
 }

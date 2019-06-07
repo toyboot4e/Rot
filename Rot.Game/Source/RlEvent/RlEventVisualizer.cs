@@ -20,32 +20,42 @@ namespace Rot.Ui {
 
         public Animation visualize(RlEvent ev) {
             switch (ev) {
-                case RlEv.Walk walk:
-                    return this.visualize(walk);
+                case RlEv.PosChanges posChange:
+                    return this.onPosChange(posChange);
 
-                case RlEv.Face face:
-                    return this.visualize(face);
+                case RlEv.DirChanges dirChange:
+                    return this.onDirChange(dirChange);
 
                 default:
                     return null;
             }
         }
 
-        public Animation visualize(RlEv.Walk walk) {
-            var body = walk.entity.get<Body>();
-            var next = body.pos + walk.dir.vec;
+        Animation onPosChange(RlEv.PosChanges posChange) {
+            switch (posChange.cause.e) {
+                case RlEv.Walk walk:
+                    var body = walk.entity.get<Body>();
+                    var next = body.pos + walk.dir.vec;
 
-            var tween = this.viewUtil.walk(this.walkAnimConfig, walk.entity, next);
-            var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Combined);
-            return tweenAnim;
+                    var tween = this.viewUtil.walk(this.walkAnimConfig, walk.entity, next);
+                    var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Combined);
+                    return tweenAnim;
+                default:
+                    return null;
+            }
         }
 
-        public Animation visualize(RlEv.Face face) {
-            var tween = this.viewUtil.turn(face.entity, face.dir);
-            if (tween != null) {
-                return new Anim.Tween(tween).setKind(AnimationKind.Combined);
-            } else {
-                return null;
+        Animation onDirChange(RlEv.DirChanges dirChange) {
+            switch (dirChange.cause.e) {
+                case RlEv.Face face:
+                    var tween = this.viewUtil.turn(face.entity, face.dir);
+                    if (tween != null) {
+                        return new Anim.Tween(tween).setKind(AnimationKind.Combined);
+                    } else {
+                        return null;
+                    }
+                default:
+                    return null;
             }
         }
     }
