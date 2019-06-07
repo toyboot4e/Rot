@@ -44,16 +44,18 @@ namespace Rot.Engine {
         }
 
         public bool isBlockedAt(Vec2 pos) {
-            return !this.isPassableAt(pos);
+            return !this.ctx.stage.tilesAt(pos).arePassable() ||
+                this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
 
         public bool isDiagonallyPassableAt(Vec2 pos) {
             var stage = this.ctx.stage;
-            return stage.tilesAt(pos).arePassable() && this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
+            return stage.tilesAt(pos).arePassable() && !this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
         }
 
         public bool isDiagonallyBlocedAt(Vec2 pos) {
-            return !this.isDiagonallyBlocedAt(pos);
+            var stage = this.ctx.stage;
+            return !stage.tilesAt(pos).arePassable() || this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
         }
     }
     #endregion
