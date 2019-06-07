@@ -25,5 +25,14 @@
         "FNA/[^src]*": true, // hide everything but the src folder
         "Nez/{[^DN]*}": true, // hide everything except what begins with D or N
         "Nez/Nez.*.*": true, // hide the files in the root of the repo
+
+        "Rot.Game/Content": true,
+        "Rot.Game/CompiledContent": true,
+        "setup.md": true,
+        "FNA": true,
+        "Nez/DefaultContent": true,
+        "Nez/DefaultContentSource": true,
+        "Nez/Nez.FarseerPhysics": true,
+        "Nez/Nez.PipelineImporter": true
     }
 }
