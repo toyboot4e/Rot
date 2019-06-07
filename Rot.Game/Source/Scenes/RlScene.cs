@@ -81,9 +81,6 @@ namespace Rot.Game {
                 var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
                 image.setDir(body.facing).setToGridPos(body.pos);
 
-                var(hp, atk, def) = (30, 10, 5);
-                e.add(new Performance(hp, atk, def));
-
                 entities.Add(e);
             }
 

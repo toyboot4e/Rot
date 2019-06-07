@@ -55,10 +55,6 @@ namespace Rot.Engine {
         public bool isDiagonallyBlocedAt(Vec2 pos) {
             return !this.isDiagonallyBlocedAt(pos);
         }
-
-        public Entity attackableAt(Vec2 pos) {
-            return this.ctx.entitiesAt(pos).FirstOrDefault(e => e.has<Performance>());
-        }
     }
     #endregion
 }
