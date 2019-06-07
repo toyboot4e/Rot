@@ -23,25 +23,25 @@ namespace Rot.Game {
             var report = this.game.tick();
 
             switch (report) {
-                case TickReport.Ev evReport:
+                case RlTickReport.Ev evReport:
                     // TODO: logging to Nez.ImGui
                     Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
                     return this.evCtrl.handleEvent(evReport.ev);
 
-                case TickReport.Actor actorReport:
+                case RlTickReport.Actor actorReport:
                     // not so important (the actor may not have enough power to act)
                     var entity = actorReport.actor.entity;
                     switch (actorReport.kind) {
-                        case TickReport.Actor.Kind.TakeTurn:
+                        case RlTickReport.Actor.Kind.TakeTurn:
                             // Nez.Debug.log($"actor: {entity.name}, energy: {entity.get<Actor>().energy.charge}");
                             break;
 
-                        case TickReport.Actor.Kind.EndTurn:
+                        case RlTickReport.Actor.Kind.EndTurn:
                             break;
                     }
                     return ControlResult.Continue;
 
-                case TickReport.Error errorReport:
+                case RlTickReport.Error errorReport:
                     var message = errorReport.message;
                     Nez.Debug.log(message);
                     // maybe avoid stack overflow

@@ -1,9 +1,9 @@
 namespace Rot.Engine {
-    public abstract class TickReport {
+    public abstract class RlTickReport {
         public static Error error(string message) => new Error(message);
         public static Ev ev(RlEvent ev) => new Ev(ev);
 
-        public class Error : TickReport {
+        public class Error : RlTickReport {
             public string message;
 
             public Error(string message) {
@@ -11,7 +11,7 @@ namespace Rot.Engine {
             }
         }
 
-        public class Actor : TickReport {
+        public class Actor : RlTickReport {
             public Kind kind;
             public Engine.Actor actor;
 
@@ -29,7 +29,7 @@ namespace Rot.Engine {
             }
         }
 
-        public class Ev : TickReport {
+        public class Ev : RlTickReport {
             public RlEvent ev;
 
             public Ev(RlEvent ev) {
