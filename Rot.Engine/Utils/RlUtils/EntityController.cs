@@ -3,8 +3,8 @@ using Nez;
 namespace Rot.Engine {
     /// <summary> Basic controller for UI to to inject an action to an entity </summary>
     public class EntityController {
-        public Entity actor;
-        public RlEvent action;
+        public readonly Entity actor;
+        public RlEvent action { get; private set; }
 
         public EntityController(Entity entity) {
             Insist.isNotNull(entity);

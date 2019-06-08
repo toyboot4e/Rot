@@ -30,7 +30,7 @@ namespace Rot.Game {
 
         public override void onStart() {
             this.initRoguelike();
-            this.addSceneComponent(new RlSystemComponent(this.gameCtx));
+            this.addSceneComponent(new RlSystemComponent(this.gameCtx, this.ctrl.ctx));
         }
 
         #region Initializers
@@ -96,7 +96,7 @@ namespace Rot.Game {
 
         void makeControl(ControlContext cc) {
             var cradle = cc.cradle;
-            var evCtrl = new RlEventControl(cc, this.gameCtx.evHub);
+            var evCtrl = new RlEventControl(cc);
             cradle.addAndPush(new TickControl(this.gameState, this.gameCtx, evCtrl));
             cradle.add(new AnimationControl());
             cradle.add(new PlayerControl(this.gameCtx));
