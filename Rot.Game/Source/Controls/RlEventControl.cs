@@ -17,6 +17,7 @@ namespace Rot.Game {
             evHub.subscribe<RlEv.ControlEntity>(0, this.handle);
         }
 
+        // TODO: separate event handling to systems in Game project
         public ControlResult handleEvent(RlEvent ev) {
             var anim = this.visualizer.visualize(ev);
             if (anim == null) {
@@ -32,23 +33,26 @@ namespace Rot.Game {
             var controller = new EntityController(ctrl.entity);
             var cradle = this.ctrlCtx.cradle;
 
-            cradle
-                .push<PlayerControl>()
-                .setController(controller);
+            while (true) {
+                cradle
+                    .push<PlayerControl>()
+                    .setController(controller);
 
-            // FIXME: hack for stopping
-            cradle
-                .get<AnimationControl>()
-                .beginCombinedIfAny();
+                // FIXME: hack for stopping
+                cradle
+                    .get<AnimationControl>()
+                    .beginCombinedIfAny();
 
-            // FIXME: turn consuption
-            // Let user decide action of the actor
-            while (controller.action == null) {
-                yield return new RlEv.NotYetDecided();
+                // FIXME: turn consuption
+                // Let user decide action of the actor
+                while (controller.action == null) {
+                    yield return new RlEv.NotYetDecided();
+                }
+
+                yield return controller.action;
+                break;
+                // TODO: using commands to check turn consuption
             }
-
-            yield return controller.action;
         }
-
     }
 }

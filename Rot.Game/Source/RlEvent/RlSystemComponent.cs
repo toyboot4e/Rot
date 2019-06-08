@@ -4,7 +4,6 @@ using Sys = Rot.Engine.Sys;
 using Rot.Ui;
 
 namespace Rot.Game {
-    /// <summary> Framework of game flow / wrapper of the `ControlContext`. </summary>
     public class RlSystemComponent : Nez.SceneComponent {
         RlGameContext gameCtx;
         Sys.RlDefaultSystems defaults;
