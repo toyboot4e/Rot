@@ -1,6 +1,7 @@
 using Nez;
 
 namespace Rot.Engine.RlEv {
+    /// <summary> Notifies an entity to control in UI </summary>
     public class ControlEntity : RlEvent {
         public Entity entity;
         public RlEvent ev;
@@ -10,7 +11,7 @@ namespace Rot.Engine.RlEv {
         }
     }
 
-    /// <summary> Indicates that the action is not decided yet </summary>
+    /// <summary> Indicates that the event is not decided yet by UI </summary>
     public class NotYetDecided : RlEvent { }
 
     public class Log : RlEvent {
@@ -20,7 +21,9 @@ namespace Rot.Engine.RlEv {
             this.message = message;
         }
     }
+}
 
+namespace Rot.Engine.RlEv {
     public class Walk : RlEvent {
         public readonly Entity entity;
         public readonly EDir dir;

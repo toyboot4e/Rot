@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Rot.Ui;
 
 namespace Rot.Game {
-    /// <summary> Visualizes RlEvents / Component of TickControl </summary>
+    /// <summary> Visualizes RlEvents </summary>
     public class RlEventControl {
         ControlContext ctrlCtx;
         RlEventVisualizer visualizer;

@@ -37,6 +37,7 @@ namespace Rot.Engine {
         }
     }
 
+    /// <summary> Basis of the turn system </summary>
     public class Energy : Nez.Component {
         public int speedLevel { get; private set; }
         public int charge { get; private set; }

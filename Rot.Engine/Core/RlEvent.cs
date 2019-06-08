@@ -1,25 +1,12 @@
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Something to be handle by some `RlSystem` </summary>
+    /// <summary> Message to be handled by a system </summary>
     public abstract class RlEvent { }
-
-    public class RlEventResult {
-        public Kind kind;
-
-        public enum Kind {
-            JustListened,
-            Handled,
-        }
-
-        public RlEventResult(Kind k) {
-            this.kind = k;
-        }
-    }
 }
 
 namespace Rot.Engine.RlEv {
-    /// <summary> Cause of a RlEvent </summary>
+    /// <summary> Cause of an RlEvent </summary>
     public class Cause {
         public readonly RlEvent e;
 

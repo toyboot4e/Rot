@@ -14,12 +14,12 @@ namespace Rot.Engine {
         void updateList();
     }
 
-    /// <summary> A tickable state </summary>
+    /// <summary> The tickable game state / wrapper around an <c>ActorScheduler</c> </summary>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
         public RlGameState(RlEventHub evHub, ActorScheduler scheduler) {
-            Nez.Insist.isNotNull(scheduler, "Given null as ascheduler");
+            Nez.Insist.isNotNull(scheduler, "Given null as a scheduler");
             this.loop = this.create(scheduler, evHub).GetEnumerator();
         }
 

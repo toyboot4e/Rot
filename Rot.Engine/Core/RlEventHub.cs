@@ -7,7 +7,7 @@ using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 // using Handlers = System.Collections.Generic.List<System.Func<Rot.Engine.RlEvent, System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>>>;
 
 namespace Rot.Engine {
-    /// <summary> Enables subscribing specific <c>RlEvent</c>s </summary>
+    /// <summary> Where to subscribing specific <c>RlEvent</c>s </summary>
     public class RlEventHub {
         Dictionary<Type, IRlEvHandlerBand> handlers;
 
