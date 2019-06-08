@@ -4,6 +4,7 @@ using Nez.Tiled;
 using Rot.Engine;
 
 namespace Rot.Ui {
+    /// <summary> Tiled implementation of the stage </summary>
     public class TiledRlStage : Engine.RlStage {
         public TiledMap tiled { get; private set; }
 

@@ -3,6 +3,7 @@ using Nez;
 
 namespace Rot.Ui {
     // Copied from the sample repository Ninja Adventure
+    /// <summary> Let the <c>Camera</c> stick with a rectangle </summary>
     public class CameraBounds : Component, IUpdatable {
         public Vector2 min, max;
 

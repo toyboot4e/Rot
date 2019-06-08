@@ -19,6 +19,7 @@ namespace Rot.Engine {
         #endregion
 
         #region Walk
+        // TODO: make it overridable
         public bool canWalkIn(Entity e, EDir dir) {
             var body = e.get<Body>();
             var from = body.pos;

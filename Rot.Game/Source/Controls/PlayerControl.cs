@@ -5,7 +5,7 @@ using RlEv = Rot.Engine.RlEv;
 using Rot.Ui;
 
 namespace Rot.Ui {
-	/// <summary> Decides an action of an entity </summary>
+	/// <summary> Decides player actions; the player controller </summary>
 	public class PlayerControl : Control {
 		EntityController controller;
 		RlGameContext gameCtx;

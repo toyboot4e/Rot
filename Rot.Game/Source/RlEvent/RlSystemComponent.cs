@@ -4,6 +4,7 @@ using Sys = Rot.Engine.Sys;
 using Rot.Ui;
 
 namespace Rot.Game {
+    /// <summary> Storage of roguelike systems </summary>
     public class RlSystemComponent : Nez.SceneComponent {
         RlGameContext gameCtx;
         Sys.RlDefaultSystems defaults;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Rot.Engine;
 
 namespace Rot.Ui {
-    /// <summary> Injected to <c>Control</c>s </summary>
+    /// <summary> Context automatically injected to <c>Control</c>s by <c>Cradle</c> </summary>
     public struct ControlContext {
         public Cradle cradle;
         public VInput input;
@@ -21,7 +21,7 @@ namespace Rot.Ui {
         }
     }
 
-    /// <summary> State </summary>
+    /// <summary> A game state to control the game </summary>
     public abstract class Control {
         /// <summary> Injected when pushed to the Cradle state machine </summary>
         protected ControlContext ctrlCtx;

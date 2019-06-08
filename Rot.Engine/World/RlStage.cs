@@ -4,13 +4,14 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> The interface of stages used in Engine. </summary>
+    /// <summary> Decopules any stage instance from the engine </summary>
     public interface RlStage {
         Rect bounds { get; }
         RlTiles tilesAt(Vec2 pos);
         // RlCell at(Vec2 pos);
     }
 
+    /// <summary> Helper <summary>
     public interface RlTiles {
         Vec2 pos { get; }
         RlStage stage { get; }

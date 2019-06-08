@@ -5,7 +5,7 @@ using Nez;
 using Nez.Tweens;
 
 namespace Rot.Ui {
-    /// <summary> Generic animation to be <c>play</c>ed by <c>AnimationControl</c> </summary>
+    /// <summary> Generic animation </summary>
     public abstract class Animation {
         public virtual bool isFinished { get; }
         public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
@@ -20,6 +20,7 @@ namespace Rot.Ui {
         public virtual void onClear() { }
     }
 
+    /// <summary> e.g. Walking animation does not block the game <summary>
     public enum AnimationKind {
         Blocking,
         Combined,

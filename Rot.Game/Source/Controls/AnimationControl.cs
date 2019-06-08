@@ -4,7 +4,7 @@ using Rot.Ui;
 using Anim = Rot.Ui.Anim;
 
 namespace Rot.Game {
-    /// <summary> Wrapper around an animation.null Stops the <c>Engine</c> until it's finished </summary>
+    /// <summary> Wrapper around an animation. Stops the <c>Engine</c> until it's finished </summary>
     public class AnimationControl : Control {
         Animation anim;
         Anim.Combined combined;

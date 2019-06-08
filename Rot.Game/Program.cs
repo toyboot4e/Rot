@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 
 namespace Rot.Game {
+    /// <summary> The entry point of the application </summary>
     class Program {
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [

@@ -2,8 +2,7 @@ using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Game {
-    // TODO: separate entity control
-    // TODO: separate view
+    /// <summary> Tick the engine and may dispatches some control to the report </summary>
     public class TickControl : Ui.Control {
         RlGameState game;
         RlGameContext gameCtx;

@@ -1,13 +1,14 @@
 using Microsoft.Xna.Framework;
 
 namespace Rot.Ui {
-    // The higher, the deeper.
+    /// <summary> The higher, the deeper </summary>
     public static class Layers {
         public static int Stage => 1000;
         public static int Screen => 0;
         public static int DebugScreen => -1000;
     }
 
+    /// <summary> The higher, the deeper </summary>
     public static class ZOrders {
         public static float Stage => 0.6f;
         public static float Charachip => 0.5f;
@@ -18,6 +19,7 @@ namespace Rot.Ui {
         public static float Debug => 0.1f;
     }
 
+    /// <summary> Ease for prototyping </summary>
     public static class Colors {
         public static class Gage {
             public static Color frame = new Color(255, 255, 255);

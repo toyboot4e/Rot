@@ -1,4 +1,5 @@
 namespace Rot.Engine {
+    /// <summary> Enough information or references to observe what happened </summary>
     public abstract class RlTickReport {
         public static Error error(string message) => new Error(message);
         public static Ev ev(RlEvent ev) => new Ev(ev);

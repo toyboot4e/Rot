@@ -4,6 +4,7 @@ using Nez;
 using Nez.ImGuiTools;
 
 namespace Rot.Game {
+    /// <summary> The game application loop </summary>
     class GameApp : Nez.Core {
         public GameApp() : base() { }
 

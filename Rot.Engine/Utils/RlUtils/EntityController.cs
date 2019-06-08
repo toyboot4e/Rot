@@ -1,7 +1,7 @@
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Context to let UI decide action of an entity </summary>
+    /// <summary> Basic controller for UI to to inject an action to an entity </summary>
     public class EntityController {
         public Entity actor;
         public RlEvent action;
