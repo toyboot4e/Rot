@@ -9,8 +9,9 @@ namespace Rot.Game {
     public class ControlEntitySystem {
         ControlContext ctx;
 
-        public ControlEntitySystem(ControlContext ctx) {
-            this.ctx = ctx;
+        public ControlEntitySystem(ControlContext ctrlCtx, RlGameContext gameCtx) {
+            this.ctx = ctrlCtx;
+            gameCtx.evHub.subscribe<RlEv.ControlEntity>(0f, this.handle);
         }
 
         IEnumerable<RlEvent> handle(RlEv.ControlEntity ctrl) {

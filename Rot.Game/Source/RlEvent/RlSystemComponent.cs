@@ -18,7 +18,7 @@ namespace Rot.Game {
             this.ctrlCtx = ctrlCtx;
 
             this.defaults = new Sys.DefaultRlSystems(this.gameCtx);
-            this.ctrlEntitySys = new ControlEntitySystem(this.ctrlCtx);
+            this.ctrlEntitySys = new ControlEntitySystem(this.ctrlCtx, this.gameCtx);
         }
 
     }
