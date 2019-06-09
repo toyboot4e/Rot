@@ -33,6 +33,7 @@ namespace Rot.Ui {
                 this.controller.decide(ev);
                 this.controller = null;
                 base.ctrlCtx.cradle.pop();
+                return ControlResult.Continue;
             }
 
             return ControlResult.SeeYouNextFrame;

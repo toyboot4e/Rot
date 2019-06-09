@@ -12,7 +12,7 @@ namespace Rot.Ui {
             this.tiled = tiled;
         }
 
-        public Rect bounds => new Rect(tiled.width, tiled.height);
+        public Rect bounds => new Rect(1, 1, tiled.width, tiled.height);
         public RlTiles tilesAt(Vec2 pos) => new TiledRlTiles(pos, this);
     }
 
