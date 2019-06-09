@@ -10,6 +10,7 @@ namespace Rot.Engine.Sys {
             hub.subscribe<RlEv.GiveDamage>(0f, this.handle);
             hub.subscribe<RlEv.Hit>(0f, this.handle);
             hub.subscribe<RlEv.MeleeAttack>(0f, this.handle);
+            hub.subscribe<RlEv.Death>(0f, this.handle);
         }
 
         public override void onDelete() {
@@ -17,6 +18,7 @@ namespace Rot.Engine.Sys {
             hub.unsubscribe<RlEv.GiveDamage>(this.handle);
             hub.unsubscribe<RlEv.Hit>(this.handle);
             hub.unsubscribe<RlEv.MeleeAttack>(this.handle);
+            hub.unsubscribe<RlEv.Death>(this.handle);
         }
 
         public IEnumerable<RlEvent> handle(RlEv.MeleeAttack melee) {
@@ -62,8 +64,13 @@ namespace Rot.Engine.Sys {
             var rest = hp.val - hit.amount;
             hp.setCurrent(rest);
             if (hp.val <= 0) {
-                // raise death event here
+                yield return new RlEv.Death(hit.entity, hit.cause);
             }
+            yield break;
+        }
+
+        public IEnumerable<RlEvent> handle(RlEv.Death death) {
+            death.entity.get<Actor>().isDead = true;
             yield break;
         }
     }

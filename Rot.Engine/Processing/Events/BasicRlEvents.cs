@@ -83,4 +83,14 @@ namespace Rot.Engine.RlEv {
             this.cause = cause;
         }
     }
+
+    public class Death : RlEvent {
+        public readonly Entity entity;
+        public readonly Cause cause;
+
+        public Death(Entity entity, Cause cause) {
+            this.entity = entity;
+            this.cause = cause;
+        }
+    }
 }

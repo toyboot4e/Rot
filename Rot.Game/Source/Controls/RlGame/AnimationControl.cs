@@ -40,6 +40,13 @@ namespace Rot.Game {
         }
 
         public override ControlResult update() {
+            if (this.anim == null) {
+                Nez.Debug.log("found null animation in AnimationControl.update()");
+                this.clear();
+                base.ctrlCtx.cradle.pop();
+                return ControlResult.SeeYouNextFrame;
+            }
+
             this.anim.update();
             if (!this.anim.isFinished) {
                 return ControlResult.SeeYouNextFrame;
@@ -51,9 +58,9 @@ namespace Rot.Game {
         }
 
         void clear() {
-            this.anim.onClear();
+            this.anim?.onClear();
             this.anim = null;
-            this.combined.clear();
+            this.combined?.clear();
         }
     }
 }

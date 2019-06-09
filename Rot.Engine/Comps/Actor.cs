@@ -8,7 +8,7 @@ namespace Rot.Engine {
 
     /// <summary> Wrapper around IBehavior </sumary>
     public class Actor : Nez.Component, IActor {
-        public bool needsDeleting { get; set; }
+        public bool isDead { get; set; }
         public IBehavior behavior { get; private set; }
         public Energy energy { get; private set; }
 

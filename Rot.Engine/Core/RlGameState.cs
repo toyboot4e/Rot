@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Rot.Engine {
     public interface IActor {
-        bool needsDeleting { get; }
+        bool isDead { get; }
         IEnumerable<RlEvent> takeTurn();
         // RlEvent alternate();
     }
@@ -11,6 +11,7 @@ namespace Rot.Engine {
     /// <summary> Injected to the `RlGame` </summary>
     public interface ActorScheduler {
         IActor next();
+        /// <summary> Deletes dead actor </summary>
         void updateList();
     }
 

@@ -9,8 +9,9 @@ namespace Rot.Engine {
         int index;
 
         IActor ActorScheduler.next() {
-            var(is_ensured, error) = this.ensureIndex();
-            if (!is_ensured) {
+            // error check
+            var(is_ok, error) = this.ensureIndex();
+            if (!is_ok) {
                 Nez.Debug.log(error);
                 return null;
             }
@@ -21,7 +22,24 @@ namespace Rot.Engine {
         }
 
         void ActorScheduler.updateList() {
+            // Note that we mustn't modify list while iterating via IEnumerator
+            for (int i = 0; i < this.Count; i++) {
+                var entity = this[i];
+                if (entity.get<Actor>()?.isDead ?? false) {
+                    // TODO: lazy deleting
+                    this.onDelete(entity);
+                    entity.destroy();
+                    i--;
+                }
+            }
+        }
 
+        void onDelete(Entity entity) {
+            var index = this.IndexOf(entity);
+            this.RemoveAt(index);
+            if (this.index > index) {
+                this.decIndex();
+            }
         }
 
         (bool, string) ensureIndex() {
@@ -36,6 +54,11 @@ namespace Rot.Engine {
 
         void incIndex() {
             this.index += 1;
+            this.index %= base.Count;
+        }
+
+        void decIndex() {
+            this.index += base.Count - 1;
             this.index %= base.Count;
         }
     }
