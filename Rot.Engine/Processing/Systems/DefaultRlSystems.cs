@@ -4,26 +4,21 @@ using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
     // Note that it doens't handle RlEv.EntityControl
-    public class DefaultRlSystems {
-        RlGameContext ctx;
-
-        public DefaultRlSystems(RlGameContext ctx) {
-            this.ctx = ctx;
-            this.setup(ctx.evHub);
-        }
-
-        void setup(RlEventHub hub) {
+    public class DefaultRlSystems : RlSystem {
+        public override void setup() {
+            var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Walk>(0f, this.handle);
             hub.subscribe<RlEv.Face>(0f, this.handle);
         }
 
-        public void onDelete(RlEventHub hub) {
+        public override void onDelete() {
+            var hub = base.gameCtx.evHub;
             hub.unsubscribe<RlEv.Walk>(this.handle);
             hub.unsubscribe<RlEv.Face>(this.handle);
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Walk walk) {
-            if (!this.ctx.logic.canWalkIn(walk.entity, walk.dir)) {
+            if (!base.gameCtx.logic.canWalkIn(walk.entity, walk.dir)) {
                 var chain = new RlEv.Face(walk.entity, walk.dir);
                 yield return chain;
                 walk.consumesTurn = chain.consumesTurn;

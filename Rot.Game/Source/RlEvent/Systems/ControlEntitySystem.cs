@@ -6,12 +6,15 @@ using Rot.Ui;
 using RlEv = Rot.Engine.RlEv;
 
 namespace Rot.Game {
-    public class ControlEntitySystem {
+    public class ControlEntitySystem : RlSystem {
         ControlContext ctx;
 
-        public ControlEntitySystem(ControlContext ctrlCtx, RlGameContext gameCtx) {
+        public ControlEntitySystem(ControlContext ctrlCtx) {
             this.ctx = ctrlCtx;
-            gameCtx.evHub.subscribe<RlEv.ControlEntity>(0f, this.handle);
+        }
+
+        public override void setup() {
+            this.gameCtx.evHub.subscribe<RlEv.ControlEntity>(0f, this.handle);
         }
 
         IEnumerable<RlEvent> handle(RlEv.ControlEntity ctrl) {
