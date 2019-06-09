@@ -7,12 +7,12 @@ namespace Rot.Game {
     public class TickControl : Ui.Control {
         RlGameState game;
         RlGameContext gameCtx;
-        RlEventControl evCtrl;
+        RlViewPlatform view;
 
-        public TickControl(RlGameState game, RlGameContext gameCtx, RlEventControl evCtrl) {
+        public TickControl(RlGameState game, RlGameContext gameCtx, RlViewPlatform view) {
             this.game = game;
             this.gameCtx = gameCtx;
-            this.evCtrl = evCtrl;
+            this.view = view;
         }
 
         public override ControlResult update() {
@@ -21,7 +21,14 @@ namespace Rot.Game {
             switch (report) {
                 case RlTickReport.Ev evReport:
                     Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
-                    return this.evCtrl.handleEvent(evReport.ev);
+                    var anim = this.view.visualize(evReport.ev);
+                    if (anim == null) {
+                        return ControlResult.Continue;
+                    } else {
+                        var cradle = this.ctrlCtx.cradle;
+                        var animCtrl = cradle.get<AnimationControl>();
+                        return animCtrl.beginOrCombine(anim);
+                    }
 
                 case RlTickReport.Actor actorReport:
                     var entity = actorReport.actor.entity;
