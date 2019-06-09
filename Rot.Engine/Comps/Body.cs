@@ -20,7 +20,7 @@ namespace Rot.Engine {
         public Body(Vec2 pos, EDir dir, bool isBlocker, bool isDiagonalBlocker = false) {
             this.location = Location.OnStage;
             (this.pos, this.facing, this.isBlocker) = (pos, dir, isBlocker);
-            this.isBlocker = isDiagonalBlocker;
+            this.isDiagonalBlocker = isDiagonalBlocker;
         }
 
         public Body setDir(EDir dir) {
