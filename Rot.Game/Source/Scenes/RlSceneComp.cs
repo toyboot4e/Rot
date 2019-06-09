@@ -77,6 +77,8 @@ namespace Rot.Game {
                 var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
                 image.setDir(body.facing).setToGridPos(body.pos);
 
+                e.add(new Performance(50, 10, 5));
+
                 entities.Add(e);
             }
 
@@ -100,6 +102,7 @@ namespace Rot.Game {
 
         void storeSystems(RlSystemStorage systems) {
             systems.add(new Sys.BodyRlSystems());
+            systems.add(new Sys.HitSystem());
             systems.add(new ControlEntitySystem(this.ctrl.ctx));
         }
 
