@@ -10,14 +10,14 @@ namespace Rot.Game {
     public class RlSystemComponent : Nez.SceneComponent {
         RlGameContext gameCtx;
         ControlContext ctrlCtx;
-        Sys.RlDefaultSystems defaults;
+        Sys.DefaultRlSystems defaults;
         ControlEntitySystem ctrlEntitySys;
 
         public RlSystemComponent(RlGameContext gameCtx, ControlContext ctrlCtx) {
             this.gameCtx = gameCtx;
             this.ctrlCtx = ctrlCtx;
 
-            this.defaults = new Sys.RlDefaultSystems(this.gameCtx);
+            this.defaults = new Sys.DefaultRlSystems(this.gameCtx);
             this.ctrlEntitySys = new ControlEntitySystem(this.ctrlCtx);
         }
 

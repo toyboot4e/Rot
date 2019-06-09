@@ -4,10 +4,10 @@ using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
     // Note that it doens't handle RlEv.EntityControl
-    public class RlDefaultSystems {
+    public class DefaultRlSystems {
         RlGameContext ctx;
 
-        public RlDefaultSystems(RlGameContext ctx) {
+        public DefaultRlSystems(RlGameContext ctx) {
             this.ctx = ctx;
             this.setup(ctx.evHub);
         }
