@@ -57,14 +57,4 @@ namespace Rot.Engine.Sys {
             yield break;
         }
     }
-
-    public class Dodge : RlEvent {
-        public readonly Entity entity;
-        public readonly Cause cause;
-    }
-
-    public class GiveDamage : RlEvent {
-        public readonly Entity entity;
-        public readonly Cause cause;
-    }
 }

@@ -6,7 +6,7 @@ using Rot.Ui;
 using RlEv = Rot.Engine.RlEv;
 
 namespace Rot.Game {
-    /// <summary> Storage of roguelike systems </summary>
+    /// <summary> Storage of roguelike systems, which subscribe to RLEventHub </summary>
     public class RlSystemComponent : Nez.SceneComponent {
         RlGameContext gameCtx;
         ControlContext ctrlCtx;

@@ -22,6 +22,7 @@ namespace Rot.Ui {
 
     public static class CharachipFactory {
         public static Sprite<EnumDir> wodi8(string path) {
+            var scene = Nez.Core.scene;
             var texture = Nez.Core.scene.content.Load<Texture2D>(path);
             var subs = CharachipFactory.split(texture, 6, 4);
 
