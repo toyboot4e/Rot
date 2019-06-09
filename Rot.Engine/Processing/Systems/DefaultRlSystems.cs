@@ -4,10 +4,10 @@ using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
     // Note that it doens't handle RlEv.EntityControl
-    public class RlDefaultSystems {
+    public class DefaultRlSystems {
         RlGameContext ctx;
 
-        public RlDefaultSystems(RlGameContext ctx) {
+        public DefaultRlSystems(RlGameContext ctx) {
             this.ctx = ctx;
             this.setup(ctx.evHub);
         }
@@ -24,7 +24,9 @@ namespace Rot.Engine.Sys {
 
         public IEnumerable<RlEvent> handle(RlEv.Walk walk) {
             if (!this.ctx.logic.canWalkIn(walk.entity, walk.dir)) {
-                yield return new RlEv.Face(walk.entity, walk.dir);
+                var chain = new RlEv.Face(walk.entity, walk.dir);
+                yield return chain;
+                walk.consumesTurn = chain.consumesTurn;
                 yield break;
             }
 
@@ -46,6 +48,8 @@ namespace Rot.Engine.Sys {
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Face face) {
+            face.consumesTurn = false;
+
             var body = face.entity.get<Body>();
 
             var cause = Cause.ev(face);
