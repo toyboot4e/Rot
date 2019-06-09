@@ -60,6 +60,7 @@ namespace Rot.Game {
 
         void makeEntities(IList<Entity> entities, RlStage stage, TiledMapComponent tiledComp) {
             var tiled = tiledComp.tiledMap;
+            EntityBarStyleDef.init(scene);
             for (int i = 0; i < 5; i++) {
                 var e = scene.createEntity($"actor_{i}");
 
@@ -78,6 +79,7 @@ namespace Rot.Game {
                 image.setDir(body.facing).setToGridPos(body.pos);
 
                 e.add(new Performance(50, 10, 5));
+                e.add(new HpBar(this.ctrl.ctx.posUtil, EntityBarStyleDef.hp()));
 
                 entities.Add(e);
             }
@@ -108,6 +110,7 @@ namespace Rot.Game {
 
         void storeViews(RlViewStorage views) {
             views.add(new View.BodyRlView());
+            views.add(new View.HitRlView());
         }
     }
 

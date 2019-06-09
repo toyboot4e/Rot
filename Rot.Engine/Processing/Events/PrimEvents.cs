@@ -32,12 +32,12 @@ namespace Rot.Engine.RlEv {
 
     public class GiveDamage : RlEvent {
         public readonly Entity entity;
-        public readonly int damage;
+        public readonly int amount;
         public readonly Cause cause;
 
         public GiveDamage(Entity entity, int damage, Cause cause) {
             this.entity = entity;
-            this.damage = damage;
+            this.amount = damage;
             this.cause = cause;
         }
     }

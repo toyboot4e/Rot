@@ -59,7 +59,7 @@ namespace Rot.Engine.Sys {
         public IEnumerable<RlEvent> handle(RlEv.GiveDamage hit) {
             var stats = hit.entity.get<Performance>();
             var hp = stats.hp;
-            var rest = hp.val - hit.damage;
+            var rest = hp.val - hit.amount;
             hp.setCurrent(rest);
             if (hp.val <= 0) {
                 // raise death event here
