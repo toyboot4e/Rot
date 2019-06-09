@@ -35,8 +35,11 @@ namespace Rot.Game {
                 }
 
                 yield return controller.action;
-                break;
-                // TODO: using commands to check turn consuption
+
+                if (controller.action.consumesTurn) {
+                    break;
+                }
+                controller.resetAction();
             }
         }
 

@@ -15,6 +15,10 @@ namespace Rot.Engine {
             this.action = action;
         }
 
+        public void resetAction() {
+            this.action = null;
+        }
+
         public bool isDecided => this.action != null;
     }
 }
