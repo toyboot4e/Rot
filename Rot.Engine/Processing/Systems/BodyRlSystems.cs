@@ -4,7 +4,7 @@ using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
     // Note that it doens't handle RlEv.EntityControl
-    public class DefaultRlSystems : RlSystem {
+    public class BodyRlSystems : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Walk>(0f, this.handle);

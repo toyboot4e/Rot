@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Nez;
-using Rot.Engine.RlEv;
 
 namespace Rot.Engine {
     public class RlSystem {
@@ -25,6 +24,10 @@ namespace Rot.Engine {
         public void add(RlSystem sys) {
             sys.injectContexts(this.gameCtx);
             sys.setup();
+        }
+
+        public void add<T>() where T : RlSystem, new() {
+            this.add(new T());
         }
 
         public void remove(RlSystem sys) {
