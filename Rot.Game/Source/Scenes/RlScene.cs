@@ -9,7 +9,6 @@ using Rot.Game.Debug;
 using Rot.Ui;
 
 namespace Rot.Game {
-    // TODO: split basic setup
     public class RlScene : Scene {
         public override void initialize() {
             var policy = Scene.SceneResolutionPolicy.None;

@@ -53,7 +53,7 @@ namespace Rot.Ui {
             return null;
         }
 
-        /// <summary> Mayve dispatches a sub routine to the input </summary>
+        /// <summary> Maybe dispatches a sub routine to the input </summary>
         RlEvent handleInput(VInput input) {
             // pressed VKey or down axis input
             var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);

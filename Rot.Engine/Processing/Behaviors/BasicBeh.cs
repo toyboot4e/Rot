@@ -6,7 +6,7 @@ namespace Rot.Engine.Beh {
         public RlEvent alternate() => null;
     }
 
-    /// <summary> Just creates actions decided by UI.abstract </summary>
+    /// <summary> Just creates actions decided by UI </summary>
     public class Player : IBehavior {
         Entity entity;
 
@@ -19,7 +19,7 @@ namespace Rot.Engine.Beh {
         }
     }
 
-    /// <summary> Just creates actions decided by UI.abstract </summary>
+    /// <summary> Just creates random walk actions </summary>
     public class RandomWalk : IBehavior {
         Entity entity;
 

@@ -17,7 +17,7 @@ namespace Rot.Engine {
 
         public IEnumerable<RlEvent> handleAny(RlEvent e) {
             IRlEvHandlerBand handlers;
-            if (!this.handlers.TryGetValue(e.GetType(), out handlers)) {
+            if (e == null || !this.handlers.TryGetValue(e.GetType(), out handlers)) {
                 yield break;
             }
 
