@@ -12,26 +12,28 @@ using Sys = Rot.Engine.Sys;
 
 namespace Rot.Game {
     public class RlSceneComp : SceneComponent {
+        // all fields are owned
         RlGameContext gameCtx;
         RlGameState gameState;
         ControlSceneComponent ctrl;
+        RlSystemStorage systems;
+        RlViewPlatform view;
 
         public RlSceneComp() { }
 
         public override void onEnabled() {
             this.initRoguelike();
 
-            var systemComp = scene.addSceneComponent(new RlSystemComponent(this.gameCtx, this.ctrl.ctx));
-            var systems = systemComp.systems;
-            this.storeSystems(systems);
+            this.systems = new RlSystemStorage(this.gameCtx);
+            this.storeSystems(this.systems);
 
             var ctrlCtx = ctrl.ctx;
             RlInspector.create(scene, ctrlCtx.cradle, ctrlCtx.input);
 
             var services = new RlViewServices(this.gameCtx, ctrlCtx);
-            var visualizer = new RlViewPlatform(services);
-            this.storeViews(visualizer);
-            this.makeControls(ctrlCtx, visualizer);
+            this.view = new RlViewPlatform(services);
+            this.storeViews(this.view);
+            this.makeControls(ctrlCtx, this.view);
         }
 
         #region Initializers
