@@ -1,2 +1,2 @@
 # Rot.Engine
-The internal state of the game.
+The internal game state.
