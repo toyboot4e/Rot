@@ -105,7 +105,7 @@ namespace Rot.Game {
         #endregion
 
         void storeSystems(RlSystemStorage systems) {
-            systems.add(new Sys.BodyRlSystems());
+            systems.add(new Sys.BodySystems());
             systems.add(new Sys.HitSystem());
             systems.add(new ControlEntitySystem(this.ctrl.ctx));
         }

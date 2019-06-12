@@ -3,8 +3,7 @@ using Nez;
 using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
-    // Note that it doens't handle RlEv.EntityControl
-    public class BodyRlSystems : RlSystem {
+    public class BodySystems : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Walk>(0f, this.handle);

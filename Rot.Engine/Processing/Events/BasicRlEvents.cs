@@ -2,7 +2,7 @@ using Nez;
 
 namespace Rot.Engine.RlEv {
     /// <summary>
-    /// Notifies an entity to control in UI. Note that this event is handled by a system in UI.
+    /// Notifies an entity to control in UI. To be handled by UI.
     /// </summary>
     public class ControlEntity : RlEvent {
         public Entity entity;
