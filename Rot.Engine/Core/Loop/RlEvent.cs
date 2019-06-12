@@ -21,4 +21,21 @@ namespace Rot.Engine.RlEv {
             this.e = ev;
         }
     }
+
+    /// <summary> Wrapper around a RlEvent </summary>
+    public class AnyTry {
+        public RlEvent ev;
+
+        public AnyTry(RlEvent ev) {
+            this.ev = ev;
+        }
+
+        public static AnyTry wrap(RlEvent ev) {
+            return new AnyTry(ev);
+        }
+
+        public RlEvent unwrap() {
+            return this.ev;
+        }
+    }
 }
