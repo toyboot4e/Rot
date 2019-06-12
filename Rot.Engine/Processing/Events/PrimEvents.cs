@@ -29,4 +29,16 @@ namespace Rot.Engine.RlEv {
             this.cause = cause;
         }
     }
+
+    public class GiveDamage : RlEvent {
+        public readonly Entity entity;
+        public readonly int amount;
+        public readonly Cause cause;
+
+        public GiveDamage(Entity entity, int damage, Cause cause) {
+            this.entity = entity;
+            this.amount = damage;
+            this.cause = cause;
+        }
+    }
 }

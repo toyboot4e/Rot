@@ -12,26 +12,28 @@ using Sys = Rot.Engine.Sys;
 
 namespace Rot.Game {
     public class RlSceneComp : SceneComponent {
+        // all fields are owned
         RlGameContext gameCtx;
         RlGameState gameState;
         ControlSceneComponent ctrl;
+        RlSystemStorage systems;
+        RlViewPlatform view;
 
         public RlSceneComp() { }
 
         public override void onEnabled() {
             this.initRoguelike();
 
-            var systemComp = scene.addSceneComponent(new RlSystemComponent(this.gameCtx, this.ctrl.ctx));
-            var systems = systemComp.systems;
-            this.storeSystems(systems);
+            this.systems = new RlSystemStorage(this.gameCtx);
+            this.storeSystems(this.systems);
 
             var ctrlCtx = ctrl.ctx;
             RlInspector.create(scene, ctrlCtx.cradle, ctrlCtx.input);
 
             var services = new RlViewServices(this.gameCtx, ctrlCtx);
-            var visualizer = new RlViewPlatform(services);
-            this.storeViews(visualizer);
-            this.makeControls(ctrlCtx, visualizer);
+            this.view = new RlViewPlatform(services);
+            this.storeViews(this.view);
+            this.makeControls(ctrlCtx, this.view);
         }
 
         #region Initializers
@@ -60,6 +62,7 @@ namespace Rot.Game {
 
         void makeEntities(IList<Entity> entities, RlStage stage, TiledMapComponent tiledComp) {
             var tiled = tiledComp.tiledMap;
+            EntityBarStyleDef.init(scene);
             for (int i = 0; i < 5; i++) {
                 var e = scene.createEntity($"actor_{i}");
 
@@ -76,6 +79,9 @@ namespace Rot.Game {
                 var chip = CharachipFactory.wodi8(Content.Charachips.Patched.gremlin_black);
                 var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
                 image.setDir(body.facing).setToGridPos(body.pos);
+
+                e.add(new Performance(50, 10, 5));
+                e.add(new HpBar(this.ctrl.ctx.posUtil, EntityBarStyleDef.hp()));
 
                 entities.Add(e);
             }
@@ -100,11 +106,13 @@ namespace Rot.Game {
 
         void storeSystems(RlSystemStorage systems) {
             systems.add(new Sys.BodyRlSystems());
+            systems.add(new Sys.HitSystem());
             systems.add(new ControlEntitySystem(this.ctrl.ctx));
         }
 
         void storeViews(RlViewStorage views) {
             views.add(new View.BodyRlView());
+            views.add(new View.HitRlView());
         }
     }
 

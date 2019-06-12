@@ -39,6 +39,10 @@ namespace Rot.Engine {
             return self.addComponent<T>();
         }
 
+        public static T ensure<T>(this Entity self) where T : Component, new() {
+            return self.get<T>() ?? self.add<T>();
+        }
+
         public static void addAll(this Entity self, params Component[] cs) {
             cs.forEach(c => self.addComponent(c));
         }

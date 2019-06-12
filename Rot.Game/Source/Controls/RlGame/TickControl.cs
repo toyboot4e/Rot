@@ -5,6 +5,7 @@ namespace Rot.Game {
     // TODO: logger
     /// <summary> Tick the engine and may dispatches some control to the report </summary>
     public class TickControl : Ui.Control {
+        // all fileds are references
         RlGameState game;
         RlGameContext gameCtx;
         RlViewPlatform view;

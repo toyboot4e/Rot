@@ -1,5 +1,6 @@
 using Math = System.Math;
 using System.Collections;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Tweens;
 using Rot.Engine;
@@ -46,26 +47,21 @@ namespace Rot.Ui {
             return anim;
         }
 
-        public ITweenable swing(Entity e, EDir to) {
-            var body = e.get<Body>();
-            var dPos = 0.5f * body.facing.vector2 * posUtil.tileSize;
+        public ITween<Vector2>[] swing(Entity entity, EDir to, float duration = 4f / 60f) {
+            var body = entity.get<Body>();
+            var chip = entity.get<CharaChip>().chip;
 
-            // ITweenable tweenLocal(
-            //     RenderableComponent c,
-            //     Vector2 dPos,
-            //     float d,
-            //     EaseType e
-            // ) {
-            //     return c.tweenLocalOffset(this.basePos + dPos, d, EaseType.Linear);
-            // }
+            var deltaPos = 0.5f * body.facing.vector2 * posUtil.tileSize;
+            // TODO: consider offset of charachip
+            var offset = new Vector2(0, 0);
 
-            // var first = chip.tweenLocal(dPos, 0.01f, EaseType.Linear);
-            // var duration = 8f / 60f;
-            // var second = tweenLocal(chip, Vector2.Zero, duration, EaseType.Linear);
+            var easeType = EaseType.Linear;
+            var first = chip.tweenLocalOffset(offset + deltaPos, duration, easeType);
 
-            // return new ITweenable[] { first, second };
+            easeType = EaseType.Linear;
+            var second = chip.tweenLocalOffset(offset, duration, easeType);
 
-            return null;
+            return new ITween<Vector2>[] { first, second };
         }
     }
 

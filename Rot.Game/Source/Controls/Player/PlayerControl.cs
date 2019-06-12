@@ -33,6 +33,7 @@ namespace Rot.Ui {
                 this.controller.decide(ev);
                 this.controller = null;
                 base.ctrlCtx.cradle.pop();
+                return ControlResult.Continue;
             }
 
             return ControlResult.SeeYouNextFrame;
@@ -52,7 +53,7 @@ namespace Rot.Ui {
             return null;
         }
 
-        /// <summary> Mayve dispatches a sub routine to the input </summary>
+        /// <summary> Maybe dispatches a sub routine to the input </summary>
         RlEvent handleInput(VInput input) {
             // pressed VKey or down axis input
             var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
