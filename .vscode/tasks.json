@@ -1,5 +1,13 @@
 {
     "version": "2.0.0",
+    "osx": {
+        "options": {
+            "shell": {
+                "executable": "/bin/bash",
+                "args": ["-c"]
+            }
+        }
+    },
     "tasks": [
         {
             "label": "Restore Project",

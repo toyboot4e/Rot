@@ -25,6 +25,6 @@ namespace Rot.Ui {
             (this.pos, this.stage) = (pos, stage);
         }
 
-        public bool arePassable() => this.isInsideStage() && this.stage.tiled.collision(pos.x, pos.y);
+        public bool arePassable() => this.isInsideStage() && this.stage.tiled.isBlocked(pos.x, pos.y);
     }
 }

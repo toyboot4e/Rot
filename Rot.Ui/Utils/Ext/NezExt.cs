@@ -1,7 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Tiled;
 using Nez.Tweens;
@@ -13,9 +12,11 @@ namespace Rot.Ui {
             return PropertyTweens.vector2PropertyTo(self, "localOffset", to, dur)
                 .setEaseType(ease);
         }
+
         public static ITween<Color> tweenColorW(this RenderableComponent self, float opacity, float dur, EaseType ease = EaseType.Linear) {
             return self.tweenColorTo(Color.White * opacity, dur);
         }
+
         public static RenderableComponent setColorW(this RenderableComponent self, float opacity) {
             return self.setColor(Color.White * opacity);
         }
@@ -34,39 +35,44 @@ namespace Rot.Ui {
             return self.getLayer(layer) as TiledTileLayer;
         }
 
-        public static TiledTileLayer layerCollision(this TiledMap self) {
+        public static List<TiledTileLayer> tileLayers(this TiledMap self) {
+            return new [] { 0, 1, 2 }.Select(n => self.getLayer<TiledTileLayer>(n)).ToList();
+        }
+
+        public static TiledTileLayer collisionLayer(this TiledMap self) {
             return self.getLayer("collision") as TiledTileLayer;
         }
 
         // true: blocked
-        public static bool collision(this TiledMap self, int x, int y) {
-            return self.layerCollision().getTile(x, y) == null ? true : false;
+        public static bool isBlocked(this TiledMap self, int x, int y) {
+            return self.collisionLayer().getTile(x, y) == null ? true : false;
+        }
+
+        // TODO: appropriate collision layer
+        public static bool isDiagonallyBlocked(this TiledMap self, int x, int y) {
+            return false;
         }
 
         public static void setCollision(this TiledMap self, int x, int y, bool willBlocked) {
             if (willBlocked) {
-                self.layerCollision().setTile(new TiledTile(1).setPos(x, y));
+                self.collisionLayer().setTile(new TiledTile(1).setPos(x, y));
             } else {
-                self.layerCollision().removeTile(x, y);
+                self.collisionLayer().removeTile(x, y);
             }
         }
 
         public static void clearCollisionLayer(this TiledMap self) {
-            clearLayer(self.layerCollision());
+            self.collisionLayer().clear();
         }
 
-        static void clearLayer(TiledTileLayer layer) {
-            for (int i = 0; i < layer.width * layer.height; i++) {
-                layer.tiles[i] = null;
+        public static void clear(this TiledTileLayer self) {
+            for (int i = 0; i < self.width * self.height; i++) {
+                self.tiles[i] = null;
             }
         }
 
-        static void clearLayers(params TiledTileLayer[] layers) {
-            foreach(var layer in layers) {
-                for (int i = 0; i < layer.width * layer.height; i++) {
-                    layer.tiles[i] = null;
-                }
-            }
+        public static void clearAll(params TiledTileLayer[] tileLayers) {
+            tileLayers.forEach(layer => layer.clear());
         }
     }
 }

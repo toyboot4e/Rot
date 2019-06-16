@@ -21,10 +21,12 @@ namespace Rot.Game {
 
             Core.scene = new RlScene();
 
+#if DEBUG
             var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.registerGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;
+#endif
         }
 
         public void setFps(int fps) {

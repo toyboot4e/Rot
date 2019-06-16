@@ -3,7 +3,7 @@ A 2D, GUI to-be turn-based roguelike game made with [Nez](https://github.com/pri
 
 ## Architecture
 
-### Engine - View separation
+### Engine - UI separation
 We split the game into "Engine" and "UI". The internal game state is called as Engine. When we `tick` the game state, it returns `TickReport`, with which UI can pull enough context to visualize what happened.
 
 ### Engine = processor of contents
@@ -15,6 +15,6 @@ We mutate the game by pushing `RlEvent` to the engine. `RlEvent` is not only pri
 #### Layers of logics
 When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity become "dissy", their walking directions become random.
 
-We don't write an action handling logic at one place. Instead, we collect each logic via `RlEventHub`. Logic subscribes specific `RlEvent`s through the hub, with some `precedene`. Then `RlEventHub` dispatches each logic to the events in the order of preecdence.
+We don't write an action handling logic at one place. Instead, we collect each logic via `RlEventHub`. Logic subscribes specific `RlEvent`s through the hub, with some `precedene`. Then `RlEventHub` dispatches each logic to the corresponding events in the order of precedences.
 
-Logics may convert events to another; e.g. `MeleeAttack` → `Hit` → `TakeDamage`.
+Logics may convert events to another e.g. `MeleeAttack` → `Hit` → `TakeDamage`.

@@ -3,7 +3,7 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Implements <c>ActorScheduler</c> ; ease for prototyping </summary>
+    /// <summary> Implements <c>ActorScheduler</c>; for ease of prototyping </summary>
     // TODO: separating scheduler
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;

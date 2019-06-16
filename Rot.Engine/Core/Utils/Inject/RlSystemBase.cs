@@ -18,12 +18,15 @@ namespace Rot.Engine {
         RlGameContext gameCtx;
 
         public RlSystemStorage(RlGameContext gameCtx) {
+            this.systems = new List<RlSystem>();
             this.gameCtx = gameCtx;
         }
 
         public void add(RlSystem sys) {
-            sys.injectContexts(this.gameCtx);
-            sys.setup();
+            if (this.systems.addIfNotPresent(sys)) {
+                sys.injectContexts(this.gameCtx);
+                sys.setup();
+            }
         }
 
         public void add<T>() where T : RlSystem, new() {

@@ -13,11 +13,12 @@ using Sys = Rot.Engine.Sys;
 namespace Rot.Game {
     public class RlSceneComp : SceneComponent {
         // all fields are owned
-        RlGameContext gameCtx;
-        RlGameState gameState;
-        ControlSceneComponent ctrl;
-        RlSystemStorage systems;
-        RlViewPlatform view;
+        public RlGameContext gameCtx;
+        public RlGameState gameState;
+        public ControlSceneComponent ctrl;
+        public RlSystemStorage systems;
+        public RlViewPlatform view;
+        public TiledMap tiled;
 
         public RlSceneComp() { }
 
@@ -40,6 +41,7 @@ namespace Rot.Game {
         void initRoguelike() {
             var stagePath = Content.Stages.test;
             var(stage, tiled, tiledComp) = this.makeStage(stagePath);
+            this.tiled = tiled;
 
             var entities = new RotEntityList();
             this.gameCtx = new RlGameContext(stage, entities);
@@ -70,13 +72,16 @@ namespace Rot.Game {
 
                 var pos = new Vec2(5 + i, 5 + i);
                 var body = e.add(new Body(pos, dir : EDir.random(), isBlocker : true));
+                string imgPath = "";
                 if (i == 0) {
                     e.get<Actor>().setBehavior(new Engine.Beh.Player(e));
+                    imgPath = Content.Charachips.Patched.gremlin_blue;
                 } else {
                     e.get<Actor>().setBehavior(new Engine.Beh.RandomWalk(e));
+                    imgPath = Content.Charachips.Patched.gremlin_black;
                 }
 
-                var chip = CharachipFactory.wodi8(Content.Charachips.Patched.gremlin_black);
+                var chip = CharachipFactory.wodi8(imgPath);
                 var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
                 image.setDir(body.facing).setToGridPos(body.pos);
 

@@ -19,7 +19,11 @@
 		<!-- <ProjectReference Include="../Nez/Nez.FarseerPhysics/Nez.FNA.FarseerPhysics.csproj" /> -->
         <ProjectReference Include="../Rot.Engine/Rot.Engine.csproj" />
     </ItemGroup>
-    
+
+    <ItemGroup>
+      <PackageReference Include="Karcero" Version="0.4.0.0" />
+    </ItemGroup>
+
     <PropertyGroup>
         <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>

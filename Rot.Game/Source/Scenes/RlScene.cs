@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
 using Nez;
 using Nez.ImGuiTools;
 using Nez.Tiled;
@@ -23,7 +20,9 @@ namespace Rot.Game {
         }
 
         public override void onStart() {
-            this.add(new RlSceneComp());
+            var rl = this.add(new RlSceneComp());
+            var gen = this.add(new DungeonComp(rl.tiled));
+            gen.generate();
         }
     }
 }

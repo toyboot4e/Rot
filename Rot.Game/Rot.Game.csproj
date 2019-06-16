@@ -88,4 +88,8 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Karcero" Version="0.4.0.0" />
+    </ItemGroup>
 </Project>
