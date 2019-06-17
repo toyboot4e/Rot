@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Nez;
 using Rot.Engine.RlEv;
 
@@ -36,7 +37,7 @@ namespace Rot.Engine.Sys {
 
             // we assume the range is only the from cell
             var targets = base.gameCtx.entitiesAt(pos + dir.vec);
-            foreach(var target in targets) {
+            foreach(var target in targets.Where(t => t.has<Performance>())) {
                 int hitProbability = 90;
                 bool hit = hitProbability - Random.nextInt(100) > 0;
                 if (hit) {

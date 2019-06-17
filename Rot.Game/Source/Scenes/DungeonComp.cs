@@ -21,6 +21,7 @@ namespace Rot.Game {
             this.clearEnemies();
             this.genDungeon();
             this.genEnemies();
+            (rlCtx.gameCtx.entities as RotEntityList).setIndex(0);
         }
 
         public void genDungeon() {

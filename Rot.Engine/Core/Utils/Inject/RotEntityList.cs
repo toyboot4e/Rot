@@ -8,6 +8,10 @@ namespace Rot.Engine {
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;
 
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
         IActor ActorScheduler.next() {
             // error check
             var(is_ok, error) = this.ensureIndex();
