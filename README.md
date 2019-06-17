@@ -6,15 +6,17 @@ A 2D, GUI, in-development roguelike game made with [Nez](https://github.com/prim
 ## Architecture
 
 ### Engine - View separation
-We split the game into "Engine" and "UI". Engine is the internal game state, UI is other (input and view). When we `tick` the game state, it returns `RlTickReport`, with which UI can pull enough context to visualize what happened.
+We split the game into *Engine* and *UI.* Engine is the internal game state, UI is the other (input and view). When we `tick` the game state, it returns `RlTickReport`, with which UI can pull enough context to visualize what happened.
+
+> The terminology is based on [this blog post](https://journal.stuffwithstuff.com/2014/07/15/a-turn-based-game-loop/), but they don't directly apply to the project names. `Rot.Engine` is alomost same as the internal game state. But `Rot.Ui` is a view/input component of the `Rot.Game` application, and the app is the UI to the Engine.
 
 ### Engine = processor of contents
 We develop the game by adding contents to the engine.
 
 #### Mutation via events
-We mutate the game by pushing `RlEvent` to the engine. `RlEvent` is not only primitive events, such as `TakeDamage`, but also **actions** of entities. This is natural because action events are a kind of mutation; they result in some primitive events, e.g. `MeleeAttack` → `Hit` → `TakeDamage`.
+We mutate the game by pushing `RlEvent` to the engine. `RlEvent` is not only primitive events, such as `GiveDamage`, but also **actions** of entities. This is natural because action events are a kind of mutation; they result in some primitive events, e.g. `MeleeAttack` → `Hit` → `GiveDamage`.
 
 #### Layers of logics
-When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity is able to become "dissy", their walking directions become random. We need add the logic to `Walk` event handling.
+When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity is able to become "dissy", their walking directions may become random. We need to add that logic to `Walk` event handling then.
 
-Since we add more extension to the engine later, we don't write an action handling logic at one place. Instead, we collect each logic via `RlEventHub`. Logic subscribes specific `RlEvent`s through the hub, with some `precedence`. Then `RlEventHub` dispatches each logic to the events in the order of the precedences.
+Since we add more extension to the engine later, we don't write an action handling logic at one place. Instead, we collect each logic via `RlEventHub`. Logics subscribe specific `RlEvent`s through the hub, passing some `precedence`. Then `RlEventHub` dispatches each logic to the events in the order of the precedences.
