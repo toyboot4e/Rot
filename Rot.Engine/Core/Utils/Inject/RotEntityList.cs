@@ -16,9 +16,19 @@ namespace Rot.Engine {
                 return null;
             }
 
-            var actor = base[this.index].get<Actor>();
-            this.incIndex();
-            return actor;
+            int prevIndex = this.index;
+            Actor actor = null;
+            while (true) {
+                actor = base[this.index].get<Actor>();
+                this.incIndex();
+                if (actor != null) {
+                    return actor;
+                }
+                if (this.index == prevIndex) {
+                    Debug.log("NO ENTIY HAS ACTOR COMPONENT");
+                    return null;
+                }
+            }
         }
 
         void ActorScheduler.updateList() {

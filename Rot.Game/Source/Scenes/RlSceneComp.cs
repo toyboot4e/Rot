@@ -9,116 +9,105 @@ using Rot.Game.Debug;
 using Rot.Ui;
 using View = Rot.Ui.View;
 using Sys = Rot.Engine.Sys;
+using Beh = Rot.Engine.Beh;
 
 namespace Rot.Game {
     public class RlSceneComp : SceneComponent {
         // all fields are owned
-        public RlGameContext gameCtx;
+        public ControlContext ctrlCtx;
+
+        public TiledMap tiled;
+        public PosUtil posUtil;
+
         public RlGameState gameState;
-        public ControlSceneComponent ctrl;
+        public RlGameContext gameCtx;
+
         public RlSystemStorage systems;
         public RlViewPlatform view;
-        public TiledMap tiled;
-
-        public RlSceneComp() { }
 
         public override void onEnabled() {
+            EntityBarStyleDef.init(scene); // FIXME: the hack
+
+            this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
+            this.scene.add(new ControlSceneComponent(this.ctrlCtx));
+
             this.initRoguelike();
 
             this.systems = new RlSystemStorage(this.gameCtx);
-            this.storeSystems(this.systems);
+            this.view = new RlViewPlatform(
+                new RlViewServices(this.gameCtx, this.ctrlCtx, this.posUtil)
+            );
 
-            var ctrlCtx = ctrl.ctx;
-            RlInspector.create(scene, ctrlCtx.cradle, ctrlCtx.input);
+            makeControls(this.ctrlCtx.cradle, this.gameState, this.gameCtx, this.view);
+            // Note that enable scene is not yet added to the scenec component;
+            // we have to pass `this` here.
+            var gen = this.scene.add(new DungeonComp(this.tiled, this));
+            storeSystems(gen, this.systems, this.ctrlCtx);
+            storeViews(this.view);
 
-            var services = new RlViewServices(this.gameCtx, ctrlCtx);
-            this.view = new RlViewPlatform(services);
-            this.storeViews(this.view);
-            this.makeControls(ctrlCtx, this.view);
+            RlInspector.create(scene, this.ctrlCtx.cradle, this.ctrlCtx.input);
+
+            var player = gen.genPlayer();
+            this.scene.camera.entity.add(new FollowCamera(player));
+
+            gen.newFloor();
         }
 
         #region Initializers
+        /// <summary> Creates stage, entities, processing services and the internal game state </summary>
         void initRoguelike() {
-            var stagePath = Content.Stages.test;
-            var(stage, tiled, tiledComp) = this.makeStage(stagePath);
-            this.tiled = tiled;
+            var path = Content.Stages.test;
 
-            var entities = new RotEntityList();
-            this.gameCtx = new RlGameContext(stage, entities);
-            this.gameState = new RlGameState(this.gameCtx.evHub, entities);
-
-            var posUtil = new PosUtil(tiled, scene.camera);
-            this.ctrl = this.scene.add(new ControlSceneComponent(posUtil));
-
-            this.makeEntities(entities, stage, tiledComp);
+            this.loadTiledMap(path);
+            this.gameCtx = new RlGameContext(new TiledRlStage(tiled), new RotEntityList());
+            this.gameState = new RlGameState(this.gameCtx.evHub, this.gameCtx.entities as ActorScheduler);
         }
 
-        (TiledRlStage, TiledMap, TiledMapComponent) makeStage(string stagePath) {
-            var tiled = scene.content.Load<TiledMap>(stagePath);
+        // Note that when changing tiled, all objects referencing this.posUtils must be changed
+        void loadTiledMap(string path) {
+            this.tiled = scene.content.Load<TiledMap>(path); {
+                var tiledComp = this.scene
+                    .createEntity("tiled")
+                    .addComponent(new TiledMapComponent(tiled));
+                tiledComp.setLayerDepth(ZOrders.Stage)
+                    .setRenderLayer(Layers.Stage);
 
-            var tiledComp = scene.createEntity("tiled").addComponent(new TiledMapComponent(tiled));
-            tiledComp.setLayerDepth(ZOrders.Stage).setRenderLayer(Layers.Stage);
-
-            return (new TiledRlStage(tiled), tiled, tiledComp);
-        }
-
-        void makeEntities(IList<Entity> entities, RlStage stage, TiledMapComponent tiledComp) {
-            var tiled = tiledComp.tiledMap;
-            EntityBarStyleDef.init(scene);
-            for (int i = 0; i < 5; i++) {
-                var e = scene.createEntity($"actor_{i}");
-
-                e.add(new Actor(null));
-
-                var pos = new Vec2(5 + i, 5 + i);
-                var body = e.add(new Body(pos, dir : EDir.random(), isBlocker : true));
-                string imgPath = "";
-                if (i == 0) {
-                    e.get<Actor>().setBehavior(new Engine.Beh.Player(e));
-                    imgPath = Content.Charachips.Patched.gremlin_blue;
-                } else {
-                    e.get<Actor>().setBehavior(new Engine.Beh.RandomWalk(e));
-                    imgPath = Content.Charachips.Patched.gremlin_black;
-                }
-
-                var chip = CharachipFactory.wodi8(imgPath);
-                var image = CharaChip.fromSprite(e, this.ctrl.ctx.posUtil, chip);
-                image.setDir(body.facing).setToGridPos(body.pos);
-
-                e.add(new Performance(50, 10, 5));
-                e.add(new HpBar(this.ctrl.ctx.posUtil, EntityBarStyleDef.hp()));
-
-                entities.Add(e);
+                var topLeft = new Vector2(tiled.tileWidth, tiled.tileWidth);
+                var bottomRight = new Vector2(tiled.tileWidth * (tiled.width - 1), tiled.tileWidth * (tiled.height - 1));
+                tiledComp.entity.add(new CameraBounds(topLeft, bottomRight));
             }
-
-            var pl = entities[0];
-            pl.get<Actor>().setBehavior(new Engine.Beh.Player(pl));
-
-            var topLeft = new Vector2(tiled.tileWidth, tiled.tileWidth);
-            var bottomRight = new Vector2(tiled.tileWidth * (tiled.width - 1), tiled.tileWidth * (tiled.height - 1));
-            tiledComp.entity.add(new CameraBounds(topLeft, bottomRight));
-
-            scene.camera.entity.add(new FollowCamera(pl));
+            this.posUtil = new PosUtil(tiled, scene.camera);
         }
 
-        void makeControls(ControlContext cc, RlViewPlatform view) {
-            var cradle = cc.cradle;
-            cradle.addAndPush(new TickControl(this.gameState, this.gameCtx, view));
+        /// <summary> Creates controls and attaches them to given Cradle </summmary>
+        static void makeControls(Cradle cradle, RlGameState gameState, RlGameContext gameCtx, RlViewPlatform view) {
+            cradle.addAndPush(new TickControl(gameState, gameCtx, view));
             cradle.add(new AnimationControl());
-            cradle.add(new PlayerControl(this.gameCtx));
+            cradle.add(new PlayerControl(gameCtx));
         }
         #endregion
 
-        void storeSystems(RlSystemStorage systems) {
+        #region Mods
+        void storeSystems(DungeonComp dungeonComp, RlSystemStorage systems, ControlContext ctrlCtx) {
+            // action systems
+            systems.add(new Sys.PrimSystems());
             systems.add(new Sys.BodySystems());
             systems.add(new Sys.HitSystem());
-            systems.add(new ControlEntitySystem(this.ctrl.ctx));
+
+            // reactive systems
+            systems.add(new Sys.OnWalkSystem());
+            systems.add(new Game.StairSystem(dungeonComp));
+
+            // input systems
+            systems.add(new ControlEntitySystem(ctrlCtx));
         }
 
-        void storeViews(RlViewStorage views) {
+        static void storeViews(RlViewStorage views) {
+            // action views
             views.add(new View.BodyRlView());
             views.add(new View.HitRlView());
         }
+        #endregion
     }
 
 }

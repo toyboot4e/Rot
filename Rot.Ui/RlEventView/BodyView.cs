@@ -13,10 +13,10 @@ namespace Rot.Ui.View {
 
         public override Animation visualize(RlEvent ev) {
             switch (ev) {
-                case RlEv.PosChanges posChange:
+                case RlEv.PosChange posChange:
                     return this.onPosChange(posChange);
 
-                case RlEv.DirChanges dirChange:
+                case RlEv.DirChange dirChange:
                     return this.onDirChange(dirChange);
 
                 default:
@@ -24,7 +24,7 @@ namespace Rot.Ui.View {
             }
         }
 
-        Animation onPosChange(RlEv.PosChanges posChange) {
+        Animation onPosChange(RlEv.PosChange posChange) {
             switch (posChange.cause.e) {
                 case RlEv.Walk walk:
                     var body = walk.entity.get<Body>();
@@ -39,7 +39,7 @@ namespace Rot.Ui.View {
             }
         }
 
-        Animation onDirChange(RlEv.DirChanges dirChange) {
+        Animation onDirChange(RlEv.DirChange dirChange) {
             switch (dirChange.cause.e) {
                 case RlEv.Face face:
                     var tween = _s.viewUtil.turn(face.entity, face.dir);

@@ -29,10 +29,10 @@ namespace Rot.Ui {
         public VInput input;
         public RlEventViewUtils viewUtil;
 
-        public RlViewServices(RlGameContext gameCtx, ControlContext ctrlCtx) {
+        public RlViewServices(RlGameContext gameCtx, ControlContext ctrlCtx, PosUtil posUtil) {
             this.gameCtx = gameCtx;
             this.cradle = ctrlCtx.cradle;
-            this.posUtil = ctrlCtx.posUtil;
+            this.posUtil = posUtil;
             this.input = ctrlCtx.input;
             this.viewUtil = new RlEventViewUtils(this.posUtil, this.input);
         }
@@ -42,7 +42,7 @@ namespace Rot.Ui {
     public class RlView {
         protected RlViewServices _s;
 
-        public void injectContexts(RlViewServices s) {
+        public void injectServices(RlViewServices s) {
             _s = s;
         }
 
@@ -64,7 +64,7 @@ namespace Rot.Ui {
         }
 
         public void add(RlView view) {
-            view.injectContexts(services);
+            view.injectServices(services);
             this.views.Add(view);
             view.setup();
         }

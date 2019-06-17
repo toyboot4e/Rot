@@ -21,8 +21,6 @@ namespace Rot.Game {
 
         public override void onStart() {
             var rl = this.add(new RlSceneComp());
-            var gen = this.add(new DungeonComp(rl.tiled));
-            gen.generate();
         }
     }
 }

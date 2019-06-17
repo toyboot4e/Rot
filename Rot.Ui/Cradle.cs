@@ -7,17 +7,10 @@ namespace Rot.Ui {
     public struct ControlContext {
         public Cradle cradle;
         public VInput input;
-        public PosUtil posUtil;
 
-        public ControlContext(Cradle cradle, VInput input, PosUtil posUtil) {
+        public ControlContext(Cradle cradle, VInput input) {
             this.cradle = cradle;
             this.input = input;
-            this.posUtil = posUtil;
-        }
-
-        public void update() {
-            this.input.update();
-            this.cradle.update();
         }
     }
 
@@ -67,6 +60,7 @@ namespace Rot.Ui {
                 if (peek == null) {
                     throw new System.Exception("the cradle has no top control");
                 }
+
                 switch (peek.update()) {
                     case ControlResult.SeeYouNextFrame:
                         return;

@@ -32,11 +32,8 @@ namespace Rot.Engine.Sys {
             var nextDir = walk.dir;
             var nextPos = body.pos + nextDir.vec;
 
-            yield return new RlEv.DirChanges(walk.entity, prevDir, nextDir, cause);
-            body.setDir(nextDir);
-
-            yield return new RlEv.PosChanges(walk.entity, prevPos, nextPos, cause);
-            body.setPos(nextPos);
+            yield return new RlEv.DirChange(walk.entity, prevDir, nextDir, cause);
+            yield return new RlEv.PosChange(walk.entity, prevPos, nextPos, cause);
 
             yield break;
         }
@@ -49,7 +46,7 @@ namespace Rot.Engine.Sys {
             var cause = Cause.ev(face);
             var prevDir = body.facing;
             var nextDir = face.dir;
-            yield return new RlEv.DirChanges(face.entity, prevDir, nextDir, cause);
+            yield return new RlEv.DirChange(face.entity, prevDir, nextDir, cause);
 
             body.setDir(face.dir);
 
