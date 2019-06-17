@@ -3,9 +3,9 @@ using Rot.Ui;
 
 namespace Rot.Game {
     // TODO: logger
-    /// <summary> Tick the engine and may dispatches some control to the report </summary>
+    /// <summary> Tick the engine and may dispatche some control to the report after a tick </summary>
     public class TickControl : Ui.Control {
-        // all fileds are references
+        // all fileds are borrows
         RlGameState game;
         RlGameContext gameCtx;
         RlViewPlatform view;

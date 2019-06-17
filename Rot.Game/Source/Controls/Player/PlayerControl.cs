@@ -30,7 +30,7 @@ namespace Rot.Ui {
 
             var ev = this.updateModes(input) ?? this.handleInput(input);
             if (ev != null) {
-                this.controller.decide(ev);
+                this.controller.setAction(ev);
                 this.controller = null;
                 base.ctrlCtx.cradle.pop();
                 return ControlResult.Continue;

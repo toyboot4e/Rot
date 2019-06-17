@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Rot.Engine
-{
+namespace Rot.Engine {
     /// <summary>
     /// An immutable 2D rectangle.
     /// </summary>
-    public struct Rect : IEquatable<Rect>, IEnumerable<Vec2>
-    {
+    public struct Rect : IEquatable<Rect>, IEnumerable<Vec2> {
         private readonly Vec2 mPos;
         private readonly Vec2 mSize;
 
@@ -35,8 +33,7 @@ namespace Rot.Engine
         ///   |             |
         ///   '-------------'
         /// </code></example>
-        public static Rect intersect(Rect a, Rect b)
-        {
+        public static Rect intersect(Rect a, Rect b) {
             int left = Math.Max(a.left, b.left);
             int right = Math.Min(a.right, b.right);
             int top = Math.Max(a.top, b.top);
@@ -48,8 +45,7 @@ namespace Rot.Engine
             return new Rect(left, top, width, height);
         }
 
-        public static Rect centerIn(Rect toCenter, Rect main)
-        {
+        public static Rect centerIn(Rect toCenter, Rect main) {
             Vec2 pos = main.leftUp + ((main.size - toCenter.size) / 2);
 
             return new Rect(pos, toCenter.size);
@@ -75,37 +71,17 @@ namespace Rot.Engine
 
         public Vec2 Center => new Vec2((left + right) / 2, (top + bottom) / 2);
 
-
-        public Rect(Vec2 pos, Vec2 size)
-        {
+        public Rect(Vec2 pos, Vec2 size) {
             mPos = pos;
             mSize = size;
         }
-        public Rect(int x, int y, int width, int height)
-            : this(new Vec2(x, y), new Vec2(width, height))
-        {
-        }
+        public Rect(int x, int y, int width, int height) : this(new Vec2(x, y), new Vec2(width, height)) { }
 
-        public Rect(Vec2 pos, int width, int height)
-            : this(pos, new Vec2(width, height))
-        {
-        }
-        public Rect(int x, int y, Vec2 size)
-            : this(new Vec2(x, y), size)
-        {
-        }
+        public Rect(Vec2 pos, int width, int height) : this(pos, new Vec2(width, height)) { }
+        public Rect(int x, int y, Vec2 size) : this(new Vec2(x, y), size) { }
         // from size
-        public Rect(Vec2 size)
-                    : this(Vec2.zero, size)
-        {
-        }
-        public Rect(int width, int height)
-            : this(Vec2.zero, new Vec2(width, height))
-        {
-        }
-
-
-
+        public Rect(Vec2 size) : this(Vec2.zero, size) { }
+        public Rect(int width, int height) : this(Vec2.zero, new Vec2(width, height)) { }
 
         #region Operators
         public static bool operator ==(Rect r1, Rect r2) => r1.Equals(r2);
@@ -115,51 +91,40 @@ namespace Rot.Engine
         public static Rect operator -(Rect r1, Vec2 v2) => new Rect(r1.leftUp - v2, r1.size);
         #endregion
 
-
-        public override string ToString()
-        {
+        public override string ToString() {
             return String.Format("({0})-({1})", mPos, mSize);
         }
-        public override bool Equals(object obj)
-        {
-            if (obj is Rect) return Equals((Rect)obj);
+        public override bool Equals(object obj) {
+            if (obj is Rect) return Equals((Rect) obj);
 
             return base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return mPos.GetHashCode() + mSize.GetHashCode();
         }
 
-
-        public Rect offset(Vec2 pos, Vec2 size)
-        {
+        public Rect offset(Vec2 pos, Vec2 size) {
             return new Rect(mPos + pos, mSize + size);
         }
-        public Rect offset(int x, int y, int width, int height)
-        {
+        public Rect offset(int x, int y, int width, int height) {
             return offset(new Vec2(x, y), new Vec2(width, height));
         }
 
-        public Rect inflate(int distance)
-        {
+        public Rect inflate(int distance) {
             return new Rect(mPos.offset(-distance, -distance),
-                            mSize.offset(distance * 2, distance * 2));
+                mSize.offset(distance * 2, distance * 2));
         }
 
-        public bool contains(Vec2 pos)
-        {
-            if (pos.x < mPos.x || pos.x >= mPos.x + mSize.x - 1
-             || pos.y < mPos.y || pos.y >= mPos.y + mSize.y - 1)
-            {
+        public bool contains(Vec2 pos) {
+            if (pos.x < mPos.x || pos.x >= mPos.x + mSize.x - 1 ||
+                pos.y < mPos.y || pos.y >= mPos.y + mSize.y - 1) {
                 return false;
             }
             return true;
         }
 
-        public bool contains(Rect rect)
-        {
+        public bool contains(Rect rect) {
             // all sides must be within
             if (rect.left < left) return false;
             if (rect.right > right) return false;
@@ -169,8 +134,7 @@ namespace Rot.Engine
             return true;
         }
 
-        public bool overlaps(Rect rect)
-        {
+        public bool overlaps(Rect rect) {
             // fail if they do not overlap on any axis
             if (left > rect.right) return false;
             if (right < rect.left) return false;
@@ -181,35 +145,27 @@ namespace Rot.Engine
             return true;
         }
 
-        public Rect intersect(Rect rect)
-        {
+        public Rect intersect(Rect rect) {
             return intersect(this, rect);
         }
 
-        public Rect centerIn(Rect rect)
-        {
+        public Rect centerIn(Rect rect) {
             return centerIn(this, rect);
         }
 
-        public IEnumerable<Vec2> Trace()
-        {
-            if ((width > 1) && (height > 1))
-            {
+        public IEnumerable<Vec2> Trace() {
+            if ((width > 1) && (height > 1)) {
                 // trace all four sides
-                foreach (Vec2 thisTop in row(leftUp, width - 1)) yield return thisTop;
-                foreach (Vec2 thisRight in col(rightUp.offsetX(-1), height - 1)) yield return thisRight;
-                foreach (Vec2 thisBottom in row(width - 1)) yield return rightDown.offset(-1, -1) - thisBottom;
-                foreach (Vec2 thisLeft in col(height - 1)) yield return leftDown.offsetY(-1) - thisLeft;
-            }
-            else if ((width > 1) && (height == 1))
-            {
+                foreach(Vec2 thisTop in row(leftUp, width - 1)) yield return thisTop;
+                foreach(Vec2 thisRight in col(rightUp.offsetX(-1), height - 1)) yield return thisRight;
+                foreach(Vec2 thisBottom in row(width - 1)) yield return rightDown.offset(-1, -1) - thisBottom;
+                foreach(Vec2 thisLeft in col(height - 1)) yield return leftDown.offsetY(-1) - thisLeft;
+            } else if ((width > 1) && (height == 1)) {
                 // a single row
-                foreach (Vec2 thisPos in row(leftUp, width)) yield return thisPos;
-            }
-            else if ((height >= 1) && (width == 1))
-            {
+                foreach(Vec2 thisPos in row(leftUp, width)) yield return thisPos;
+            } else if ((height >= 1) && (width == 1)) {
                 // a single column, or one unit
-                foreach (Vec2 thisPos in col(leftUp, height)) yield return thisPos;
+                foreach(Vec2 thisPos in col(leftUp, height)) yield return thisPos;
             }
 
             // otherwise, the rect doesn't have a positive size, so there's nothing to trace
@@ -217,8 +173,7 @@ namespace Rot.Engine
 
         #region IEquatable<Rect> Members
 
-        public bool Equals(Rect other)
-        {
+        public bool Equals(Rect other) {
             return mPos.Equals(other.mPos) && mSize.Equals(other.mSize);
         }
 
@@ -226,15 +181,12 @@ namespace Rot.Engine
 
         #region IEnumerable<Vec2> Members
 
-        public IEnumerator<Vec2> GetEnumerator()
-        {
+        public IEnumerator<Vec2> GetEnumerator() {
             if (mSize.x < 0) throw new ArgumentOutOfRangeException("Cannot enumerate a Rectangle with a negative width.");
             if (mSize.y < 0) throw new ArgumentOutOfRangeException("Cannot enumerate a Rectangle with a negative height.");
 
-            for (int y = mPos.y; y < mPos.y + mSize.y; y++)
-            {
-                for (int x = mPos.x; x < mPos.x + mSize.x; x++)
-                {
+            for (int y = mPos.y; y < mPos.y + mSize.y; y++) {
+                for (int x = mPos.x; x < mPos.x + mSize.x; x++) {
                     yield return new Vec2(x, y);
                 }
             }
@@ -244,8 +196,7 @@ namespace Rot.Engine
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 

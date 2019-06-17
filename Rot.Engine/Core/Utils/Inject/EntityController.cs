@@ -11,7 +11,7 @@ namespace Rot.Engine {
             (this.actor, this.action) = (entity, null);
         }
 
-        public void decide(RlEvent action) {
+        public void setAction(RlEvent action) {
             this.action = action;
         }
 

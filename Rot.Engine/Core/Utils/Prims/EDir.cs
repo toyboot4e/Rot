@@ -10,7 +10,7 @@ using Rot.Engine;
 
 namespace Rot.Engine {
     /// <summary>
-    /// One of the eight directions: almost an enum. Can be None.
+    /// One of the eight directions: almost an enum. Can be Ground.
     /// </summary>
     [Nez.CustomInspector(typeof(EDirInspector))]
     public struct EDir : IEquatable<EDir> {

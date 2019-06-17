@@ -1,9 +1,9 @@
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Message to be handled by a system </summary>
+    /// <summary> Message handled by systems </summary>
     public abstract class RlEvent {
-        /// <summary> Hanlding result, mainlg for RlEv.ContorlEntity </summary>
+        /// <summary> Hack to return handling result </summary>
         public bool consumesTurn = true;
     }
 }

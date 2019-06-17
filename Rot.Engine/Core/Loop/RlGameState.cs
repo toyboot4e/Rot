@@ -8,7 +8,7 @@ namespace Rot.Engine {
         // RlEvent alternate();
     }
 
-    /// <summary> Injected to the `RlGame` </summary>
+    /// <summary> Injected to the `RlGameState` </summary>
     public interface ActorScheduler {
         IActor next();
         /// <summary> Deletes dead actor </summary>
@@ -53,7 +53,7 @@ namespace Rot.Engine {
         IEnumerable<RlTickReport> processEvent(RlEventHub evHub, RlEvent ev) {
             yield return RlTickReport.ev(ev);
             foreach(var evNested in evHub.handleAny(ev)) {
-                // nesting
+                // nesting events
                 foreach(var report in this.processEvent(evHub, evNested)) {
                     yield return report;
                 }

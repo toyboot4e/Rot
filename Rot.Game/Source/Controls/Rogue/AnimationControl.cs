@@ -6,7 +6,9 @@ using Anim = Rot.Ui.Anim;
 namespace Rot.Game {
     /// <summary> Wrapper around an animation. Stops the <c>Engine</c> until it's finished </summary>
     public class AnimationControl : Control {
+        /// <summary> The animation to be played </summary>
         Animation anim;
+        /// <summary> Animations to be played at the same time with others e.g. walk animation </summary>
         Anim.Combined combined;
 
         public AnimationControl() {

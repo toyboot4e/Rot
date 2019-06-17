@@ -4,6 +4,7 @@ using Rot.Ui;
 namespace Rot.Game {
     /// <summary> Updates cradle and VInput </summary>
     public class ControlSceneComponent : Nez.SceneComponent {
+        // borrows
         public ControlContext ctx { get; private set; }
 
         public ControlSceneComponent(ControlContext ctrlCtx) {
