@@ -24,14 +24,19 @@ namespace Rot.Engine {
             Actor actor = null;
             while (true) {
                 actor = base[this.index].get<Actor>();
+
                 this.incIndex();
-                if (actor != null) {
-                    return actor;
-                }
                 if (this.index == prevIndex) {
                     Debug.log("NO ENTIY HAS ACTOR COMPONENT");
                     return null;
                 }
+
+                if (actor == null) {
+                    continue;
+                }
+
+                // we assume that the entity is not died
+                return actor;
             }
         }
 
@@ -41,14 +46,14 @@ namespace Rot.Engine {
                 var entity = this[i];
                 if (entity.get<Actor>()?.isDead ?? false) {
                     // TODO: lazy deleting
-                    this.onDelete(entity);
+                    this.delete(entity);
                     entity.destroy();
                     i--;
                 }
             }
         }
 
-        void onDelete(Entity entity) {
+        public void delete(Entity entity) {
             var index = this.IndexOf(entity);
             this.RemoveAt(index);
             if (this.index > index) {

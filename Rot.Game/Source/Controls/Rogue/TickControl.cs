@@ -21,7 +21,7 @@ namespace Rot.Game {
 
             switch (report) {
                 case RlTickReport.Ev evReport:
-                    Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
+                    // Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
                     var anim = this.view.visualize(evReport.ev);
                     if (anim == null) {
                         return ControlResult.Continue;

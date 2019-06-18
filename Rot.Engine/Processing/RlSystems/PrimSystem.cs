@@ -3,6 +3,8 @@ using Nez;
 using Rot.Engine.RlEv;
 
 namespace Rot.Engine.Sys {
+    // NOTE: death event handling is delegated // (or: replace IList<Entity>
+    // to IRlEntityList from RlGameContext and handle death event here)
     public class PrimSystems : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;

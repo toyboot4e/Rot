@@ -34,8 +34,6 @@ namespace Rot.Engine {
 
         IEnumerable<RlTickReport> create(ActorScheduler scheduler, RlEventHub evHub) {
             while (true) {
-                scheduler.updateList();
-
                 var actor = scheduler.next();
                 if (actor == null) {
                     yield return RlTickReport.error("Given null as an actor in the RlGameState.");
@@ -43,7 +41,9 @@ namespace Rot.Engine {
                 }
 
                 foreach(var ev in actor.takeTurn()) {
+                    if (ev == null) continue;
                     foreach(var report in this.processEvent(evHub, ev)) {
+                        if (report == null) continue;
                         yield return report;
                     }
                 }
@@ -55,6 +55,7 @@ namespace Rot.Engine {
             foreach(var evNested in evHub.handleAny(ev)) {
                 // nesting events
                 foreach(var report in this.processEvent(evHub, evNested)) {
+                    if (report == null) continue;
                     yield return report;
                 }
             }
