@@ -66,6 +66,13 @@ namespace Rot.Engine {
         }
     }
 
+    public static class IListExt {
+        public static bool removeFirst<T>(this IList<T> self, System.Func<T, bool> f) {
+            var item = self.FirstOrDefault(f);
+            return item != null ? self.Remove(item) : false;
+        }
+    }
+
     public static class IEnumerableExt {
         public static void forEach<T>(
             this IEnumerable<T> self,

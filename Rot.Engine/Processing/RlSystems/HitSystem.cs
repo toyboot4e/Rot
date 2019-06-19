@@ -7,14 +7,12 @@ namespace Rot.Engine.Sys {
     public class HitSystem : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;
-            hub.subscribe<RlEv.GiveDamage>(0f, this.handle);
             hub.subscribe<RlEv.Hit>(0f, this.handle);
             hub.subscribe<RlEv.MeleeAttack>(0f, this.handle);
         }
 
         public override void onDelete() {
             var hub = base.gameCtx.evHub;
-            hub.unsubscribe<RlEv.GiveDamage>(this.handle);
             hub.unsubscribe<RlEv.Hit>(this.handle);
             hub.unsubscribe<RlEv.MeleeAttack>(this.handle);
         }
@@ -35,7 +33,8 @@ namespace Rot.Engine.Sys {
 
             // we assume the range is only the from cell
             var targets = base.gameCtx.entitiesAt(pos + dir.vec);
-            foreach(var target in targets.Where(t => t.has<Performance>())) {
+            // FIXME: first hit all the entities then do let systems react to those hit events.
+            foreach(var target in targets.Where(e => e.has<Performance>()).ToList()) {
                 int hitProbability = 90;
                 bool hit = hitProbability - Random.nextInt(100) > 0;
                 if (hit) {
@@ -54,17 +53,6 @@ namespace Rot.Engine.Sys {
             int damage = atk.amount - hitEntityStats.def;
 
             yield return new RlEv.GiveDamage(hit.hitEntity, damage, cause);
-        }
-
-        public IEnumerable<RlEvent> handle(RlEv.GiveDamage hit) {
-            var stats = hit.entity.get<Performance>();
-            var hp = stats.hp;
-            var rest = hp.val - hit.amount;
-            hp.setCurrent(rest);
-            if (hp.val <= 0) {
-                yield return new RlEv.Death(hit.entity, hit.cause);
-            }
-            yield break;
         }
     }
 }

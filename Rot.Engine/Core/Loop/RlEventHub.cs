@@ -7,24 +7,23 @@ using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 // using Handlers = System.Collections.Generic.List<System.Func<Rot.Engine.RlEvent, System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>>>;
 
 namespace Rot.Engine {
-    /// <summary> Where to subscribing specific <c>RlEvent</c>s </summary>
+    /// <summary> <c>RlEvent</c> mediator </summary>
     public class RlEventHub {
-        Dictionary<Type, IRlEvHandlerBand> handlers;
+        /// <summary> Maps specific <c>RlEvent</c>s to corresponding handlers band </summary>
+        Dictionary<Type, IRlEvHandlerBand> bands;
 
         public RlEventHub() {
-            this.handlers = new Dictionary<Type, IRlEvHandlerBand>();
+            this.bands = new Dictionary<Type, IRlEvHandlerBand>();
         }
 
         public IEnumerable<RlEvent> handleAny(RlEvent e) {
-            IRlEvHandlerBand handlers;
-            if (e == null || !this.handlers.TryGetValue(e.GetType(), out handlers)) {
+            IRlEvHandlerBand band;
+            if (e == null || !this.bands.TryGetValue(e.GetType(), out band)) {
                 yield break;
             }
 
-            foreach(var f in handlers.inOrderAbstract()) {
-                foreach(var ev in f.Invoke(e)) {
-                    yield return ev;
-                }
+            foreach(var ev in band.handleAbs(e)) {
+                yield return ev;
             }
         }
 
@@ -34,46 +33,44 @@ namespace Rot.Engine {
                 yield break;
             }
 
-            foreach(var f in band.inOrder()) {
-                foreach(var ev in f.Invoke(e)) {
-                    yield return ev;
-                }
+            foreach(var ev in band.handleConc(e)) {
+                yield return ev;
             }
         }
 
         public RlEvHandlerBand<T> band<T>() where T : RlEvent {
-            IRlEvHandlerBand handlers;
-            if (!this.handlers.TryGetValue(typeof(T), out handlers)) {
+            IRlEvHandlerBand band;
+            if (!this.bands.TryGetValue(typeof(T), out band)) {
                 return null;
             }
-            return handlers as RlEvHandlerBand<T>;
+            return band as RlEvHandlerBand<T>;
         }
 
+        /// <summary> Always use concrete event types </summary>
         public RlEventHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
             var band = this.band<T>();
             if (band == null) {
                 band = new RlEvHandlerBand<T>();
-                this.handlers.Add(typeof(T), band);
+                this.bands.Add(typeof(T), band);
             }
             band.add(new RlEvHandler<T>(precedence, f));
             return this;
         }
 
+        /// <summary> Always use concrete event types </summary>
         public bool unsubscribe<T>(Func<T, Evs> f) where T : RlEvent {
-            var band = this.band<T>();
-            if (band == null) {
-                return false;
-            }
-            return band.remove(f);
+            return this.band<T>()?.remove(f) ?? false;
         }
     }
 
+    /// <summary> Handlers of a specific <c>RlEvent</c> </summary>
     internal interface IRlEvHandlerBand {
-        IEnumerable<RlEvent> handle(RlEvent ev);
-        IEnumerable<Func<RlEvent, Evs>> inOrderAbstract();
+        IEnumerable<RlEvent> handleAbs(RlEvent ev);
+        IEnumerable<Func<RlEvent, Evs>> absHandlersInOrder();
         // RlEvHandlerBand<T> downcast<T>() where T : RlEvent;
     }
 
+    /// <summary> Handlers of a specific <c>RlEvent</c> </summary>
     public class RlEvHandlerBand<T> : IRlEvHandlerBand where T : RlEvent {
         public List<RlEvHandler<T>> handlers;
 
@@ -81,42 +78,37 @@ namespace Rot.Engine {
             this.handlers = new List<RlEvHandler<T>>();
         }
 
-        public IEnumerable<Func<T, Evs>> inOrder() {
-            foreach(var handler in this.handlers) {
-                yield return handler.f;
-            }
-        }
+        IEnumerable<RlEvent> IRlEvHandlerBand.handleAbs(RlEvent ev) => this.handleConc(ev as T);
 
-        public IEnumerable<Func<RlEvent, Evs>> inOrderAbstract() {
-            foreach(var f in this.inOrder()) {
-                yield return ev => f.Invoke(ev as T);
-            }
-        }
-
-        public bool remove(Func<T, Evs> f) {
-            var handler = this.handlers.FirstOrDefault(hnd => hnd.f == f);
-            if (handler == null) {
-                return false;
-            } else {
-                this.handlers.Remove(handler);
-                return true;
-            }
-        }
-
-        public RlEvHandlerBand<T> add(RlEvHandler<T> handler) {
-            this.handlers.Add(handler);
-            this.handlers.Sort((a, b) => a.precedence.CompareTo(b.precedence));
-            return this;
-        }
-
-        IEnumerable<RlEvent> IRlEvHandlerBand.handle(RlEvent ev) => this.handle(ev as T);
-
-        public IEnumerable<RlEvent> handle(T ev) {
+        public IEnumerable<RlEvent> handleConc(T ev) {
             foreach(var handler in this.handlers) {
                 foreach(var e in handler.f.Invoke(ev)) {
                     yield return e;
                 }
             }
+        }
+
+        public IEnumerable<Func<RlEvent, Evs>> absHandlersInOrder() {
+            foreach(var f in this.concHandlersInOrder()) {
+                yield return ev => f.Invoke(ev as T);
+            }
+        }
+
+        public IEnumerable<Func<T, Evs>> concHandlersInOrder() {
+            foreach(var handler in this.handlers) {
+                yield return handler.f;
+            }
+        }
+
+        public RlEvHandlerBand<T> add(RlEvHandler<T> handler) {
+            this.handlers.Add(handler);
+            // sort in descending order
+            this.handlers.Sort((a, b) => b.precedence.CompareTo(a.precedence));
+            return this;
+        }
+
+        public bool remove(Func<T, Evs> f) {
+            return this.handlers.removeFirst(hnd => hnd.f == f);
         }
     }
 

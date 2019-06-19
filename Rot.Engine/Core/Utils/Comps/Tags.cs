@@ -1,4 +1,6 @@
 namespace Rot.Engine {
+    public class Dead : Nez.Component { }
+
     public class Player : Nez.Component { }
 
     public class Stair : Nez.Component {

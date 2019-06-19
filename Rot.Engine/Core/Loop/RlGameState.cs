@@ -3,16 +3,12 @@ using System.Linq;
 
 namespace Rot.Engine {
     public interface IActor {
-        bool isDead { get; }
         IEnumerable<RlEvent> takeTurn();
-        // RlEvent alternate();
     }
 
     /// <summary> Injected to the `RlGameState` </summary>
     public interface ActorScheduler {
         IActor next();
-        /// <summary> Deletes dead actor </summary>
-        void updateList();
     }
 
     /// <summary> The tickable game state / wrapper around an <c>ActorScheduler</c> </summary>

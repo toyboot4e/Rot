@@ -40,19 +40,6 @@ namespace Rot.Engine {
             }
         }
 
-        void ActorScheduler.updateList() {
-            // Note that we mustn't modify list while iterating via IEnumerator
-            for (int i = 0; i < this.Count; i++) {
-                var entity = this[i];
-                if (entity.get<Actor>()?.isDead ?? false) {
-                    // TODO: lazy deleting
-                    this.delete(entity);
-                    entity.destroy();
-                    i--;
-                }
-            }
-        }
-
         public void delete(Entity entity) {
             var index = this.IndexOf(entity);
             this.RemoveAt(index);

@@ -89,8 +89,11 @@ namespace Rot.Game {
 
         #region Mods
         void storeSystems(DungeonComp dungeonComp, RlSystemStorage systems, ControlContext ctrlCtx) {
-            // action systems
+            // primitive systems
             systems.add(new Sys.PrimSystems());
+            systems.add(new Rot.Game.GrimSystem());
+
+            // action systems
             systems.add(new Sys.BodySystems());
             systems.add(new Sys.HitSystem());
 
