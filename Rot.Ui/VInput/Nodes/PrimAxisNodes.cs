@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Rot.Engine;
 
 namespace Rot.Ui {
-    public abstract class PrimIntAxisNodeComponent : ISingleValueNode<int>, IBufNode {
+    public abstract class PrimIntAxisNodeComponent : iSingleValueNode<int>, iBufNode {
         public abstract bool isPressedRaw { get; }
         public abstract bool isDown { get; }
         public uint buf { get; protected set; }

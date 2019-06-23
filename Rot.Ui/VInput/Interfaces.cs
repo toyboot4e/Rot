@@ -1,39 +1,39 @@
 ﻿namespace Rot.Ui {
-    public interface IPrimNode {
+    public interface iPrimNode {
         bool isDown { get; }
         bool isPressedRaw { get; }
     }
 
-    public interface ISingleValueNode<T> : IPrimNode {
+    public interface iSingleValueNode<T> : iPrimNode {
         T value { get; }
     }
 
-    public interface IBufNode : IPrimNode {
+    public interface iBufNode : iPrimNode {
         uint buf { get; }
         void clearBuf();
         void update();
     }
 
-    public interface IValueBufNode<T> : IBufNode {
+    public interface iValueBufNode<T> : iBufNode {
         T valueDown { get; }
         T valuePressed { get; }
     }
 
     // buttons
-    public interface IButton {
+    public interface iButton {
         bool isDown { get; }
         bool isPressed { get; }
         bool isReleased { get; }
     }
 
-    public interface IBufButton {
+    public interface iBufButton {
         void update();
         uint buf { get; }
         void clearBuf();
         void consumePulseBuffer();
     }
 
-    public interface IValueButton<T> {
+    public interface iValueButton<T> {
         T valueDown { get; }
         T valuePressed { get; }
     }

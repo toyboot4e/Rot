@@ -58,7 +58,7 @@ namespace Rot.Game {
 
             this.loadTiledMap(path);
             this.gameCtx = new RlGameContext(new TiledRlStage(tiled), new RotEntityList());
-            this.gameState = new RlGameState(this.gameCtx.evHub, this.gameCtx.entities as ActorScheduler);
+            this.gameState = new RlGameState(this.gameCtx.evHub, this.gameCtx.entities as iRlActorIterator);
         }
 
         // Note that when changing tiled, all objects referencing this.posUtils must be changed

@@ -26,16 +26,16 @@ namespace Rot.Ui {
         public EDir dirDown => this.btDown?.valueDown ?? default(EDir);
         public EDir dirPressed => this.btPressed?.valueDown ?? default(EDir);
 
-        IValueButton<EDir> btDown {
+        iValueButton<EDir> btDown {
             get {
                 int dBuf = (int) this.axisDir.buf - (int) this.eDir.buf;
-                return dBuf > 0 ? this.axisDir as IValueButton<EDir>
+                return dBuf > 0 ? this.axisDir as iValueButton<EDir>
                     :
-                    dBuf < 0 ? this.eDir as IValueButton<EDir>
+                    dBuf < 0 ? this.eDir as iValueButton<EDir>
                     :
                     null;
             }
         }
-        IValueButton<EDir> btPressed => this.isPressed ? this.btDown : null;
+        iValueButton<EDir> btPressed => this.isPressed ? this.btDown : null;
     }
 }

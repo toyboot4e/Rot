@@ -2,26 +2,26 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Rot.Engine {
-    public interface IBehavior {
+    public interface iBehavior {
         RlEvent make();
     }
 
     /// <summary> Wrapper around IBehavior </sumary>
-    public class Actor : Nez.Component, IActor {
-        public IBehavior behavior { get; private set; }
+    public class RlActor : Nez.Component, iRlActor {
+        public iBehavior behavior { get; private set; }
         public Energy energy { get; private set; }
 
-        public Actor(IBehavior behavior, int speedLevel = 3) {
+        public RlActor(iBehavior behavior, int speedLevel = 3) {
             this.behavior = behavior;
             this.energy = Energy.fromSpeedLevel(3);
         }
 
-        public Actor setBehavior(IBehavior beh) {
+        public RlActor setBehavior(iBehavior beh) {
             this.behavior = beh;
             return this;
         }
 
-        IEnumerable<RlEvent> IActor.takeTurn() {
+        IEnumerable<RlEvent> iRlActor.takeTurn() {
             this.energy.gain();
 
             if (!this.energy.canTakeTurn) {

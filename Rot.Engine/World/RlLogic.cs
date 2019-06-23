@@ -20,6 +20,7 @@ namespace Rot.Engine {
         #endregion
 
         #region Walk
+        // TODO: separate it in a static class
         public bool canWalkIn(Entity e, EDir dir) {
             var stage = this.ctx.stage;
             var body = e.get<Body>();

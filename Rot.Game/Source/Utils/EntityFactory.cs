@@ -30,8 +30,8 @@ namespace Rot.Game {
             return this;
         }
 
-        public EntityFactory actor(IBehavior beh, int speed) {
-            this.entity.add(new Actor(beh, speed));
+        public EntityFactory actor(iBehavior beh, int speed) {
+            this.entity.add(new RlActor(beh, speed));
             return this;
         }
 

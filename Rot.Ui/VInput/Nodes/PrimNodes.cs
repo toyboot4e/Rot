@@ -1,31 +1,30 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Nez;
 
-
 namespace Rot.Ui.PrimNodes {
-    public abstract class PrimNode : IPrimNode {
+    public abstract class PrimNode : iPrimNode {
         public abstract bool isDown { get; }
         public abstract bool isPressedRaw { get; }
     }
     #region Keyboard
     public class KeyboardKey : PrimNode {
         public Keys key;
-        public KeyboardKey( Keys key ) {
+        public KeyboardKey(Keys key) {
             this.key = key;
         }
-        public override bool isDown => Input.isKeyDown( key );
-        public override bool isPressedRaw => Input.isKeyPressed( key );
+        public override bool isDown => Input.isKeyDown(key);
+        public override bool isPressedRaw => Input.isKeyPressed(key);
         //public override bool isReleased => Input.isKeyReleased( key );
     }
     public class KeyboardModifiedKey : PrimNode {
         public Keys key;
         public Keys modifier;
-        public KeyboardModifiedKey( Keys key, Keys modifier ) {
+        public KeyboardModifiedKey(Keys key, Keys modifier) {
             this.key = key;
             this.modifier = modifier;
         }
-        public override bool isDown => Input.isKeyDown( modifier ) && Input.isKeyDown( key );
-        public override bool isPressedRaw => Input.isKeyDown( modifier ) && Input.isKeyPressed( key );
+        public override bool isDown => Input.isKeyDown(modifier) && Input.isKeyDown(key);
+        public override bool isPressedRaw => Input.isKeyDown(modifier) && Input.isKeyPressed(key);
         //public override bool isReleased => Input.isKeyReleased( key );
     }
     #endregion
@@ -34,39 +33,39 @@ namespace Rot.Ui.PrimNodes {
         public int index;
         public Buttons button;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadButton( int index, Buttons button ) {
+        public GamePadButton(int index, Buttons button) {
             this.index = index;
             this.button = button;
         }
-        public override bool isDown => gamePad.isButtonDown( button );
-        public override bool isPressedRaw => gamePad.isButtonPressed( button );
+        public override bool isDown => gamePad.isButtonDown(button);
+        public override bool isPressedRaw => gamePad.isButtonPressed(button);
         //public override bool isReleased => gamePad.isButtonReleased( button ); }
     }
     public class GamePadLeftTrigger : PrimNode {
         public int index;
         public float threshold;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadLeftTrigger( int gamepadIndex, float threshold ) {
+        public GamePadLeftTrigger(int gamepadIndex, float threshold) {
             this.index = gamepadIndex;
             this.threshold = threshold;
         }
-        public override bool isDown => gamePad.isLeftTriggerDown( threshold );
-        public override bool isPressedRaw => gamePad.isLeftTriggerPressed( threshold );
+        public override bool isDown => gamePad.isLeftTriggerDown(threshold);
+        public override bool isPressedRaw => gamePad.isLeftTriggerPressed(threshold);
         //public override bool isReleased => gamePad.isLeftTriggerReleased( threshold );
     }
     public class GamePadRightTrigger : PrimNode {
         public int index;
         public float threshold;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadRightTrigger( int index, float threshold ) {
+        public GamePadRightTrigger(int index, float threshold) {
             this.index = index;
             this.threshold = threshold;
         }
         public override bool isDown {
-            get { return Input.gamePads[index].isRightTriggerDown( threshold ); }
+            get { return Input.gamePads[index].isRightTriggerDown(threshold); }
         }
 
-        public override bool isPressedRaw => gamePad.isRightTriggerPressed( threshold );
+        public override bool isPressedRaw => gamePad.isRightTriggerPressed(threshold);
         //public override bool isReleased => gamePad.isRightTriggerReleased( threshold );
     }
     #endregion
@@ -74,7 +73,7 @@ namespace Rot.Ui.PrimNodes {
     public class GamePadDPadRight : PrimNode {
         public int index;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadDPadRight( int index ) {
+        public GamePadDPadRight(int index) {
             this.index = index;
         }
         public override bool isDown => gamePad.DpadRightDown;
@@ -84,7 +83,7 @@ namespace Rot.Ui.PrimNodes {
     public class GamePadDPadLeft : PrimNode {
         public int index;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadDPadLeft( int index ) {
+        public GamePadDPadLeft(int index) {
             this.index = index;
         }
         public override bool isDown => gamePad.DpadLeftDown;
@@ -94,7 +93,7 @@ namespace Rot.Ui.PrimNodes {
     public class GamePadDPadDown : PrimNode {
         public int index;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadDPadDown( int index ) {
+        public GamePadDPadDown(int index) {
             this.index = index;
         }
         public override bool isDown => gamePad.DpadDownDown;
@@ -104,7 +103,7 @@ namespace Rot.Ui.PrimNodes {
     public class GamePadDPadUp : PrimNode {
         public int index;
         GamePadData gamePad => Input.gamePads[index];
-        public GamePadDPadUp( int index ) {
+        public GamePadDPadUp(int index) {
             this.index = index;
         }
         public override bool isDown => gamePad.DpadUpDown;

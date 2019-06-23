@@ -2,7 +2,7 @@
 using Rot.Engine;
 
 namespace Rot.Ui {
-    public abstract class VBufButtonTemplate : RepeatPulse, IBufButton {
+    public abstract class VBufButtonTemplate : RepeatPulse, iBufButton {
         /// <summary> Update BufNodes and returns (isDown, isPressedRaw). </summary>
         protected abstract(bool, bool) onUpdate();
 
@@ -54,7 +54,7 @@ namespace Rot.Ui {
         }
     }
 
-    public class VEightDirButtonButton : VBufButtonTemplate, IValueButton<EDir> {
+    public class VEightDirButtonButton : VBufButtonTemplate, iValueButton<EDir> {
         BufSelecterNode<ValueBufNode<EDir>> selecterNode = new BufSelecterNode<ValueBufNode<EDir>>();
         public List<ValueBufNode<EDir>> nodes => this.selecterNode.nodes;
         public VEightDirButtonButton() {
@@ -70,7 +70,7 @@ namespace Rot.Ui {
         public EDir valuePressed => this.nodePressed?.value ?? default(EDir);
     }
 
-    public class VIntAxisButton : VBufButtonTemplate, IValueButton<int> {
+    public class VIntAxisButton : VBufButtonTemplate, iValueButton<int> {
         public VIntAxisNode nodes { get; private set; }
         public VIntAxisButton(VIntAxisNode axis = null) {
             this.nodes = axis ?? new VIntAxisNode();
@@ -83,7 +83,7 @@ namespace Rot.Ui {
         public int valuePressed => this.isPressed ? this.valueDown : 0;
     }
 
-    public class VAxisDirButton : VBufButtonTemplate, IValueButton<EDir> {
+    public class VAxisDirButton : VBufButtonTemplate, iValueButton<EDir> {
         public VIntAxisButton xAxis { get; private set; } = new VIntAxisButton();
         public VIntAxisButton yAxis { get; private set; } = new VIntAxisButton();
 

@@ -2,20 +2,20 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Rot.Engine {
-    public interface IActor {
+    public interface iRlActor {
         IEnumerable<RlEvent> takeTurn();
     }
 
     /// <summary> Injected to the `RlGameState` </summary>
-    public interface ActorScheduler {
-        IActor next();
+    public interface iRlActorIterator {
+        iRlActor next();
     }
 
     /// <summary> The tickable game state / wrapper around an <c>ActorScheduler</c> </summary>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
-        public RlGameState(RlEventHub evHub, ActorScheduler scheduler) {
+        public RlGameState(RlEventHub evHub, iRlActorIterator scheduler) {
             Nez.Insist.isNotNull(scheduler, "Given null as a scheduler");
             this.loop = this.create(scheduler, evHub).GetEnumerator();
         }
@@ -28,7 +28,7 @@ namespace Rot.Engine {
             return loop.Current;
         }
 
-        IEnumerable<RlTickReport> create(ActorScheduler scheduler, RlEventHub evHub) {
+        IEnumerable<RlTickReport> create(iRlActorIterator scheduler, RlEventHub evHub) {
             while (true) {
                 var actor = scheduler.next();
                 if (actor == null) {

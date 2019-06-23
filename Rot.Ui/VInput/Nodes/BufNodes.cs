@@ -8,7 +8,7 @@ using Rot.Ui.PrimNodes;
 namespace Rot.Ui {
     // base implementations
     /// <summary> Buffer nodes are to be updated by VButtons. </summary>
-    public abstract class BufNodeTemplate : IBufNode {
+    public abstract class BufNodeTemplate : iBufNode {
         /// <summary> Updates nodes and returns (isDown, isPresedRaw). </summary>
         protected abstract(bool, bool) onUpdate();
 
@@ -31,7 +31,7 @@ namespace Rot.Ui {
     }
 
     public class BufNode : BufNodeTemplate {
-        public List<IPrimNode> nodes { get; private set; } = new List<IPrimNode>();
+        public List<iPrimNode> nodes { get; private set; } = new List<iPrimNode>();
         protected override(bool, bool) onUpdate() {
             if (this.nodes.Any(c => c.isPressedRaw)) {
                 return (true, true);
@@ -97,7 +97,7 @@ namespace Rot.Ui {
         #endregion
     }
 
-    public class ValueBufNode<T> : BufNode, ISingleValueNode<T> {
+    public class ValueBufNode<T> : BufNode, iSingleValueNode<T> {
         public T value { get; private set; }
         public ValueBufNode(T value) {
             this.value = value;
@@ -105,7 +105,7 @@ namespace Rot.Ui {
     }
 
     /// <summary> Selects which BufNode is priority. </summary>
-    public class BufSelecterNode<T> : BufNodeTemplate where T : IBufNode {
+    public class BufSelecterNode<T> : BufNodeTemplate where T : iBufNode {
         public List<T> nodes { get; private set; } = new List<T>();
         protected override(bool, bool) onUpdate() {
             this.nodes.forEach(n => n.update());

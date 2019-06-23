@@ -14,18 +14,18 @@ namespace Rot.Engine {
 
         public class Actor : RlTickReport {
             public Kind kind;
-            public Engine.Actor actor;
+            public Engine.RlActor actor;
 
             public enum Kind {
                 TakeTurn,
                 EndTurn,
             }
 
-            public Actor takeTurn(Engine.Actor actor) => new Actor(Kind.TakeTurn, actor);
-            public Actor endTurn(Engine.Actor actor) => new Actor(Kind.EndTurn, actor);
+            public Actor takeTurn(Engine.RlActor actor) => new Actor(Kind.TakeTurn, actor);
+            public Actor endTurn(Engine.RlActor actor) => new Actor(Kind.EndTurn, actor);
 
             /// <summary> To be created via Kind.into() extension </summary>
-            public Actor(Kind kind, Engine.Actor actor) {
+            public Actor(Kind kind, Engine.RlActor actor) {
                 (this.kind, this.actor) = (kind, actor);
             }
         }

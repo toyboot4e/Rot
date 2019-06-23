@@ -5,7 +5,7 @@ using Nez;
 namespace Rot.Engine {
     /// <summary> Implements <c>ActorScheduler</c>; for ease of prototyping </summary>
     // TODO: separating scheduler
-    public class RotEntityList : List<Entity>, ActorScheduler {
+    public class RotEntityList : List<Entity>, iRlActorIterator {
         int index;
 
         /// <summary> Set it zero to start a new game </summary>
@@ -13,7 +13,7 @@ namespace Rot.Engine {
             this.index = index;
         }
 
-        IActor ActorScheduler.next() {
+        iRlActor iRlActorIterator.next() {
             // should be disable for performance?
             var err = this.ensureIndex();
             if (err != null) {
@@ -23,7 +23,7 @@ namespace Rot.Engine {
 
             int prevIndex = this.index;
             while (true) {
-                var actor = base[this.index].get<Actor>();
+                var actor = base[this.index].get<RlActor>();
 
                 this.incIndex();
                 if (this.index == prevIndex) {

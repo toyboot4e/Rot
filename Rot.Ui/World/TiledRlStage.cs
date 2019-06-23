@@ -5,7 +5,7 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     /// <summary> Tiled implementation of the stage </summary>
-    public class TiledRlStage : Engine.RlStage {
+    public class TiledRlStage : Engine.iRlStage {
         public TiledMap tiled { get; private set; }
 
         public TiledRlStage(TiledMap tiled) {
@@ -19,7 +19,7 @@ namespace Rot.Ui {
     public class TiledRlTiles : RlTiles {
         public Vec2 pos { get; private set; }
         public TiledRlStage stage { get; private set; }
-        RlStage RlTiles.stage => this.stage;
+        iRlStage RlTiles.stage => this.stage;
 
         public TiledRlTiles(Vec2 pos, TiledRlStage stage) {
             (this.pos, this.stage) = (pos, stage);

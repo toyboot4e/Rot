@@ -6,7 +6,7 @@ using Nez;
 namespace Rot.Engine {
     // TODO: refactor RlStage
     /// <summary> Decopules any stage instance from the engine </summary>
-    public interface RlStage {
+    public interface iRlStage {
         Rect bounds { get; }
         RlTiles tilesAt(Vec2 pos);
         // RlCell at(Vec2 pos);
@@ -15,12 +15,12 @@ namespace Rot.Engine {
     /// <summary> Helper <summary>
     public interface RlTiles {
         Vec2 pos { get; }
-        RlStage stage { get; }
+        iRlStage stage { get; }
         bool arePassable();
     }
 
     public static class RlStageExt {
-        public static bool contains(this RlStage self, Vec2 pos) =>
+        public static bool contains(this iRlStage self, Vec2 pos) =>
             self.bounds.contains(pos);
     }
 
