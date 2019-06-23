@@ -2,21 +2,3 @@
 > You cannot compile this repository; it doens't contain image files.
 
 A 2D, GUI, in-development roguelike game made with [Nez](https://github.com/prime31/Nez). The goal is an RPG-like roguelike game with some static contents.
-
-## Architecture
-
-### Engine - View separation
-We split the game into *Engine* and *UI.* Engine is the internal game state, UI is the other (input and view). When we `tick` the game state, it returns `RlTickReport`, with which UI can pull enough context to visualize what happened.
-
-> The terminology is based on [this blog post](https://journal.stuffwithstuff.com/2014/07/15/a-turn-based-game-loop/), but they don't directly apply to our project names. `Rot.Engine` is almost same as the internal game state. But `Rot.Ui` is a view/input component of the `Rot.Game` application, and the app is the UI to the Engine.
-
-### Engine = processor of contents
-We develop the game by adding contents to the engine.
-
-#### Mutation via events
-We mutate the game by pushing `RlEvent` to the engine. `RlEvent` is not only primitive events, such as `GiveDamage`, but also **actions** of entities. This is natural because action events are a kind of mutation; they result in some primitive events, e.g. `MeleeAttack` → `Hit` → `GiveDamage`.
-
-#### Layers of logics
-When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity is able to become "dissy", their walking directions may become random. We need to add that logic to the `Walk` event handling then.
-
-Since we add more extension to the engine later, we don't write an action handling logic at one place. Instead, we collect each logic via `RlEventHub`, and they are dispatched depending on their `precedence`. (That may be like UI event handling).
