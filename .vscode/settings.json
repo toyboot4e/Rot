@@ -6,7 +6,7 @@
     // This just circumvents annoying default behavior with the C# extension...
     // If you really like Code Lens, feel free to change this.
     "csharp.referencesCodeLens.enabled": false,
-	
+
     "files.exclude": {
         "**/.[^v]*": true, // hide any files that start with a '.' but keep the .vscode folder
         ".vs": true, // Visual Studio settings
@@ -33,5 +33,9 @@
         "Nez/DefaultContentSource": true,
         "Nez/Nez.FarseerPhysics": true,
         "Nez/Nez.PipelineImporter": true
+    },
+    "files.watcherExclude": {
+        "**/Content/**": true,
+        "**/CompiledContent/**": true
     }
 }

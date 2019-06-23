@@ -31,7 +31,6 @@ namespace Rot.Game {
                     .get<AnimationControl>()
                     .beginCombinedIfAny();
 
-                // FIXME: turn consuption
                 // Let user decide action of the actor
                 while (!controller.isDecided) {
                     yield return new RlEv.NotYetDecided();

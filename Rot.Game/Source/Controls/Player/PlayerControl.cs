@@ -29,14 +29,14 @@ namespace Rot.Ui {
             var input = base.ctrlCtx.input;
 
             var ev = this.updateModes(input) ?? this.handleInput(input);
-            if (ev != null) {
+            if (ev == null) {
+                return ControlResult.SeeYouNextFrame;
+            } else {
                 this.controller.setAction(ev);
                 this.controller = null;
                 base.ctrlCtx.cradle.pop();
                 return ControlResult.Continue;
             }
-
-            return ControlResult.SeeYouNextFrame;
         }
 
         RlEvent updateModes(VInput input) {
@@ -106,12 +106,10 @@ namespace Rot.Ui {
             return ev;
         }
 
-        /// <summary> Returns the only interactable entity or null </summary>
+        /// <summary> Returns the only adjacent, interactive entity or null </summary>
         Entity findOnlyNeighbor(Entity entity) {
             var body = entity.get<Body>();
             var pos = body.pos;
-            var stage = this.gameCtx.stage;
-            var logic = this.gameCtx.logic;
 
             var es = pos.neighbors
                 .Select(v => this.gameCtx.entitiesAt(v))
@@ -143,7 +141,7 @@ namespace Rot.Ui {
         }
 
         public Switch update(VInput input) {
-            var isDown = input.isKeyDown(this.key);
+            bool isDown = input.isKeyDown(this.key);
 
             if (isDown && this.isOff) {
                 this.isOn = true;

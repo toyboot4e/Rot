@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 using Nez;
 
 namespace Rot.Engine {
@@ -8,6 +10,14 @@ namespace Rot.Engine {
         public void injectContexts(RlGameContext gameCtx) {
             this.gameCtx = gameCtx;
         }
+
+        // protected RlEventHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
+        //     return this.gameCtx.evHub.subscribe(precedence, f);
+        // }
+
+        // public bool unsubscribe<T>(Func<T, Evs> f) where T : RlEvent {
+        //     return this.gameCtx.evHub.unsubscribe(f);
+        // }
 
         public virtual void setup() { }
         public virtual void onDelete() { }

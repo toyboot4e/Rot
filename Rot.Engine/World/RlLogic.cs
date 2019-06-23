@@ -2,7 +2,7 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Handles roguelike rules such as walking </summary>
+    // TODO: overridable queries
     public class RlLogic {
         RlGameContext ctx;
 
@@ -11,6 +11,7 @@ namespace Rot.Engine {
         }
 
         #region Facing
+        // TODO: make it static and separate
         public EDir dirTo(Entity from, Entity to) {
             var posFrom = from.get<Body>().pos;
             var posTo = to.get<Body>().pos;
@@ -19,12 +20,16 @@ namespace Rot.Engine {
         #endregion
 
         #region Walk
-        // TODO: make it overridable
         public bool canWalkIn(Entity e, EDir dir) {
+            var stage = this.ctx.stage;
             var body = e.get<Body>();
             var from = body.pos;
             var to = from + dir.vec;
-            var stage = this.ctx.stage;
+
+            // TODO: not walk if the character is in a blocking cell
+            // if (stage.isBlockedAt(from)) {
+            // return false;
+            // }
 
             if (!stage.contains(to) || this.isBlockedAt(to)) {
                 return false;
@@ -49,6 +54,7 @@ namespace Rot.Engine {
                 this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
 
+        // TODO: add diagonal blocking property to stage tiles
         public bool isDiagonallyPassableAt(Vec2 pos) {
             var stage = this.ctx.stage;
             return stage.tilesAt(pos).arePassable() && !this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);

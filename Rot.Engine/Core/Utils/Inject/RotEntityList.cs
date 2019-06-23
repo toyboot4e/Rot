@@ -8,26 +8,26 @@ namespace Rot.Engine {
     public class RotEntityList : List<Entity>, ActorScheduler {
         int index;
 
+        /// <summary> Set it zero to start a new game </summary>
         public void setIndex(int index) {
             this.index = index;
         }
 
         IActor ActorScheduler.next() {
-            // error check
-            var(is_ok, error) = this.ensureIndex();
-            if (!is_ok) {
-                Nez.Debug.log(error);
+            // should be disable for performance?
+            var err = this.ensureIndex();
+            if (err != null) {
+                Nez.Debug.log(err);
                 return null;
             }
 
             int prevIndex = this.index;
-            Actor actor = null;
             while (true) {
-                actor = base[this.index].get<Actor>();
+                var actor = base[this.index].get<Actor>();
 
                 this.incIndex();
                 if (this.index == prevIndex) {
-                    Debug.log("NO ENTIY HAS ACTOR COMPONENT");
+                    Debug.log("NO ENTITY HAS ACTOR COMPONENT");
                     return null;
                 }
 
@@ -35,27 +35,27 @@ namespace Rot.Engine {
                     continue;
                 }
 
-                // we assume that the entity is not died
+                // we assume that no dead entity is in the list
                 return actor;
             }
         }
 
         public void delete(Entity entity) {
-            var index = this.IndexOf(entity);
+            int index = this.IndexOf(entity);
             this.RemoveAt(index);
             if (this.index > index) {
                 this.decIndex();
             }
         }
 
-        (bool, string) ensureIndex() {
+        string ensureIndex() {
             int len = base.Count;
             if (len == 0) {
-                return (false, "EntityList: length == 0");
-            } else if (this.index >= len) {
-                return (true, "EntityList as ActorScheduler: index out of range");
+                return "ActorScheduler: there's no entity";
+            } else if (this.index >= len || this.index < 0) {
+                return "ActorScheduler: index out of range";
             }
-            return (true, "");
+            return null;
         }
 
         void incIndex() {

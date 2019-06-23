@@ -13,7 +13,7 @@ namespace Rot.Engine {
 
         public Actor(IBehavior behavior, int speedLevel = 3) {
             this.behavior = behavior;
-            this.energy = new Energy(speedLevel);
+            this.energy = Energy.fromSpeedLevel(3);
         }
 
         public Actor setBehavior(IBehavior beh) {
@@ -38,22 +38,27 @@ namespace Rot.Engine {
 
     /// <summary> Basis of the turn system </summary>
     public class Energy : Nez.Component {
-        public int speedLevel { get; private set; }
         public int charge { get; private set; }
+        public int chargePerTurn { get; private set; }
 
-        // maps speedLevel to an actual speed
-        static readonly int[] speedTable = { 0, 100, 200, 300, 400, 500, 600 };
+        // TODO: outsourcing energy points
         static readonly int chargePerAction = 3000;
+        static readonly int[] speedTable = { 0, 100, 200, 300, 400, 500, 600 };
 
         public Energy(int speedLevel) {
+            this.chargePerTurn = speedTable[speedLevel.clamp(0, speedTable.Length - 1)];
+        }
+
+        public static Energy fromSpeedLevel(int speedLevel) {
             if (speedLevel < 0 || speedTable.Length < speedLevel) {
-                Nez.Debug.log("Energy(speedLevel) not in range: {}", speedLevel);
+                Nez.Debug.log("Energy(speedLevel) out of range: {}", speedLevel);
             }
-            this.speedLevel = speedLevel.clamp(0, speedTable.Length - 1);
+            var chargePerAction = speedTable[speedLevel.clamp(0, speedTable.Length - 1)];
+            return new Energy(chargePerAction);
         }
 
         public void gain() {
-            this.charge += speedTable[this.speedLevel];
+            this.charge += this.chargePerTurn;
         }
 
         public IEnumerable<bool> take_turns() {

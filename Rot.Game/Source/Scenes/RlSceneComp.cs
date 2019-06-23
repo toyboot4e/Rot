@@ -26,8 +26,6 @@ namespace Rot.Game {
         public RlViewPlatform view;
 
         public override void onEnabled() {
-            EntityBarStyleDef.init(scene); // FIXME: the hack
-
             this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
             this.scene.add(new ControlSceneComponent(this.ctrlCtx));
 
@@ -91,7 +89,7 @@ namespace Rot.Game {
         void storeSystems(DungeonComp dungeonComp, RlSystemStorage systems, ControlContext ctrlCtx) {
             // primitive systems
             systems.add(new Sys.PrimSystems());
-            systems.add(new Rot.Game.GrimSystem());
+            systems.add(new Rot.Game.GrimReaperSystem());
 
             // action systems
             systems.add(new Sys.BodySystems());

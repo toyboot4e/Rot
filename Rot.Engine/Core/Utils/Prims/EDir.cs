@@ -12,6 +12,7 @@ namespace Rot.Engine {
     /// <summary>
     /// One of the eight directions: almost an enum. Can be Ground.
     /// </summary>
+    // TODO: maybe decouple inspector?
     [Nez.CustomInspector(typeof(EDirInspector))]
     public struct EDir : IEquatable<EDir> {
         private const bool V = false;

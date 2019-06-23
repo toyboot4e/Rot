@@ -27,7 +27,7 @@ namespace Rot.Engine {
             }
         }
 
-        public IEnumerable<RlEvent> handle<T>(T e) where T : RlEvent {
+        public IEnumerable<RlEvent> handleConc<T>(T e) where T : RlEvent {
             var band = this.band<T>();
             if (band == null) {
                 yield break;
@@ -63,7 +63,7 @@ namespace Rot.Engine {
         }
     }
 
-    /// <summary> Handlers of a specific <c>RlEvent</c> </summary>
+    /// <summary> Upcasted handlers of a specific <c>RlEvent</c> </summary>
     internal interface IRlEvHandlerBand {
         IEnumerable<RlEvent> handleAbs(RlEvent ev);
         IEnumerable<Func<RlEvent, Evs>> absHandlersInOrder();

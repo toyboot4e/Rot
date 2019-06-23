@@ -2,8 +2,7 @@ using Nez;
 
 namespace Rot.Engine.Beh {
     public class None : IBehavior {
-        public RlEvent make() => null;
-        public RlEvent alternate() => null;
+        RlEvent IBehavior.make() => null;
     }
 
     /// <summary> Just creates actions decided by UI </summary>

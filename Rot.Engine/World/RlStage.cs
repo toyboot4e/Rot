@@ -4,6 +4,7 @@ using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
+    // TODO: refactor RlStage
     /// <summary> Decopules any stage instance from the engine </summary>
     public interface RlStage {
         Rect bounds { get; }

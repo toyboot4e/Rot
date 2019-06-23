@@ -47,7 +47,7 @@ namespace Rot.Engine {
         }
 
         IEnumerable<RlTickReport> processEvent(RlEventHub evHub, RlEvent ev) {
-            yield return RlTickReport.ev(ev);
+            yield return RlTickReport.event_(ev);
             foreach(var evNested in evHub.handleAny(ev)) {
                 // nesting events
                 foreach(var report in this.processEvent(evHub, evNested)) {
