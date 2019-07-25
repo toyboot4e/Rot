@@ -1,4 +1,6 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
@@ -11,7 +13,9 @@ namespace Rot.Game {
         override protected void Initialize() {
             base.Initialize();
 
-            base.IsFixedTimeStep = true; // 60fps
+            Nez.Console.DebugConsole.consoleKey = Keys.Tab;
+
+            base.IsFixedTimeStep = true;
             this.setFps(60);
 
 #if DEBUG
@@ -27,6 +31,12 @@ namespace Rot.Game {
             Core.registerGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;
 #endif
+        }
+
+        protected override void Update(GameTime time) {
+            // Nez.Analysis.TimeRuler.instance.beginMark("Uodate", Color.Blue);
+            base.Update(time);
+            // Nez.Analysis.TimeRuler.instance.endMark("Uodate");
         }
 
         public void setFps(int fps) {

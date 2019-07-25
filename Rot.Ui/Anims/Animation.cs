@@ -28,6 +28,16 @@ namespace Rot.Ui {
 }
 
 namespace Rot.Ui.Anim {
+    /// <summary> Just an animation state exported </summary>
+    public class State : Animation {
+        public override void play() { }
+        public override bool isFinished => _isFinished;
+        bool _isFinished;
+        public void finish() {
+            _isFinished = true;
+        }
+    }
+
     public class Tween : Animation {
         ITweenable tween;
 
@@ -61,6 +71,7 @@ namespace Rot.Ui.Anim {
         }
     }
 
+    /// <summary> Plays all the animation at once. Finishes when all of them is done. </summary>
     public class Combined : Animation {
         public List<Animation> anims { get; private set; }
 
@@ -139,19 +150,6 @@ namespace Rot.Ui.Anim {
                 this.anims.Add(anim);
             }
             return this;
-        }
-    }
-
-    public abstract class Block : Animation {
-        System.Func<bool> f;
-        public override bool isFinished => this.f?.Invoke() ?? true;
-
-        public Block(System.Func<bool> f) {
-            this.f = f;
-        }
-
-        public override void onClear() {
-            this.f = null;
         }
     }
 }

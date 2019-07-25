@@ -6,12 +6,12 @@ namespace Rot.Engine {
         IEnumerable<RlEvent> takeTurn();
     }
 
-    /// <summary> Injected to the `RlGameState` </summary>
     public interface iRlActorIterator {
         iRlActor next();
     }
 
-    /// <summary> The tickable game state / wrapper around an <c>ActorScheduler</c> </summary>
+    /// <summary> The tickable game state / wrapper around an actor iterator. </summary>
+    /// <remark> You can visualize game progress referring to returned <c>RlTickReport</c>s. </remark>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
@@ -28,6 +28,8 @@ namespace Rot.Engine {
             return loop.Current;
         }
 
+        /// <summary> Creates the internal game state. </summary>
+        /// <remarks> Becomes infinite loop if there's no event. </remarks>
         IEnumerable<RlTickReport> create(iRlActorIterator scheduler, RlEventHub evHub) {
             while (true) {
                 var actor = scheduler.next();
@@ -36,16 +38,15 @@ namespace Rot.Engine {
                     continue;
                 }
 
-                foreach(var ev in actor.takeTurn()) {
-                    if (ev == null) continue;
-                    foreach(var report in this.processEvent(evHub, ev)) {
-                        if (report == null) continue;
+                foreach(var ev in actor.takeTurn().Where(e => e != null)) {
+                    foreach(var report in this.processEvent(evHub, ev).Where(e => e != null)) {
                         yield return report;
                     }
                 }
             }
         }
 
+        /// <summary> The nestable <c>RlEvent</c> handling </summary>
         IEnumerable<RlTickReport> processEvent(RlEventHub evHub, RlEvent ev) {
             yield return RlTickReport.event_(ev);
             foreach(var evNested in evHub.handleAny(ev)) {

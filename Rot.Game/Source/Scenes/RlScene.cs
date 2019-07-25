@@ -1,5 +1,7 @@
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.ImGuiTools;
+using Nez.Textures;
 using Nez.Tiled;
 using Rot.Engine;
 using Rot.Game.Debug;
@@ -9,7 +11,7 @@ namespace Rot.Game {
     public class RlScene : Scene {
         public override void initialize() {
             var policy = Scene.SceneResolutionPolicy.None;
-            setDesignResolution(Screen.width, Screen.height, policy);
+            base.setDesignResolution(Screen.width, Screen.height, policy);
 
             var renderers = new Renderer[] {
                 new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage),

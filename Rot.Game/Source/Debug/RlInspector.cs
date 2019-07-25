@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
@@ -7,7 +8,7 @@ using Rot.Ui;
 
 namespace Rot.Game.Debug {
     /// <summary> Visualizes internal game states via Nez.ImGuiTools </summary>
-    public class RlInspector : Component {
+    public class RlInspector : Component, IUpdatable {
         Cradle cradle;
         VInput input;
 
@@ -19,6 +20,14 @@ namespace Rot.Game.Debug {
         public static RlInspector create(Scene scene, Cradle cradle, VInput input) {
             var self = new RlInspector(cradle, input);
             return scene.createEntity("RlInspector").addComponent(self);
+        }
+
+        void IUpdatable.update() {
+            if (Nez.Input.isKeyDown(Keys.B)) {
+                // Put break point here.
+                // If you use Visual Studio, you can just "Edit and Continue"
+                // (then your code is reloaded at runtime)
+            }
         }
 
         public override void onAddedToEntity() {

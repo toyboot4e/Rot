@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.ImGuiTools;
 using Nez.Tiled;

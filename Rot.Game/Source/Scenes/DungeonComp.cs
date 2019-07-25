@@ -22,6 +22,9 @@ namespace Rot.Game {
             this.genDungeon();
             this.genEnemies();
             (rlCtx.gameCtx.entities as RotEntityList).setIndex(0);
+
+            var objects = this.tiled.getObjectGroup("actors");
+            Nez.Debug.log(objects.ToString(), objects.objects);
         }
 
         public void genDungeon() {
@@ -52,7 +55,7 @@ namespace Rot.Game {
                 entities.Add(enemyGen
                     .body(new Vec2(10 + 1, 5 + i), EDir.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .wodi8Chip(Content.Charachips.Patched.gremlin_black)
+                    .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_black)
                     .performance(50, 10, 5)
                     .entity
                 );
@@ -62,7 +65,7 @@ namespace Rot.Game {
             var stairGen = EntityFactory.begin(scene, "stair", posUtil);
             entities.Add(stairGen
                 .body(new Vec2(5, 5), EDir.random(), false, false)
-                .wodi8Chip(Content.Charachips.Patched.cook_a)
+                .wodi8Chip(Content.Chips.Wodi8.cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );
@@ -76,7 +79,7 @@ namespace Rot.Game {
             entities.Add(playerGen
                 .body(new Vec2(6, 5), EDir.random(), true, false)
                 .actor(new Beh.Player(playerGen.entity), 3)
-                .wodi8Chip(Content.Charachips.Patched.gremlin_blue)
+                .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_blue)
                 .performance(50, 10, 5)
                 .add(new Player())
                 .entity

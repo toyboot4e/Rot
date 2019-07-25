@@ -14,7 +14,7 @@ namespace Rot.Ui {
         }
     }
 
-    /// <summary> A game state to control the game </summary>
+    /// <summary> A game state </summary>
     public abstract class Control {
         /// <summary> Injected when pushed to the Cradle state machine </summary>
         protected ControlContext ctrlCtx;

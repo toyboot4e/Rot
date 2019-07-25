@@ -127,7 +127,7 @@
             "group": "build",
             "command": "msbuild /t:BuildContent",
             "options": {
-                "cwd": "${workspaceFolder}/Rot.Game"
+                "cwd": "${workspaceFolder}/Rot.Data"
             },
             "problemMatcher": "$msCompile"
         },
@@ -138,7 +138,7 @@
             "group": "build",
             "command": "mono /Applications/Pipeline.app/Contents/MonoBundle/MGCB.exe /@:Content.mgcb -r",
             "options": {
-                "cwd": "${workspaceFolder}/Rot.Game/CompiledContent"
+                "cwd": "${workspaceFolder}/Rot.Data/CompiledContent"
             },
             "problemMatcher": "$msCompile"
         },
@@ -147,7 +147,7 @@
             "label": "Open Pipeline Tool",
             "type": "shell",
             "group": "build",
-            "command": "export MONOGAME_PIPELINE_PROJECT=${workspaceFolder}/Rot.Game/CompiledContent/Content.mgcb && /Applications/Pipeline.app/Contents/MacOS/Pipeline",
+            "command": "export MONOGAME_PIPELINE_PROJECT=${workspaceFolder}/Rot.Data/CompiledContent/Content.mgcb && /Applications/Pipeline.app/Contents/MacOS/Pipeline",
             "problemMatcher": "$msCompile"
         },
 		
