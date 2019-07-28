@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Nez;
 using Rot.Engine;
-using RlEv = Rot.Engine.RlEv;
+using RlEv = Rot.RlEv;
 
 namespace Rot.Game {
     /// <summary> Handles <c>Death</c> event </summary>

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nez;
-using Rot.Engine.RlEv;
+using Rot.Engine;
+using RlEv = Rot.RlEv;
 
-namespace Rot.Engine.Sys {
+namespace Rot.Sys {
     public class HitSystem : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;
@@ -26,7 +27,7 @@ namespace Rot.Engine.Sys {
             }
 
             var pos = melee.entity.get<Body>().pos;
-            var cause = Cause.ev(melee);
+            var cause = RlEv.Cause.ev(melee);
 
             var stats = entity.get<Performance>();
             var attack = new Attack(amount: stats.atk);
@@ -46,7 +47,7 @@ namespace Rot.Engine.Sys {
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Hit hit) {
-            var cause = Cause.ev(hit);
+            var cause = RlEv.Cause.ev(hit);
 
             var atk = hit.attack;
             var hitEntityStats = hit.hitEntity.get<Performance>();

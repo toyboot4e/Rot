@@ -1,6 +1,7 @@
 using Nez;
+using Rot.Engine;
 
-namespace Rot.Engine.RlEv {
+namespace Rot.RlEv {
     public class Walk : RlEvent {
         public readonly Entity entity;
         public readonly EDir dir;
@@ -27,5 +28,4 @@ namespace Rot.Engine.RlEv {
             (this.entity, this.dir) = (e, d);
         }
     }
-
 }

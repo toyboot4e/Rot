@@ -7,7 +7,7 @@ namespace Rot.Engine {
     public class RlSystem {
         protected RlGameContext gameCtx;
 
-        public void injectContexts(RlGameContext gameCtx) {
+        public void injectCtx(RlGameContext gameCtx) {
             this.gameCtx = gameCtx;
         }
 
@@ -27,14 +27,22 @@ namespace Rot.Engine {
         List<RlSystem> systems;
         RlGameContext gameCtx;
 
-        public RlSystemStorage(RlGameContext gameCtx) {
+        public RlSystemStorage(RlGameContext ctx) {
             this.systems = new List<RlSystem>();
-            this.gameCtx = gameCtx;
+            this.gameCtx = ctx;
+        }
+
+        public void replCtx(RlGameContext ctx) {
+            this.gameCtx = ctx;
+            for (int i = 0; i > this.systems.Count; i++) {
+                var sys = this.systems[i];
+                sys.injectCtx(ctx);
+            }
         }
 
         public void add(RlSystem sys) {
             if (this.systems.addIfNotPresent(sys)) {
-                sys.injectContexts(this.gameCtx);
+                sys.injectCtx(this.gameCtx);
                 sys.setup();
             }
         }
@@ -43,7 +51,7 @@ namespace Rot.Engine {
             this.add(new T());
         }
 
-        public void remove(RlSystem sys) {
+        public void rm(RlSystem sys) {
             sys.onDelete();
         }
 

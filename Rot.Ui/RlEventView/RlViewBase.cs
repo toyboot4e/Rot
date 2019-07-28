@@ -29,12 +29,17 @@ namespace Rot.Ui {
         public VInput input;
         public RlEventViewUtils viewUtil;
 
-        public RlViewServices(RlGameContext gameCtx, ControlContext ctrlCtx, PosUtil posUtil) {
+        public RlViewServices(ControlContext ctrlCtx, RlGameContext gameCtx, PosUtil posUtil) {
             this.gameCtx = gameCtx;
             this.cradle = ctrlCtx.cradle;
             this.posUtil = posUtil;
             this.input = ctrlCtx.input;
             this.viewUtil = new RlEventViewUtils(this.posUtil, this.input);
+        }
+
+        public void replCtx(RlGameContext gameCtx, PosUtil posUtil) {
+            this.gameCtx = gameCtx;
+            this.posUtil = posUtil;
         }
     }
 
@@ -63,6 +68,10 @@ namespace Rot.Ui {
             this.services = services;
         }
 
+        public void replCtx(RlGameContext gameCtx, PosUtil posUtil) {
+            this.services.replCtx(gameCtx, posUtil);
+        }
+
         public void add(RlView view) {
             view.injectServices(services);
             this.views.Add(view);
@@ -74,7 +83,7 @@ namespace Rot.Ui {
             this.add(new T());
         }
 
-        public void remove(RlView view) {
+        public void rm(RlView view) {
             view.onDelete();
         }
         public IEnumerator<RlView> GetEnumerator() => this.views.GetEnumerator();

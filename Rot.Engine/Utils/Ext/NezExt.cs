@@ -5,14 +5,14 @@ using Rot.Engine;
 
 namespace Rot.Engine {
     public static class VirtualButtonExtention {
-        public static VirtualButton addKeyboardKeys(this VirtualButton self, params Keys[] keys) {
+        public static VirtualButton addKbKeys(this VirtualButton self, params Keys[] keys) {
             foreach(var key in keys) {
                 self.addKeyboardKey(key);
             }
             return self;
         }
 
-        public static VirtualButton addKeyboardKeys(this VirtualButton self, IEnumerable<Keys> keys) {
+        public static VirtualButton addKbKeys(this VirtualButton self, IEnumerable<Keys> keys) {
             foreach(var key in keys) {
                 self.addKeyboardKey(key);
             }
@@ -21,7 +21,7 @@ namespace Rot.Engine {
     }
 
     public static class SceneExt {
-        public static void removeEntity(this Scene self, Entity entity) {
+        public static void rmEntity(this Scene self, Entity entity) {
             self.entities.remove(entity);
         }
 
@@ -47,6 +47,7 @@ namespace Rot.Engine {
             cs.forEach(c => self.addComponent(c));
         }
 
+        public static bool rm<T>(this Entity self) where T : Component => self.removeComponent<T>();
         public static T get<T>(this Entity self) where T : Component => self.getComponent<T>();
         public static List<T> getAll<T>(this Entity self) where T : Component => self.getComponents<T>();
 
@@ -61,7 +62,7 @@ namespace Rot.Engine {
     }
 
     public static class ComponentExt {
-        public static void removeFromEntity(this Component self) {
+        public static void rmFromEntity(this Component self) {
             self.entity?.removeComponent(self);
         }
     }

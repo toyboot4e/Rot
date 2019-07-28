@@ -1,10 +1,31 @@
 using System.Linq;
 using Nez;
 using Rot.Engine;
-using RlEv = Rot.Engine.RlEv;
+using RlEv = Rot.RlEv;
 using Rot.Ui;
 
 namespace Rot.Ui {
+    /// <summary> Basic controller for UI to inject an action to an entity </summary>
+    public class EntityController {
+        public readonly Entity actor;
+        public RlEvent action { get; private set; }
+
+        public EntityController(Entity entity) {
+            Insist.isNotNull(entity);
+            (this.actor, this.action) = (entity, null);
+        }
+
+        public void setAction(RlEvent action) {
+            this.action = action;
+        }
+
+        public void resetAction() {
+            this.action = null;
+        }
+
+        public bool isDecided => this.action != null;
+    }
+
     /// <summary> Determines a player action </summary>
     public class PlayerControl : Control {
         EntityController controller;
