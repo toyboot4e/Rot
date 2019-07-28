@@ -6,7 +6,26 @@ using Nez;
 using Nez.ImGuiTools;
 
 namespace Rot.Game {
-    /// <summary> The game application loop </summary>
+    /// <summary> Everything goes in this scene vin <c>RlSceneComp</c>. </summary>
+    public class RlScene : Scene {
+        public override void initialize() {
+            var policy = Scene.SceneResolutionPolicy.None;
+            base.setDesignResolution(Screen.width, Screen.height, policy);
+
+            base.addRenderer(new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage));
+            base.addRenderer(new ScreenSpaceRenderer(renderOrder: 500, renderLayers: Layers.Screen));
+#if DEBUG
+            base.addRenderer(new ScreenSpaceRenderer(renderOrder: 10000, renderLayers: Layers.DebugScreen));
+#endif
+        }
+
+        public override void onStart() {
+            var rl = this.add(new RlSceneComp());
+        }
+    }
+
+    /// <summary> The game application loop. Creates <c>RlScene</c> </summary>
+    /// <remark> Instantinated from `Program.cs` in Rot.Game. </remark>
     class GameApp : Nez.Core {
         public GameApp() : base() { }
 
@@ -14,7 +33,6 @@ namespace Rot.Game {
             base.Initialize();
 
             Nez.Console.DebugConsole.consoleKey = Keys.Tab;
-
             base.IsFixedTimeStep = true;
             this.setFps(60);
 
@@ -26,6 +44,7 @@ namespace Rot.Game {
             Core.scene = new RlScene();
 
 #if DEBUG
+            // TODO: change font
             var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.registerGlobalManager(imGuiManager);

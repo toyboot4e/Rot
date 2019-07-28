@@ -36,6 +36,7 @@ namespace Rot.Engine {
     }
 
     public static class CollectionExt {
+        /// <summary> Avoids exeption when there's nothing in the stack </summary>
         public static T safePeek<T>(this Stack<T> self) where T : class {
             if (self.Count > 0) {
                 return self.Peek();

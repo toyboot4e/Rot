@@ -3,13 +3,13 @@ using System.Linq;
 using Nez;
 using Rot.Engine;
 
-namespace Rot.Game.Plug.Comp {
+namespace Rot.Game {
     public class Interactable : Nez.Component {
         //
     }
 }
 
-namespace Rot.Game.Plug.RlEv {
+namespace Rot.RlEv {
     // Not handled by Rot.Engine
     public class Interact : RlEvent {
         public readonly Entity entity;
@@ -21,7 +21,7 @@ namespace Rot.Game.Plug.RlEv {
     }
 }
 
-namespace Rot.Game.Plug.Sys {
+namespace Rot.Sys {
     public class InteractSystems : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;

@@ -58,7 +58,8 @@ namespace Rot.Ui {
             while (true) {
                 var peek = this.stack.safePeek();
                 if (peek == null) {
-                    throw new System.Exception("the cradle has no top control");
+                    break;
+                    // throw new System.Exception("The cradle has no top control");
                 }
 
                 switch (peek.update()) {

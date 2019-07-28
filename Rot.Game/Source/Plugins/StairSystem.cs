@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using Nez;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
+using Rot.Game; // DungeonComp
 
-namespace Rot.Game {
+namespace Rot.Sys {
     public class StairSystem : RlSystem {
         DungeonComp gen;
 

@@ -11,7 +11,7 @@ namespace Rot.Engine {
     }
 
     /// <summary> The tickable game state / wrapper around an actor iterator. </summary>
-    /// <remark> You can visualize game progress referring to returned <c>RlTickReport</c>s. </remark>
+    /// <remark> You can visualize the game progress referring to returned <c>RlTickReport</c>s. </remark>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
@@ -21,7 +21,7 @@ namespace Rot.Engine {
         }
 
         public RlTickReport tick() {
-            if (loop.MoveNext() == false) {
+            if (this.loop.MoveNext() == false) {
                 return RlTickReport.error("The game loop is finished!");
             }
 

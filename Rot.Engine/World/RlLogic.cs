@@ -32,7 +32,7 @@ namespace Rot.Engine {
             // return false;
             // }
 
-            if (!stage.contains(to) || this.isBlockedAt(to)) {
+            if (this.isBlockedAt(to)) {
                 return false;
             }
 
@@ -45,13 +45,16 @@ namespace Rot.Engine {
             }
         }
 
+        // TODO: faster collision system
         public bool isPassableAt(Vec2 pos) {
-            return this.ctx.stage.tilesAt(pos).arePassable() &&
-                !this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
+            return this.ctx.stage.contains(pos) &&
+                this.ctx.stage.tilesAt(pos).arePassable() &&
+                this.ctx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
         }
 
         public bool isBlockedAt(Vec2 pos) {
-            return !this.ctx.stage.tilesAt(pos).arePassable() ||
+            return !this.ctx.stage.contains(pos) ||
+                !this.ctx.stage.tilesAt(pos).arePassable() ||
                 this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
 

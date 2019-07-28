@@ -50,7 +50,7 @@ namespace Rot.Ui {
 				var(subtextures, color) = def;
 				var sprite = new NineSliceSprite(subtextures);
 
-				sprite.setRenderLayer(this.renderLayer).setLayerDepth(this.depth(layer));
+				sprite.layer(layer: this.renderLayer, depth: this.depth(layer));
 				sprite.setColor(color);
 				sprite.setSize(this.size);
 				sprite.setLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));

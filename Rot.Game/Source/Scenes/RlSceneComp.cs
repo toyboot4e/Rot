@@ -90,7 +90,7 @@ namespace Rot.Game {
                 this.tiled = base.scene.content.Load<TiledMap>(path); {
                     var tiledComp = tiledEntity
                         .add(new TiledMapComponent(tiled))
-                        .layer(Layers.Stage, ZOrders.Stage);
+                        .layer(layer: Layers.Stage, depth: ZOrders.Stage);
 
                     var topLeft = new Vector2(tiled.tileWidth, tiled.tileWidth);
                     var bottomRight = new Vector2(tiled.tileWidth * (tiled.width - 1), tiled.tileWidth * (tiled.height - 1));
@@ -133,13 +133,13 @@ namespace Rot.Game {
                 .begin(entity, this.posUtil)
                 .body(pos, EDir.S, true, true)
                 .wodi8Chip(Content.Chips.Wodi8.cook_a)
-                .add(new Game.Plug.Comp.Interactable());
+                .add(new Interactable());
             this.gameCtx.entities.Add(entity);
         }
 
         void addDungeon() {
             var gen = base.scene.add(new DungeonComp(this.tiled, this));
-            this.systems.add(new StairSystem(gen));
+            this.systems.add(new Sys.StairSystem(gen));
         }
 
         #region Plugins
