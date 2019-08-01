@@ -53,6 +53,15 @@ namespace Rot.Ui.View {
             return null;
         }
 
+        Animation visualize(RlEv.JustSwing swing) {
+            // TODO: not swing if fail
+            float duration = 2f / 60f;
+            var tweens = _s.viewUtil.swing(swing.entity, swing.dir, duration);
+            tweens[0].setNextTween(tweens[1]);
+            return new Anim.Tween(tweens[0]);
+            // TODO: fix null animation error in AnimationControl
+        }
+
         Animation visualize(RlEv.MeleeAttack melee) {
             // TODO: not swing if fail
             float duration = 2f / 60f;

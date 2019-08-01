@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
+using Rot.Engine;
+using Rot.Ui;
 
 namespace Rot.Game {
     /// <summary> Everything goes in this scene vin <c>RlSceneComp</c>. </summary>

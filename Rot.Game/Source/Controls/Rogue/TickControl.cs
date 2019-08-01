@@ -28,7 +28,7 @@ namespace Rot.Game {
                     } else {
                         var cradle = this.ctrlCtx.cradle;
                         var animCtrl = cradle.get<AnimationControl>();
-                        return animCtrl.beginOrCombine(anim);
+                        return animCtrl.beginOrParallelize(anim);
                     }
 
                 case RlTickReport.Actor actorReport:

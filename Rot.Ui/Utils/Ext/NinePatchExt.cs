@@ -49,24 +49,32 @@ namespace Rot.Ui {
             return self;
         }
 
+        public static NineSliceSprite setSize(this NineSliceSprite self, float w, float h) {
+            self.width = w;
+            self.height = h;
+            return self;
+        }
+
         public static NineSliceSprite setSize(this NineSliceSprite self, Vector2 s) {
             self.width = s.X;
             self.height = s.Y;
             return self;
         }
 
-        public static FnTween<float> tweenWidth(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return new FloatFnTween(e, d).setFuncs(
-                () => self.width,
-                v => self.width = v
-            );
+        public static ITween<float> tweenWidth(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
+            return self.tween("width", to, d);
+            // return new FloatFnTween(e, d).setFuncs(
+            //     () => self.width,
+            //     v => self.width = v
+            // );
         }
 
-        public static FnTween<float> tweenHeight(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return new FloatFnTween(e, d).setFuncs(
-                () => self.height,
-                v => self.height = v
-            );
+        public static ITween<float> tweenHeight(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
+            return self.tween("height", to, d);
+            // return new FloatFnTween(e, d).setFuncs(
+            //     () => self.height,
+            //     v => self.height = v
+            // );
         }
     }
 }

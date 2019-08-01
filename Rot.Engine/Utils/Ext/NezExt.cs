@@ -28,6 +28,10 @@ namespace Rot.Engine {
         public static T add<T>(this Scene self, T comp) where T : SceneComponent {
             return self.addSceneComponent(comp);
         }
+
+        public static T get<T>(this Scene self) where T : SceneComponent {
+            return self.getSceneComponent<T>();
+        }
     }
 
     public static class EntityExt {
@@ -49,6 +53,7 @@ namespace Rot.Engine {
 
         public static bool rm<T>(this Entity self) where T : Component => self.removeComponent<T>();
         public static T get<T>(this Entity self) where T : Component => self.getComponent<T>();
+        public static T getOrAdd<T>(this Entity self) where T : Component, new() => self.getComponent<T>() ?? self.addComponent<T>();
         public static List<T> getAll<T>(this Entity self) where T : Component => self.getComponents<T>();
 
         public static bool has<T>(this Entity self, T c) where T : Component => c.entity == self;

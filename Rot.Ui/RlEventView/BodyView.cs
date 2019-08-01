@@ -31,7 +31,7 @@ namespace Rot.Ui.View {
                     var next = body.pos + walk.dir.vec;
 
                     var tween = _s.viewUtil.walk(this.walkAnimConfig, walk.entity, next);
-                    var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Combined);
+                    var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
                     // TODO: just update the position
@@ -44,7 +44,7 @@ namespace Rot.Ui.View {
                 case RlEv.Face face:
                     var tween = _s.viewUtil.turn(face.entity, face.dir);
                     if (tween != null) {
-                        return new Anim.Tween(tween).setKind(AnimationKind.Combined);
+                        return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                     } else {
                         return null;
                     }

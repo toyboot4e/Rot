@@ -31,6 +31,7 @@ namespace Rot.Engine.Beh {
 }
 
 namespace Rot.Sys {
+    /// <summary> Lets user decide player actions controling the game state </summary>
     public class CtrlEntitySystem : RlSystem {
         ControlContext ctx;
 
@@ -54,7 +55,7 @@ namespace Rot.Sys {
                 // FIXME: hack for stopping
                 cradle
                     .get<AnimationControl>()
-                    .beginCombinedIfAny();
+                    .beginParallelIfAny();
 
                 // Let user decide action of the actor
                 while (!controller.isDecided) {
