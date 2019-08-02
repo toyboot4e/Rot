@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Nez;
 using Rot.Engine;
 using Rot.Ui;
+using Cmd = Rot.Script.Cmd;
 
 namespace Rot.Game {
     /// <summary> Helper for entity generation. Note that it doesn't add the generated entity to any entity list </summary>
@@ -60,6 +62,13 @@ namespace Rot.Game {
         public EntityFactory performance(int hp, int atk, int def) {
             this.entity.add(new Performance(hp, atk, def));
             this.entity.add(new HpBar(this.posUtil, EntityBarStyleDef.hp()));
+            return this;
+        }
+
+        public EntityFactory script(IEnumerable<Cmd.iCmd> script) {
+            this.entity
+                .getOrAdd<Interactable>()
+                .setScript(script);
             return this;
         }
     }
