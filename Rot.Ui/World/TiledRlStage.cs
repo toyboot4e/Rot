@@ -25,6 +25,7 @@ namespace Rot.Ui {
             (this.pos, this.stage) = (pos, stage);
         }
 
-        public bool arePassable() => this.isInsideStage() && this.stage.tiled.isBlocked(pos.x, pos.y);
+        // note: extension methods must be called with `this`
+        public bool arePassable() => this.isInsideStage() && !this.stage.tiled.isBlocked(pos.x, pos.y);
     }
 }

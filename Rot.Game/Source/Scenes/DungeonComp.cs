@@ -21,18 +21,18 @@ namespace Rot.Game {
             this.clearEnemies();
             this.genDungeon();
             this.genEnemies();
+            // FIXME: do not be dependent on RotEntityList or provide safe way
             (rlCtx.gameCtx.entities as RotEntityList).setIndex(0);
-
-            var objects = this.tiled.getObjectGroup("actors");
-            Nez.Debug.log(objects.ToString(), objects.objects);
         }
 
         public void genDungeon() {
             this.gen = new KarceroTiledGenerator();
+            // Karcero's coordinates begins with zero, so we have to consider about it
             this.gen.generate(tiled.width - 1, tiled.height - 1);
             this.gen.copyToTiled(tiled);
         }
 
+        /// <summary> Delete entities without player tag </summary>
         public void clearEnemies() {
             var entities = this.rlCtx.gameCtx.entities;
 
@@ -69,23 +69,6 @@ namespace Rot.Game {
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );
-        }
-
-        public Entity genPlayer() {
-            var posUtil = this.rlCtx.posUtil;
-            var entities = this.rlCtx.gameCtx.entities;
-
-            var playerGen = EntityFactory.begin(scene, "player", posUtil);
-            entities.Add(playerGen
-                .body(new Vec2(6, 5), EDir.random(), true, false)
-                .actor(new Beh.Player(playerGen.entity), 3)
-                .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_blue)
-                .performance(50, 10, 5)
-                .add(new Player())
-                .entity
-            );
-
-            return playerGen.entity;
         }
 
         public override void update() {

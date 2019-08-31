@@ -8,43 +8,23 @@ namespace Rot.Engine {
     public class RotEntityList : List<Entity>, iRlActorIterator {
         int index;
 
-        /// <summary> Set it zero to start a new game </summary>
         public void setIndex(int index) {
             this.index = index;
         }
 
         iRlActor iRlActorIterator.next() {
-            // should be disable for performance?
             var err = this.ensureIndex();
             if (err != null) {
                 Nez.Debug.log(err);
                 return null;
             }
 
-            int prevIndex = this.index;
             while (true) {
-                var actor = base[this.index].get<RlActor>();
-
+                var entity = base[this.index];
+                var actor = entity.get<RlActor>();
                 this.incIndex();
-                if (this.index == prevIndex) {
-                    Debug.log("NO ENTITY HAS ACTOR COMPONENT");
-                    return null;
-                }
-
-                if (actor == null) {
-                    continue;
-                }
-
-                // we assume that no dead entity is in the list
+                if (actor == null) continue;
                 return actor;
-            }
-        }
-
-        public void delete(Entity entity) {
-            int index = this.IndexOf(entity);
-            this.RemoveAt(index);
-            if (this.index > index) {
-                this.decIndex();
             }
         }
 
@@ -56,6 +36,14 @@ namespace Rot.Engine {
                 return "ActorScheduler: index out of range";
             }
             return null;
+        }
+
+        public void delete(Entity entity) {
+            int index = this.IndexOf(entity);
+            this.RemoveAt(index);
+            if (this.index > index) {
+                this.decIndex();
+            }
         }
 
         void incIndex() {

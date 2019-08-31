@@ -1,7 +1,7 @@
 using Nez;
 using Rot.Engine;
 
-namespace Rot.Engine.RlEv {
+namespace Rot.RlEv {
     public class PosChange : RlEvent {
         public readonly Entity entity;
         public readonly Vec2 from;

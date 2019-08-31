@@ -1,15 +1,40 @@
 using System.Collections.Generic;
 using Nez;
 using Rot.Engine;
-using Sys = Rot.Engine.Sys;
+using Rot.Game;
 using Rot.Ui;
-using RlEv = Rot.Engine.RlEv;
 
-namespace Rot.Game {
-    public class ControlEntitySystem : RlSystem {
+namespace Rot.RlEv {
+    public class ControlEntity : RlEvent {
+        public Entity entity;
+        public RlEvent ev;
+
+        public ControlEntity(Entity e) {
+            this.entity = e;
+        }
+    }
+}
+
+namespace Rot.Engine.Beh {
+    /// <summary> Just creates actions decided by UI </summary>
+    public class Player : iBehavior {
+        Entity entity;
+
+        public Player(Entity e) {
+            this.entity = e;
+        }
+
+        RlEvent iBehavior.make() {
+            return new RlEv.ControlEntity(this.entity);
+        }
+    }
+}
+
+namespace Rot.Sys {
+    public class CtrlEntitySystem : RlSystem {
         ControlContext ctx;
 
-        public ControlEntitySystem(ControlContext ctrlCtx) {
+        public CtrlEntitySystem(ControlContext ctrlCtx) {
             this.ctx = ctrlCtx;
         }
 

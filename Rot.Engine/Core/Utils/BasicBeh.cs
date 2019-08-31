@@ -5,19 +5,6 @@ namespace Rot.Engine.Beh {
         RlEvent iBehavior.make() => null;
     }
 
-    /// <summary> Just creates actions decided by UI </summary>
-    public class Player : iBehavior {
-        Entity entity;
-
-        public Player(Entity e) {
-            this.entity = e;
-        }
-
-        RlEvent iBehavior.make() {
-            return new RlEv.ControlEntity(this.entity);
-        }
-    }
-
     /// <summary> Just creates random walk actions </summary>
     public class RandomWalk : iBehavior {
         Entity entity;

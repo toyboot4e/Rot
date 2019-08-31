@@ -1,4 +1,5 @@
 using Nez;
+using Rot.Engine;
 
 namespace Rot.Engine {
     /// <summary> Message handled by systems </summary>
@@ -8,7 +9,7 @@ namespace Rot.Engine {
     }
 }
 
-namespace Rot.Engine.RlEv {
+namespace Rot.RlEv {
     /// <summary> Cause of an RlEvent </summary>
     public class Cause {
         public readonly RlEvent e;

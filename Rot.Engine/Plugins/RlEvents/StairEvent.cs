@@ -1,6 +1,7 @@
 using Nez;
+using Rot.Engine;
 
-namespace Rot.Engine.RlEv {
+namespace Rot.RlEv {
     /// <summary> To be handled outside engine </summary>
     public class Stair : RlEvent {
         public Entity stair;

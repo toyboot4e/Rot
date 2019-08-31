@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net471</TargetFramework>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <AssemblyName>Rot.Script</AssemblyName>
+        <MonoGamePlatform>DesktopGL</MonoGamePlatform>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <!-- Reference FNA, Nez, ImGui and Persistence projects. Optionally add a Farseer reference here and in the .sln file -->
+    <ItemGroup>
+        <ProjectReference Include="../FNA/FNA.csproj" />
+        <ProjectReference Include="../Nez/Nez.Portable/Nez.FNA.csproj" />
+		<ProjectReference Include="../Nez/Nez.Persistence/Nez.FNA.Persistence.csproj" />
+        <ProjectReference Include="../Nez/Nez.ImGui/Nez.FNA.ImGui.csproj" />
+        <ProjectReference Include="../Rot.Engine/Rot.Engine.csproj" />
+        <ProjectReference Include="..\Rot.Ui\Rot.Ui.csproj" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+        <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+    </PropertyGroup>
+</Project>

@@ -26,9 +26,8 @@ namespace Rot.Ui {
             var texture = Nez.Core.scene.content.Load<Texture2D>(path);
             var subs = CharachipFactory.split(texture, 6, 4);
 
-            var chip = new Sprite<EnumDir>();
-            chip.setLayerDepth(ZOrders.Charachip);
-            chip.setRenderLayer(Layers.Stage);
+            var chip = new Sprite<EnumDir>()
+                .layer(layer: Layers.Stage, depth: ZOrders.Charachip);
 
             if (texture.Height / 4 > 32) { // centering the image
                 var originY = texture.Height / 4 - 16;

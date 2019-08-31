@@ -3,6 +3,7 @@ using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Game {
+    /// <summary> Helper for entity generation. Note that it doesn't add the generated entity to any entity list </summary>
     public class EntityFactory {
         public Entity entity;
         PosUtil posUtil;
@@ -18,6 +19,17 @@ namespace Rot.Game {
 
         public static EntityFactory begin(Scene scene, string name, PosUtil posUtil) {
             return EntityFactory.begin(scene.createEntity(name), posUtil);
+        }
+
+        public static EntityFactory genPlayer(Scene scene, PosUtil posUtil) {
+            var self = EntityFactory.begin(scene, "player", posUtil);
+            self
+                .body(new Vec2(7, 7), EDir.random(), true, false)
+                .actor(new Engine.Beh.Player(self.entity), 3)
+                .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_blue)
+                .performance(50, 10, 5)
+                .add(new Player());
+            return self;
         }
 
         public EntityFactory add(Component any) {

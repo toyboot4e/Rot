@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using Nez;
-using Rot.Engine.RlEv;
+using Rot.Engine;
+using RlEv = Rot.RlEv;
 
-namespace Rot.Engine.Sys {
+namespace Rot.Sys {
     public class BodySystems : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;
@@ -26,7 +28,7 @@ namespace Rot.Engine.Sys {
 
             var body = walk.entity.get<Body>();
 
-            var cause = Cause.ev(walk);
+            var cause = RlEv.Cause.ev(walk);
             var prevDir = body.facing;
             var prevPos = body.pos;
             var nextDir = walk.dir;
@@ -43,7 +45,7 @@ namespace Rot.Engine.Sys {
 
             var body = face.entity.get<Body>();
 
-            var cause = Cause.ev(face);
+            var cause = RlEv.Cause.ev(face);
             var prevDir = body.facing;
             var nextDir = face.dir;
             yield return new RlEv.DirChange(face.entity, prevDir, nextDir, cause);

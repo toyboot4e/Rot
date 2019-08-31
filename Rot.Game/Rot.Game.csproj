@@ -19,6 +19,7 @@
         <ProjectReference Include="../Rot.Engine/Rot.Engine.csproj" />
         <ProjectReference Include="../Rot.Ui/Rot.Ui.csproj" />
         <ProjectReference Include="..\Rot.Data\Rot.Data.csproj" />
+        <ProjectReference Include="..\Rot.Script\Rot.Script.csproj" />
 <!-- <ProjectReference Include="../Nez/Nez.FarseerPhysics/Nez.FNA.FarseerPhysics.csproj" /> -->
     </ItemGroup>
 

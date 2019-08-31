@@ -1,0 +1,15 @@
+using Nez;
+using Rot.Engine;
+
+namespace Rot.RlEv {
+    /// <summary> Same as null; indicates that the event is not decided yet by UI </summary>
+    public class NotYetDecided : RlEvent { }
+
+    public class Log : RlEvent {
+        public readonly string message;
+
+        public Log(string message) {
+            this.message = message;
+        }
+    }
+}

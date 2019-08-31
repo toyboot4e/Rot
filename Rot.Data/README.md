@@ -1,2 +1,4 @@
 # Rot.Data
-Provides assets (maybe hot swappable someday). Note that images in this repository are **not comitted** (inspite of their use).
+Provides assets and places paths to them in `Nez.Content`. May be hot swappable someday.
+
+Note that images in this repository are **not comitted** inspite of their use.

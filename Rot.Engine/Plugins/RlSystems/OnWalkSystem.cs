@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Rot.Engine;
+using RlEv = Rot.RlEv;
 
-namespace Rot.Engine.Sys {
+namespace Rot.Sys {
     public class OnWalkSystem : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;

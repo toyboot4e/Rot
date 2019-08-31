@@ -1,6 +1,7 @@
 using Nez;
+using Rot.Engine;
 
-namespace Rot.Engine.RlEv {
+namespace Rot.RlEv {
     public class MeleeAttack : RlEvent {
         public readonly Entity entity;
         public readonly EDir dir;
