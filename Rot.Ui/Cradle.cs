@@ -29,8 +29,11 @@ namespace Rot.Ui {
         protected virtual void onContextInjected() { }
 
         public abstract ControlResult update();
+        /// <summary> Called when pushed to the stack in <c>Cradle<c> </summary>
         public virtual void onPushed() { }
+        /// <summary> Called when poped from the stack in <c>Cradle<c> </summary>
         public virtual void onPoped() { }
+        /// <summary> Called when removed from the <c>Cradle<c> </summary>
         public virtual void onRemoved() { }
     }
 

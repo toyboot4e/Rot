@@ -51,7 +51,7 @@ namespace Rot.Engine {
 
         public static Energy fromSpeedLevel(int speedLevel) {
             if (speedLevel < 0 || speedTable.Length < speedLevel) {
-                Nez.Debug.log("Energy(speedLevel) out of range: {}", speedLevel);
+                Nez.Debug.Log("Energy(speedLevel) out of range: {}", speedLevel);
             }
             var chargePerAction = speedTable[speedLevel.clamp(0, speedTable.Length - 1)];
             return new Energy(chargePerAction);

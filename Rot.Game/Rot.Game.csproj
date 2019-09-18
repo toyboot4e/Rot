@@ -48,7 +48,8 @@
             <Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <!-- cleanup so VS looks clean -->
+
+    <!-- cleanup so VS looks clean -->
         <None Remove="CompiledContent\obj\**" />
         <None Remove="CompiledContent\bin\**" />
         <None Remove="CompiledContent\.*" />

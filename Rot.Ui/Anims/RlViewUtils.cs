@@ -26,7 +26,7 @@ namespace Rot.Ui {
             this.changeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);
-            var tween = new Tw.Walk(entity.transform, config.duration, nextPosWorld);
+            var tween = new Tw.Walk(entity.Transform, config.duration, nextPosWorld);
             return tween;
         }
 

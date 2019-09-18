@@ -13,7 +13,7 @@ namespace Rot.Game {
         public static Dictionary < BarLayer, (NinePatchSubtexture, Color) > hpDict;
 
         public static EntityBarStyle hp() {
-            init(Core.scene);
+            init(Core.Scene);
             var e = new EntityBarStyle();
             e.defs = hpDict;
             return e;

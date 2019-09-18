@@ -37,7 +37,7 @@ namespace Rot.Sys {
             // FIXME: first hit all the entities then do let systems react to those hit events.
             foreach(var target in targets.Where(e => e.has<Performance>()).ToList()) {
                 int hitProbability = 90;
-                bool hit = hitProbability - Random.nextInt(100) > 0;
+                bool hit = hitProbability - Random.NextInt(100) > 0;
                 if (hit) {
                     yield return new RlEv.Hit(target, attack, cause);
                 } else {

@@ -16,8 +16,8 @@ namespace Rot.Engine {
         IEnumerator<RlTickReport> loop;
 
         public RlGameState(RlEventHub evHub, iRlActorIterator scheduler) {
-            Nez.Insist.isNotNull(scheduler, "Given null as a scheduler");
-            this.loop = this.create(scheduler, evHub).GetEnumerator();
+            Nez.Insist.IsNotNull(scheduler, "Given null as a scheduler");
+            this.loop = this.flow(scheduler, evHub).GetEnumerator();
         }
 
         public RlTickReport tick() {
@@ -30,7 +30,7 @@ namespace Rot.Engine {
 
         /// <summary> Creates the internal game state. </summary>
         /// <remarks> Becomes infinite loop if there's no event. </remarks>
-        IEnumerable<RlTickReport> create(iRlActorIterator scheduler, RlEventHub evHub) {
+        IEnumerable<RlTickReport> flow(iRlActorIterator scheduler, RlEventHub evHub) {
             while (true) {
                 var actor = scheduler.next();
                 if (actor == null) {

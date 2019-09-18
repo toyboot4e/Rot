@@ -54,9 +54,9 @@ namespace Rot.Ui {
 
         static void setOrRemoveTile(TiledTileLayer layer, int x, int y, TiledTile t) {
             if (t == null) {
-                layer.removeTile(x, y);
+                layer.RemoveTile(x, y);
             } else {
-                layer.setTile(t);
+                layer.SetTile(t);
             }
         }
 
@@ -76,22 +76,22 @@ namespace Rot.Ui {
         }
 
         static void fillWithTile(TiledTileLayer l, int id) {
-            foreach(var tile in l.tiles) {
-                tile?.setTileId(id);
+            foreach(var tile in l.Tiles) {
+                tile?.SetTileId(id);
             }
         }
 
         public Vec2 randomPosInSomeRoom() {
-            var room = this.map.Rooms.randomItem();
-            int x = Nez.Random.range(room.Left, room.Right);
-            int y = Nez.Random.range(room.Top, room.Bottom);
+            var room = this.map.Rooms.RandomItem();
+            int x = Nez.Random.Range(room.Left, room.Right);
+            int y = Nez.Random.Range(room.Top, room.Bottom);
             return new Vec2(x, y);
         }
 
         public Vec2 randomPosInsideSomeRoom() {
-            var room = this.map.Rooms.randomItem();
-            int x = Nez.Random.range(room.Left + 1, room.Right - 1);
-            int y = Nez.Random.range(room.Top + 1, room.Bottom - 1);
+            var room = this.map.Rooms.RandomItem();
+            int x = Nez.Random.Range(room.Left + 1, room.Right - 1);
+            int y = Nez.Random.Range(room.Top + 1, room.Bottom - 1);
             return new Vec2(x, y);
         }
     }

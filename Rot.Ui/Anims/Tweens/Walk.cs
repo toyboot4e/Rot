@@ -12,18 +12,18 @@ namespace Rot.Ui.Tweens {
             _duration = duration;
             _target = this;
             _easeType = easeType;
-            _fromValue = transform.localPosition;
+            _fromValue = transform.LocalPosition;
             _toValue = to;
         }
 
-        public override ITween<Vector2> setIsRelative() {
+        public override ITween<Vector2> SetIsRelative() {
             _isRelative = true;
             _toValue += _fromValue;
             return this;
         }
 
-        protected override void updateValue() {
-            var next = Lerps.ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration);
+        protected override void UpdateValue() {
+            var next = Lerps.Ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration);
 
             // XXX: hack for rounding
             // var delta = _toValue - next;
@@ -31,18 +31,18 @@ namespace Rot.Ui.Tweens {
             // next = _toValue;
             // }
 
-            _target.setTweenedValue(next);
+            _target.SetTweenedValue(next);
         }
 
-        Vector2 ITweenTarget<Vector2>.getTweenedValue() {
-            return this.transform.localPosition;
+        Vector2 ITweenTarget<Vector2>.GetTweenedValue() {
+            return this.transform.LocalPosition;
         }
 
-        void ITweenTarget<Vector2>.setTweenedValue(Vector2 value) {
-            this.transform.setLocalPosition(value);
+        void ITweenTarget<Vector2>.SetTweenedValue(Vector2 value) {
+            this.transform.SetLocalPosition(value);
         }
 
-        object ITweenTarget<Vector2>.getTargetObject() {
+        object ITweenTarget<Vector2>.GetTargetObject() {
             return this;
         }
     }

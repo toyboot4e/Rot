@@ -9,21 +9,21 @@ namespace Rot.Game {
         /// <summary> The animation to be played </summary>
         Animation anim;
         /// <summary> Animations to be played at the same time with others e.g. walk animation </summary>
-        Anim.Combined combined;
+        Anim.Parallel parallel;
 
         public AnimationControl() {
-            this.combined = new Anim.Combined();
+            this.parallel = new Anim.Parallel();
         }
 
-        public ControlResult beginOrCombine(Animation anim) {
-            if (anim.kind == AnimationKind.Combined) {
-                this.combined.add(anim);
+        public ControlResult beginOrParallelize(Animation anim) {
+            if (anim.kind == AnimationKind.Parallel) {
+                this.parallel.add(anim);
                 return ControlResult.Continue;
             } else {
                 base.ctrlCtx.cradle.push<AnimationControl>();
-                this.anim = this.combined.anims.Count == 0 ?
+                this.anim = this.parallel.anims.Count == 0 ?
                     anim :
-                    new Anim.Queue().enqueue(this.combined, anim);
+                    new Anim.Seq().chain(this.parallel, anim);
                 this.anim.play();
                 base.ctrlCtx.cradle.push(this);
                 return ControlResult.Continue;
@@ -31,11 +31,11 @@ namespace Rot.Game {
         }
 
         /// <summary> Maybe pushes AnimationControl </summary>
-        public void beginCombinedIfAny() {
-            if (this.combined.anims.Count == 0) {
+        public void beginParallelIfAny() {
+            if (this.parallel.anims.Count == 0) {
                 return;
             } else {
-                this.anim = this.combined;
+                this.anim = this.parallel;
                 this.anim.play();
                 this.ctrlCtx.cradle.push<AnimationControl>();
             }
@@ -43,7 +43,7 @@ namespace Rot.Game {
 
         public override ControlResult update() {
             if (this.anim == null) {
-                Nez.Debug.log("found null animation in AnimationControl.update()");
+                Nez.Debug.Log("found null animation in AnimationControl.update()");
                 this.clear();
                 base.ctrlCtx.cradle.pop();
                 return ControlResult.SeeYouNextFrame;
@@ -62,7 +62,7 @@ namespace Rot.Game {
         void clear() {
             this.anim?.onClear();
             this.anim = null;
-            this.combined?.clear();
+            this.parallel?.clear();
         }
     }
 }

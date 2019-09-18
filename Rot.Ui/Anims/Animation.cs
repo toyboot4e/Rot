@@ -5,38 +5,87 @@ using Nez;
 using Nez.Tweens;
 
 namespace Rot.Ui {
-    /// <summary> Generic animation </summary>
+    /// <summary> State object for an animation </summary>
     public abstract class Animation {
         public virtual bool isFinished { get; }
         public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
+        System.Action<Animation> onEndAction;
 
         public Animation setKind(AnimationKind kind) {
             this.kind = kind;
             return this;
         }
 
-        public abstract void play();
-        public virtual void update() { }
+        /// <summary> Called when started playing </summary>
+        public virtual void play() { }
+        /// <summary> Called to play the animation </summary>
+        public virtual void update() {
+            if (this.isFinished) {
+                this.onEnd();
+            }
+        }
         public virtual void onClear() { }
+        public virtual void onEnd() {
+            this.onEndAction?.Invoke(this);
+        }
+
+        public void setCompletionHandler(System.Action<Animation> onEndAction) {
+            this.onEndAction = onEndAction;
+        }
+
+        public static IEnumerable createProcess(Animation anim) {
+            anim.play();
+            anim.update();
+            while (!anim.isFinished) {
+                yield return null;
+                anim.update();
+            }
+            anim.onClear();
+        }
     }
 
     /// <summary> e.g. Walking animation does not block the game <summary>
     public enum AnimationKind {
         Blocking,
-        Combined,
+        Parallel,
     }
 }
 
 namespace Rot.Ui.Anim {
-    /// <summary> Just an animation state exported </summary>
-    public class State : Animation {
-        public override void play() { }
-        public override bool isFinished => _isFinished;
-        bool _isFinished;
-        public void finish() {
-            _isFinished = true;
+    public class Wait : Animation {
+        public override bool isFinished => this.duration <= 0;
+        float duration;
+        public Wait(float duration) {
+            this.duration = duration;
+        }
+        public override void update() {
+            this.duration -= Time.DeltaTime;
+            base.update();
         }
     }
+
+    public class WaitForInput : Animation {
+        VInput input;
+        VKey[] keys;
+        public WaitForInput(VInput input, VKey[] keys) {
+            this.input = input;
+            this.keys = keys;
+        }
+        public override void update() {
+            for (int i = 0; i < keys.Length; i++) {
+                var key = this.keys[i];
+                if (this.input.consume(key)) {
+                    this._isFinished = true;
+                    base.update();
+                    return;
+                }
+            }
+        }
+        public override bool isFinished => _isFinished;
+        bool _isFinished;
+    }
+
+    // public class WaitForDurationOrInput
 
     public class Tween : Animation {
         ITweenable tween;
@@ -46,69 +95,63 @@ namespace Rot.Ui.Anim {
         }
 
         bool isStarted;
-        public override bool isFinished => this.isStarted && !this.tween.isRunning();
+        public override bool isFinished => this.isStarted && !this.tween.IsRunning();
 
         public override void play() {
-            this.tween.start();
+            this.tween.Start();
             // HACK: this enables tweens to be started at once
-            this.tween.tick();
+            this.tween.Tick();
             this.isStarted = true;
         }
     }
 
-    public class Coroutine : Animation {
-        IEnumerator coroutine;
-
-        public Coroutine(IEnumerator coroutine) {
-            this.coroutine = coroutine;
-        }
-
-        Nez.Systems.CoroutineManager mgr => Nez.Core.getGlobalManager<Nez.Systems.CoroutineManager>();
-
-        public override void play() {
-            Nez.Core.startCoroutine(this.coroutine);
-            // FIXME: tick in now or not?
-        }
-    }
-
     /// <summary> Plays all the animation at once. Finishes when all of them is done. </summary>
-    public class Combined : Animation {
+    public class Parallel : Animation {
         public List<Animation> anims { get; private set; }
 
-        public Combined() {
+        public Parallel() {
             this.anims = new List<Animation>();
         }
 
-        public override bool isFinished {
-            get => this.anims.All(a => a.isFinished);
-        }
+        public override bool isFinished => _isFinished;
+        bool _isFinished;
 
         public override void update() {
-            this.anims.ForEach(a => a.update());
+            this._isFinished = true;
+            for (int i = 0; i < this.anims.Count; i++) {
+                var anim = this.anims[i];
+                anim.update();
+                this._isFinished &= anim.isFinished;
+            }
+            base.update();
         }
 
         public override void play() {
-            this.anims.ForEach(a => a.play());
+            for (int i = 0; i < this.anims.Count; i++) {
+                var anim = this.anims[i];
+                anim.play();
+            }
         }
 
         public void clear() {
-            foreach(var anim in this.anims) {
+            for (int i = 0; i < this.anims.Count; i++) {
+                var anim = this.anims[i];
                 anim.onClear();
             }
             this.anims.Clear();
         }
 
-        public Combined add(Animation anim) {
+        public Parallel add(Animation anim) {
             this.anims.Add(anim);
             return this;
         }
     }
 
-    public class Queue : Animation {
+    public class Seq : Animation {
         public List<Animation> anims { get; private set; }
         public int index { get; private set; }
 
-        public Queue() {
+        public Seq() {
             this.anims = new List<Animation>();
         }
 
@@ -116,24 +159,27 @@ namespace Rot.Ui.Anim {
             get => this.index >= this.anims.Count;
         }
 
-        bool incIndexThenContinue() {
+        bool incIndex() {
             this.index++;
-            return this.isFinished;
+            return !this.isFinished;
         }
 
         public override void update() {
-            if (this.anims.Count == 0) {
+            if (this.isFinished) {
                 return;
             }
 
             var anim = this.anims[this.index];
             anim.update();
-            while (anim.isFinished && this.incIndexThenContinue()) {
+            // play next animation if it's finished
+            while (anim.isFinished && this.incIndex()) {
                 anim = this.anims[this.index];
                 anim.play();
                 anim.update();
-                continue;
+                continue; // process all one shot animations
             }
+
+            base.update();
         }
 
         public override void play() {
@@ -145,10 +191,25 @@ namespace Rot.Ui.Anim {
             this.index = 0;
         }
 
-        public Queue enqueue(params Animation[] anims) {
-            foreach(var anim in anims) {
-                this.anims.Add(anim);
+        public Seq chain(params Animation[] anims) {
+            for (int i = 0; i < anims.Length; i++) {
+                this.anims.Add(anims[i]);
             }
+            return this;
+        }
+
+        public Seq tween(ITweenable tween) {
+            this.anims.Add(new Anim.Tween(tween));
+            return this;
+        }
+
+        public Seq wait(float duration) {
+            this.anims.Add(new Anim.Wait(duration));
+            return this;
+        }
+
+        public Seq waitForInput(VInput input, VKey[] keys) {
+            this.anims.Add(new Anim.WaitForInput(input, keys));
             return this;
         }
     }

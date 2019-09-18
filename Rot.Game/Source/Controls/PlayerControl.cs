@@ -4,14 +4,14 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 using Rot.Ui;
 
-namespace Rot.Ui {
+namespace Rot.Game {
     /// <summary> Basic controller for UI to inject an action to an entity </summary>
     public class EntityController {
         public readonly Entity actor;
         public RlEvent action { get; private set; }
 
         public EntityController(Entity entity) {
-            Insist.isNotNull(entity);
+            Insist.IsNotNull(entity);
             (this.actor, this.action) = (entity, null);
         }
 
@@ -24,6 +24,28 @@ namespace Rot.Ui {
         }
 
         public bool isDecided => this.action != null;
+    }
+
+    /// <summary> Predictive converter: Input → RlEvent </summary>
+    public static class PlayerCommands {
+        /// <summary> Attack, interact or just swing </summary>
+        public static RlEvent onEnterKey(Entity actor, RlGameContext ctx) {
+            var body = actor.get<Body>();
+            var dir = body.facing;
+            var es = ctx.entitiesAt(body.pos + body.facing.vec).ToList(); // avoid null entity
+            if (es.Count == 0) {
+                return new RlEv.JustSwing(actor, dir);
+            }
+            for (int i = 0; i < es.Count; i++) {
+                var e = es[i];
+                if (e.has<Interactable>()) {
+                    return new RlEv.Interact(actor, dir);
+                } else if (e.has<Performance>()) {
+                    return new RlEv.MeleeAttack(actor, dir);
+                }
+            }
+            return new RlEv.JustSwing(actor, dir);
+        }
     }
 
     /// <summary> Determines a player action </summary>
@@ -42,6 +64,7 @@ namespace Rot.Ui {
             this.dirMode = new KeyMode(VKey.Dir);
         }
 
+        /// <summary> To be called before entering </summary>
         public void setController(EntityController ctrl) {
             this.controller = ctrl;
         }
@@ -101,14 +124,12 @@ namespace Rot.Ui {
         }
 
         RlEvent handleVKey(VKey key, VInput input) {
-            var e = this.controller.actor;
-            var dir = e.get<Body>().facing;
+            var entity = this.controller.actor;
+            var dir = entity.get<Body>().facing;
 
-            RlEvent ev = null;
             switch (key) {
                 case VKey.Select:
-                    ev = new RlEv.MeleeAttack(e);
-                    break;
+                    return PlayerCommands.onEnterKey(entity, this.gameCtx);
 
                 case VKey.Cancel:
                     // this.cradle.push(new MenuControl(this.god, new InvMenu(this.god, this.context.controlled.get<Inventory>())));
@@ -124,7 +145,7 @@ namespace Rot.Ui {
                     break;
             }
 
-            return ev;
+            return null;
         }
 
         /// <summary> Returns the only adjacent, interactive entity or null </summary>

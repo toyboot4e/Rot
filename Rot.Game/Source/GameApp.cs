@@ -4,22 +4,24 @@ using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
 using Nez;
 using Nez.ImGuiTools;
+using Rot.Engine;
+using Rot.Ui;
 
 namespace Rot.Game {
-    /// <summary> Everything goes in this scene vin <c>RlSceneComp</c>. </summary>
+    /// <summary> Everything goes in this scene with <c>RlSceneComp</c>. </summary>
     public class RlScene : Scene {
-        public override void initialize() {
+        public override void Initialize() {
             var policy = Scene.SceneResolutionPolicy.None;
-            base.setDesignResolution(Screen.width, Screen.height, policy);
+            base.SetDesignResolution(Screen.Width, Screen.Height, policy);
 
-            base.addRenderer(new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage));
-            base.addRenderer(new ScreenSpaceRenderer(renderOrder: 500, renderLayers: Layers.Screen));
+            base.AddRenderer(new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage));
+            base.AddRenderer(new ScreenSpaceRenderer(renderOrder: 500, renderLayers: Layers.Screen));
 #if DEBUG
-            base.addRenderer(new ScreenSpaceRenderer(renderOrder: 10000, renderLayers: Layers.DebugScreen));
+            base.AddRenderer(new ScreenSpaceRenderer(renderOrder: 10000, renderLayers: Layers.DebugScreen));
 #endif
         }
 
-        public override void onStart() {
+        public override void OnStart() {
             var rl = this.add(new RlSceneComp());
         }
     }
@@ -32,7 +34,7 @@ namespace Rot.Game {
         override protected void Initialize() {
             base.Initialize();
 
-            Nez.Console.DebugConsole.consoleKey = Keys.Tab;
+            Nez.Console.DebugConsole.ConsoleKey = Keys.Tab;
             base.IsFixedTimeStep = true;
             this.setFps(60);
 
@@ -41,13 +43,13 @@ namespace Rot.Game {
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
 #endif
 
-            Core.scene = new RlScene();
+            Core.Scene = new RlScene();
 
 #if DEBUG
             // TODO: change font
-            var options = new ImGuiOptions().addFont(Nez.Content.Fonts.arial24, 24);
+            var options = new ImGuiOptions().AddFont(Nez.Content.Fonts.arial24, 24);
             var imGuiManager = new ImGuiManager(options);
-            Core.registerGlobalManager(imGuiManager);
+            Core.RegisterGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;
 #endif
         }
@@ -63,7 +65,7 @@ namespace Rot.Game {
         }
 
         public void setEnableVSync(bool isEnabled) {
-            Nez.Screen.synchronizeWithVerticalRetrace = isEnabled;
+            Nez.Screen.SynchronizeWithVerticalRetrace = isEnabled;
         }
     }
 }

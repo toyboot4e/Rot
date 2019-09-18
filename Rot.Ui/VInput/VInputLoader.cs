@@ -29,7 +29,7 @@ namespace Rot.Ui {
                 Keys.NumPad1, Keys.NumPad2, Keys.NumPad3,
             };
 
-            var qwe = new [] {
+            var keyNumPadQwerty = new [] {
                 Keys.Q, Keys.W, Keys.E,
                 Keys.A, Keys.D,
                 Keys.Z, Keys.X, Keys.C,
@@ -41,7 +41,7 @@ namespace Rot.Ui {
                 Keys.B, Keys.J, Keys.N,
             };
 
-            var arrOfKeys = new [] { numpads, qwe, vimQwerty, };
+            var arrOfKeys = new [] { numpads, keyNumPadQwerty, vimQwerty, };
             for (int i = 0; i < keyDirs.Length; i++) {
                 vDir.eDir
                     .nodes[keyDirs[i].asInt]
@@ -53,7 +53,7 @@ namespace Rot.Ui {
         static void setupBasicKeys(Buttons keys) {
             var def = new(VKey, Keys[]) [] {
                 (VKey.Select, new [] { Keys.F, Keys.Enter }),
-                (VKey.Cancel, new [] { Keys.S, Keys.M, Keys.Escape, Keys.Delete, Keys.Back, }),
+                (VKey.Cancel, new [] { Keys.S, Keys.Escape, Keys.Delete, Keys.Back, }),
                 (VKey.Dir, new [] { Keys.LeftShift, }),
                 (VKey.SpeedUp, new [] { Keys.LeftControl, }),
                 (VKey.Ground, new [] { Keys.Space, }),

@@ -28,11 +28,11 @@ namespace Rot.Game {
                     } else {
                         var cradle = this.ctrlCtx.cradle;
                         var animCtrl = cradle.get<AnimationControl>();
-                        return animCtrl.beginOrCombine(anim);
+                        return animCtrl.beginOrParallelize(anim);
                     }
 
                 case RlTickReport.Actor actorReport:
-                    var entity = actorReport.actor.entity;
+                    var entity = actorReport.actor.Entity;
                     switch (actorReport.kind) {
                         case RlTickReport.Actor.Kind.TakeTurn:
                             break;
@@ -44,7 +44,7 @@ namespace Rot.Game {
 
                 case RlTickReport.Error errorReport:
                     var message = errorReport.message;
-                    Nez.Debug.log(message);
+                    Nez.Debug.Log(message);
                     // maybe avoids stack overflow
                     return ControlResult.SeeYouNextFrame;
 
