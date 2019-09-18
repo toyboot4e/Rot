@@ -46,7 +46,7 @@ namespace Rot.Engine {
         public static EDir W => new EDir(new Vec2(-1, 0));
         public static EDir NW => new EDir(new Vec2(-1, -1));
 
-        public static EDir random() => EDir.fromInt(Nez.Random.range(0, 7));
+        public static EDir random() => EDir.fromInt(Nez.Random.Range(0, 7));
 
         public static EDir fromInt(int n) {
             switch (n) {
@@ -178,12 +178,12 @@ namespace Rot.Engine {
 
     /// <summary> EDir inspector for Nez.ImGui </summary>
     class EDirInspector : AbstractTypeInspector {
-        public override void drawMutable() {
-            var dir = getValue<EDir>();
+        public override void DrawMutable() {
+            var dir = base.GetValue<EDir>();
             if (dir == null) {
                 if (ImGui.Button("Create Object")) {
                     dir = EDir.fromXy(1, 0);
-                    setValue(dir);
+                    base.SetValue(dir);
                 }
             } else {
                 ImGui.LabelText("dir", dir.ToString());

@@ -19,25 +19,25 @@ namespace Rot.Game.Debug {
 
         public static RlInspector create(Scene scene, Cradle cradle, VInput input) {
             var self = new RlInspector(cradle, input);
-            return scene.createEntity("RlInspector").addComponent(self);
+            return scene.CreateEntity("RlInspector").AddComponent(self);
         }
 
-        void IUpdatable.update() {
-            if (Nez.Input.isKeyDown(Keys.B)) {
+        void IUpdatable.Update() {
+            if (Nez.Input.IsKeyDown(Keys.B)) {
                 // Put break point here.
                 // If you use Visual Studio, you can just "Edit and Continue"
                 // (then your code is reloaded at runtime)
             }
         }
 
-        public override void onAddedToEntity() {
+        public override void OnAddedToEntity() {
             // register with the ImGuiMangaer letting it know we want to render some IMGUI
-            Core.getGlobalManager<ImGuiManager>().registerDrawCommand(imGuiDraw);
+            Core.GetGlobalManager<ImGuiManager>().RegisterDrawCommand(imGuiDraw);
         }
 
-        public override void onRemovedFromEntity() {
+        public override void OnRemovedFromEntity() {
             // remove ourselves when we are removed from the Scene
-            Core.getGlobalManager<ImGuiManager>().unregisterDrawCommand(imGuiDraw);
+            Core.GetGlobalManager<ImGuiManager>().UnregisterDrawCommand(imGuiDraw);
         }
 
         void imGuiDraw() {
@@ -46,7 +46,7 @@ namespace Rot.Game.Debug {
 
             var text = new string[] {
                 "cradle: " + string.Join(" < ", cradle.stack.Select(c => c.GetType().Name)),
-                "camera: " + this.entity.scene.camera.position,
+                "camera: " + this.Entity.Scene.Camera.Position,
                 "mouse_screen: " + this.input.mousePos,
             };
             ImGui.Text(string.Join("\n", text));

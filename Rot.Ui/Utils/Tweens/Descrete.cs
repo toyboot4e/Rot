@@ -7,29 +7,29 @@ namespace Rot.Ui.Tweens {
         int frame;
 
         #region Tween
-        public override ITween<int> setIsRelative() {
+        public override ITween<int> SetIsRelative() {
             _isRelative = true;
             return this;
         }
 
-        protected override void updateValue() {
-            (this as ITweenTarget<int>).setTweenedValue((int) Lerps.ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration));
+        protected override void UpdateValue() {
+            (this as ITweenTarget<int>).SetTweenedValue((int) Lerps.Ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration));
         }
         #endregion
 
         // ITweenTarget is basically an accessor to the tweened value
         #region ITweenTarget
-        void ITweenTarget<int>.setTweenedValue(int value) {
+        void ITweenTarget<int>.SetTweenedValue(int value) {
             this.frame = value;
             this.onFrameUpdate(this.frame);
         }
 
-        int ITweenTarget<int>.getTweenedValue() {
+        int ITweenTarget<int>.GetTweenedValue() {
             return this.frame;
         }
 
         // overrides Tween.getTargetObject so that this is the ITweenTarget
-        public new object getTargetObject() {
+        public new object GetTargetObject() {
             return null;
             // return _renderable;
         }
@@ -39,7 +39,7 @@ namespace Rot.Ui.Tweens {
 
         protected void init(int frames, float duration) {
             _target = this;
-            base.initialize(this, frames, duration);
+            base.Initialize(this, frames, duration);
         }
     }
 }

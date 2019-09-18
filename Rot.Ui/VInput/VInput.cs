@@ -135,8 +135,8 @@ namespace Rot.Ui {
         }
 
         public IReadOnlyDictionary<VKey, VSingleButton> buttons => base._buttons as IReadOnlyDictionary<VKey, VSingleButton>;
-        public Vector2 mousePos => Input.mousePosition;
-        public Vector2 dMousePos => Input.mousePositionDelta.ToVector2();
+        public Vector2 mousePos => Input.MousePosition;
+        public Vector2 dMousePos => Input.MousePositionDelta.ToVector2();
 
         public EDir dirDown => base.vDir.dirDown;
         public EDir dirPressed => base.vDir.dirPressed;
@@ -167,7 +167,7 @@ namespace Rot.Ui {
         /// <summary> Gets prior down key, ignoring some specified keys. </summary>
         public VKeyResult topDownIgnoring(params VKey[] keys) {
             VKey top = EnumUtil.allOf<VKey>()
-                .Where(k => !keys.contains(k) && buttons[k].isDown)
+                .Where(k => !keys.Contains(k) && buttons[k].isDown)
                 .minByOrDefault(k => buttons[k].buf);
 
             var keyBuf = this.keyBuf(top);

@@ -10,71 +10,71 @@ namespace Rot.Ui {
         public TweenBatch(params ITweenable[] tweens) {
             this.tweens = new FastList<ITweenable>(tweens.Length);
             for (int i = 0; i < tweens.Length; i++) {
-                this.tweens.add(tweens[i]);
+                this.tweens.Add(tweens[i]);
             }
         }
 
-        public bool tick() {
+        public bool Tick() {
             bool result = false;
-            for (int i = 0; i < this.tweens.length; i++) {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                result |= tween.tick();
+                result |= tween.Tick();
             }
             return result;
         }
 
-        public void recycleSelf() {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public void RecycleSelf() {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                tween.recycleSelf();
+                tween.RecycleSelf();
             }
         }
 
-        public bool isRunning() {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public bool IsRunning() {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                if (tween.isRunning()) return true;
+                if (tween.IsRunning()) return true;
             }
             return false;
         }
 
-        public void start() {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public void Start() {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                tween.start();
+                tween.Start();
             }
         }
 
-        public void pause() {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public void Pause() {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                tween.pause();
+                tween.Pause();
             }
         }
 
-        public void resume() {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public void Resume() {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                tween.resume();
+                tween.Resume();
             }
         }
 
-        public void stop(bool bringToCompletion = false) {
-            for (int i = 0; i < this.tweens.length; i++) {
+        public void Stop(bool bringToCompletion = false) {
+            for (int i = 0; i < this.tweens.Length; i++) {
                 var tween = this.tweens[i];
-                tween.stop();
+                tween.Stop();
             }
         }
     }
 
     public class FloatFnTween : FnTween<float> {
         public FloatFnTween(float to, float duration, EaseType easeType) {
-            this.initialize(this, to, duration);
-            this.setEaseType(easeType);
+            this.Initialize(this, to, duration);
+            this.SetEaseType(easeType);
         }
 
-        protected override void updateValue() {
-            (this as ITweenTarget<float>).setTweenedValue((float) Lerps.ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration));
+        protected override void UpdateValue() {
+            (this as ITweenTarget<float>).SetTweenedValue((float) Lerps.Ease(_easeType, _fromValue, _toValue, _elapsedTime, _duration));
         }
     }
 
@@ -90,7 +90,7 @@ namespace Rot.Ui {
         }
 
         #region Tween
-        public override ITween<T> setIsRelative() {
+        public override ITween<T> SetIsRelative() {
             _isRelative = true;
             return this;
         }
@@ -102,16 +102,16 @@ namespace Rot.Ui {
 
         // ITweenTarget is basically an accessor to the tweened value
         #region ITweenTarget
-        void ITweenTarget<T>.setTweenedValue(T value) {
+        void ITweenTarget<T>.SetTweenedValue(T value) {
             this.setter.Invoke(value);
         }
 
-        T ITweenTarget<T>.getTweenedValue() {
+        T ITweenTarget<T>.GetTweenedValue() {
             return this.getter.Invoke();
         }
 
         // overrides Tween.getTargetObject so that this is the ITweenTarget
-        public new object getTargetObject() {
+        public new object GetTargetObject() {
             return null;
         }
         #endregion Tween

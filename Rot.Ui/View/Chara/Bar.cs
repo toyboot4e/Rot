@@ -44,18 +44,18 @@ namespace Rot.Ui {
 			this.style = style;
 		}
 
-		public override void onAddedToEntity() {
-			var content = this.entity.scene.content;
+		public override void OnAddedToEntity() {
+			var content = this.Entity.Scene.Content;
 			foreach(var(layer, def) in this.style.defs) {
 				var(subtextures, color) = def;
 				var sprite = new NineSliceSprite(subtextures);
 
 				sprite.layer(layer: this.renderLayer, depth: this.depth(layer));
-				sprite.setColor(color);
+				sprite.SetColor(color);
 				sprite.setSize(this.size);
-				sprite.setLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
+				sprite.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
 
-				this.entity.addComponent(sprite);
+				this.Entity.AddComponent(sprite);
 				this.bars.Add(layer, sprite);
 			}
 		}
@@ -74,23 +74,23 @@ namespace Rot.Ui {
 				Colors.Gage.recover;
 
 			var curBar = this.bars[BarLayer.Current];
-			curBar.width = preWidth;
+			curBar.Width = preWidth;
 			// curBar.tweenWidth(newWidth, e : easeType, d : currentAnimDuration)
-			curBar.tween("width", newWidth, currentAnimDuration)
-				.setEaseType(easeType)
-				.start();
+			curBar.Tween("width", newWidth, currentAnimDuration)
+				.SetEaseType(easeType)
+				.Start();
 
 			var effectBar = this.bars[BarLayer.Effect];
-			effectBar.width = preWidth;
-			effectBar.setColor(effectColor);
+			effectBar.Width = preWidth;
+			effectBar.SetColor(effectColor);
 			// effectBar.tweenWidth(newWidth, e : easeType, d : effectDuration)
-			effectBar.tween("width", newWidth, effectDuration)
-				.setDelay(effectDelay)
-				.setEaseType(easeType)
-				.setCompletionHandler(_ => {
-					this.bars[BarLayer.Effect].setColor(Colors.Gage.opaque);
+			effectBar.Tween("width", newWidth, effectDuration)
+				.SetDelay(effectDelay)
+				.SetEaseType(easeType)
+				.SetCompletionHandler(_ => {
+					this.bars[BarLayer.Effect].SetColor(Colors.Gage.opaque);
 				})
-				.start();
+				.Start();
 		}
 	}
 }

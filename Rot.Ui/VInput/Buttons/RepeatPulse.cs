@@ -44,7 +44,7 @@ namespace Rot.Ui {
                 _repeatCounter = firstRepeatTime;
                 return;
             } else {
-                _bufferCounter -= Time.unscaledDeltaTime;
+                _bufferCounter -= Time.UnscaledDeltaTime;
                 this.isPulsing = this._bufferCounter > 0;
             }
 
@@ -52,7 +52,7 @@ namespace Rot.Ui {
                 return;
             }
             //updating repeat pulse
-            _repeatCounter -= Time.unscaledDeltaTime;
+            _repeatCounter -= Time.UnscaledDeltaTime;
             if (_repeatCounter <= 0) {
                 //this.isRepeating = _willRepeat;
                 this.isPulsing = _willRepeat;

@@ -11,7 +11,7 @@ namespace Rot.Game {
         public RlEvent action { get; private set; }
 
         public EntityController(Entity entity) {
-            Insist.isNotNull(entity);
+            Insist.IsNotNull(entity);
             (this.actor, this.action) = (entity, null);
         }
 
@@ -29,10 +29,10 @@ namespace Rot.Game {
     /// <summary> Predictive converter: Input → RlEvent </summary>
     public static class PlayerCommands {
         /// <summary> Attack, interact or just swing </summary>
-        public static RlEvent enterKey(Entity actor, RlGameContext ctx) {
+        public static RlEvent onEnterKey(Entity actor, RlGameContext ctx) {
             var body = actor.get<Body>();
             var dir = body.facing;
-            var es = ctx.entitiesAt(body.pos + body.facing.vec).ToList();
+            var es = ctx.entitiesAt(body.pos + body.facing.vec).ToList(); // avoid null entity
             if (es.Count == 0) {
                 return new RlEv.JustSwing(actor, dir);
             }
@@ -64,6 +64,7 @@ namespace Rot.Game {
             this.dirMode = new KeyMode(VKey.Dir);
         }
 
+        /// <summary> To be called before entering </summary>
         public void setController(EntityController ctrl) {
             this.controller = ctrl;
         }
@@ -123,14 +124,12 @@ namespace Rot.Game {
         }
 
         RlEvent handleVKey(VKey key, VInput input) {
-            var e = this.controller.actor;
-            var dir = e.get<Body>().facing;
+            var entity = this.controller.actor;
+            var dir = entity.get<Body>().facing;
 
-            RlEvent ev = null;
             switch (key) {
                 case VKey.Select:
-                    ev = PlayerCommands.enterKey(e, this.gameCtx);
-                    break;
+                    return PlayerCommands.onEnterKey(entity, this.gameCtx);
 
                 case VKey.Cancel:
                     // this.cradle.push(new MenuControl(this.god, new InvMenu(this.god, this.context.controlled.get<Inventory>())));
@@ -146,7 +145,7 @@ namespace Rot.Game {
                     break;
             }
 
-            return ev;
+            return null;
         }
 
         /// <summary> Returns the only adjacent, interactive entity or null </summary>

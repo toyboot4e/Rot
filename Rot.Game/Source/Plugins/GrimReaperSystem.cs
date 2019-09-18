@@ -21,7 +21,7 @@ namespace Rot.Game {
         public IEnumerable<RlEvent> handle(RlEv.Death death) {
             death.entity.add<Dead>(); // FIXME: the hack
             (base.gameCtx.entities as RotEntityList).delete(death.entity);
-            death.entity.destroy(); // FIXME: not delete entity until animation is finished
+            death.entity.Destroy(); // FIXME: not delete entity until animation is finished
             yield break;
         }
     }

@@ -34,10 +34,10 @@ namespace Rot.Ui {
             this.index = index;
             this.deadzone = deadzone;
         }
-        GamePadData gamePad => Input.gamePads[index];
-        public override bool isDown => gamePad.isLeftStickRight() || gamePad.isLeftStickRight();
-        public override bool isPressedRaw => gamePad.isLeftStickLeftPressed(deadzone) || gamePad.isLeftStickRightPressed(deadzone);
-        public override float valueFRaw => Mathf.signThreshold(Input.gamePads[index].getLeftStick(deadzone).X, deadzone);
+        GamePadData gamePad => Input.GamePads[index];
+        public override bool isDown => gamePad.IsLeftStickRight() || gamePad.IsLeftStickRight();
+        public override bool isPressedRaw => gamePad.IsLeftStickLeftPressed(deadzone) || gamePad.IsLeftStickRightPressed(deadzone);
+        public override float valueFRaw => Mathf.SignThreshold(Input.GamePads[index].GetLeftStick(deadzone).X, deadzone);
     }
 
     public class GamePadLeftStickY : PrimIntAxisNodeComponent {
@@ -47,15 +47,15 @@ namespace Rot.Ui {
             this.index = index;
             this.deadzone = deadzone;
         }
-        GamePadData gamePad => Input.gamePads[index];
-        public override bool isDown => gamePad.isLeftStickUp() || gamePad.isLeftStickDown();
-        public override bool isPressedRaw => gamePad.isLeftStickUpPressed(deadzone) || gamePad.isLeftStickDownPressed(deadzone);
-        public override float valueFRaw => Mathf.signThreshold(Input.gamePads[index].getLeftStick(deadzone).Y, deadzone);
+        GamePadData gamePad => Input.GamePads[index];
+        public override bool isDown => gamePad.IsLeftStickUp() || gamePad.IsLeftStickDown();
+        public override bool isPressedRaw => gamePad.IsLeftStickUpPressed(deadzone) || gamePad.IsLeftStickDownPressed(deadzone);
+        public override float valueFRaw => Mathf.SignThreshold(Input.GamePads[index].GetLeftStick(deadzone).Y, deadzone);
     }
 
     public class GamePadDpadLeftRight : PrimIntAxisNodeComponent {
         public int index;
-        GamePadData gamePad => Input.gamePads[index];
+        GamePadData gamePad => Input.GamePads[index];
         public GamePadDpadLeftRight(int index = 0) {
             this.index = index;
         }
@@ -66,7 +66,7 @@ namespace Rot.Ui {
 
     public class GamePadDpadUpDown : PrimIntAxisNodeComponent {
         public int index;
-        GamePadData gamePad => Input.gamePads[index];
+        GamePadData gamePad => Input.GamePads[index];
         public GamePadDpadUpDown(int index = 0) {
             this.index = index;
         }
@@ -90,16 +90,16 @@ namespace Rot.Ui {
             this.positive = positive;
         }
 
-        public override bool isDown => Input.isKeyDown(positive, negative);
-        public override bool isPressedRaw => Input.isKeyPressed(positive, negative);
+        public override bool isDown => Input.IsKeyDown(positive, negative);
+        public override bool isPressedRaw => Input.IsKeyPressed(positive, negative);
 
         public override void update() {
-            if (Input.isKeyDown(positive)) {
-                if (Input.isKeyDown(negative)) { } else {
+            if (Input.IsKeyDown(positive)) {
+                if (Input.IsKeyDown(negative)) { } else {
                     _turned = false;
                     _value = 1;
                 }
-            } else if (Input.isKeyDown(negative)) {
+            } else if (Input.IsKeyDown(negative)) {
                 _turned = false;
                 _value = -1;
             } else {

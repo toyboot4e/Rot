@@ -22,17 +22,18 @@ namespace Rot.Ui {
 
     public static class CharachipFactory {
         public static Sprite<EnumDir> wodi8(string path) {
-            var scene = Nez.Core.scene;
-            var texture = Nez.Core.scene.content.Load<Texture2D>(path);
+            var scene = Nez.Core.Scene;
+            var texture = Nez.Core.Scene.Content.Load<Texture2D>(path);
             var subs = CharachipFactory.split(texture, 6, 4);
 
             var chip = new Sprite<EnumDir>()
                 .layer(layer: Layers.Stage, depth: ZOrders.Charachip);
 
-            if (texture.Height / 4 > 32) { // centering the image
-                var originY = texture.Height / 4 - 16;
-                subs.forEach(s => s.origin = new Vector2(s.origin.X, originY));
-            }
+            // FIXME: centering
+            // if (texture.Height / 4 > 32) { // centering the image
+            //     var originY = texture.Height / 4 - 16;
+            //     // subs.forEach(s => s.origin = new Vector2(s.origin.X, s.originY));
+            // }
 
             CharachipFactory.setupWodi8Animation(chip, subs);
             return chip;
@@ -42,8 +43,8 @@ namespace Rot.Ui {
             foreach(var dir in EnumUtil.allOf<EnumDir>()) {
                 var patterns = wodi8DirAnimMap[dir].Select(p => subtextures[p]).ToList();
                 var anim = new SpriteAnimation(patterns);
-                anim.setPingPong(true).setFps(4);
-                chip.addAnimation(dir, anim);
+                anim.SetPingPong(true).SetFps(4);
+                chip.AddAnimation(dir, anim);
             }
         }
 
@@ -52,7 +53,7 @@ namespace Rot.Ui {
         };
 
         public static List<Subtexture> split(Texture2D texture, int divX, int divY) {
-            return Subtexture.subtexturesFromAtlas(texture, texture.Bounds.Width / divX, texture.Bounds.Height / divY);
+            return Subtexture.SubtexturesFromAtlas(texture, texture.Bounds.Width / divX, texture.Bounds.Height / divY);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace Rot.Ui.Anim {
             this.duration = duration;
         }
         public override void update() {
-            this.duration -= Time.deltaTime;
+            this.duration -= Time.DeltaTime;
             base.update();
         }
     }
@@ -74,8 +74,8 @@ namespace Rot.Ui.Anim {
         public override void update() {
             for (int i = 0; i < keys.Length; i++) {
                 var key = this.keys[i];
-                if (input.isKeyPressed(key)) {
-                    _isFinished = true;
+                if (this.input.consume(key)) {
+                    this._isFinished = true;
                     base.update();
                     return;
                 }
@@ -95,12 +95,12 @@ namespace Rot.Ui.Anim {
         }
 
         bool isStarted;
-        public override bool isFinished => this.isStarted && !this.tween.isRunning();
+        public override bool isFinished => this.isStarted && !this.tween.IsRunning();
 
         public override void play() {
-            this.tween.start();
+            this.tween.Start();
             // HACK: this enables tweens to be started at once
-            this.tween.tick();
+            this.tween.Tick();
             this.isStarted = true;
         }
     }

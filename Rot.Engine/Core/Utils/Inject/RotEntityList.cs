@@ -15,7 +15,7 @@ namespace Rot.Engine {
         iRlActor iRlActorIterator.next() {
             var err = this.ensureIndex();
             if (err != null) {
-                Nez.Debug.log(err);
+                Nez.Debug.Log(err);
                 return null;
             }
 

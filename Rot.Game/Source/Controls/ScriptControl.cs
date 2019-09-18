@@ -31,7 +31,7 @@ namespace Rot.Ui {
         public override ControlResult update() {
             if (this._flow == null) {
                 if (this.script == null) {
-                    Nez.Debug.log("Updated `ScriptControl`, but there's no script to run! (just get out)");
+                    Nez.Debug.Log("Updated `ScriptControl`, but there's no script to run! (just get out)");
                     base.ctrlCtx.cradle.pop();
                     return ControlResult.SeeYouNextFrame; // maybe avoids stack overflow
                 }
@@ -47,18 +47,18 @@ namespace Rot.Ui {
         }
 
         IEnumerable flow() {
-            Insist.isNotNull(this.script);
+            Insist.IsNotNull(this.script);
             foreach(var cmd in this.script) {
                 Cmd.iCmdView view;
                 if (!this.views.TryGetValue(cmd.GetType(), out view)) {
-                    Nez.Debug.log($"Could not find view for command of type `{view.GetType()}`");
+                    Nez.Debug.Log($"Could not find view for command of type `{view.GetType()}`");
                     continue;
                 }
 
-                Nez.Debug.log($"cmd `{cmd}`");
+                Nez.Debug.Log($"cmd `{cmd}`");
                 var anim = view.anim(cmd);
                 if (anim == null) {
-                    Nez.Debug.log($"Given null as an animation for a command of type `{view.GetType()}` by `{view}`");
+                    Nez.Debug.Log($"Given null as an animation for a command of type `{view.GetType()}` by `{view}`");
                     continue;
                 }
                 foreach(var _ in Animation.createProcess(anim)) {

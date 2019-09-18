@@ -29,10 +29,10 @@ namespace Rot.Game {
         public RlGameState gameState;
         public RlGameContext gameCtx;
 
-        public override void onEnabled() {
-            this.scene.add(new RlHook(this));
+        public override void OnEnabled() {
+            this.Scene.add(new RlHook(this));
             this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
-            base.scene.add(new ControlSceneComponent(this.ctrlCtx));
+            base.Scene.add(new ControlSceneComponent(this.ctrlCtx));
 
             // load initial stage
             const string initialStage = Content.Stages.@static;
@@ -59,7 +59,7 @@ namespace Rot.Game {
             }
 
 #if DEBUG
-            RlInspector.create(base.scene, this.ctrlCtx.cradle, this.ctrlCtx.input);
+            RlInspector.create(base.Scene, this.ctrlCtx.cradle, this.ctrlCtx.input);
 #endif
         }
 
@@ -71,7 +71,7 @@ namespace Rot.Game {
                 for (int i = 0; i < this.gameCtx.entities.Count; i++) {
                     var e = this.gameCtx.entities[i];
                     if (e == null) {
-                        Nez.Debug.log("Null found as an entity in the roguelike world");
+                        Nez.Debug.Log("Null found as an entity in the roguelike world");
                         this.gameCtx.entities.RemoveAt(i);
                         continue;
                     }
@@ -80,30 +80,30 @@ namespace Rot.Game {
                     } else {
                         this.gameCtx.entities.RemoveAt(i);
                         i--;
-                        e.destroy();
+                        e.Destroy();
                     }
                 }
             }
 
             // dispose the previouos tiled map if there is
-            var tiledEntity = base.scene.findEntity("tiled");
+            var tiledEntity = base.Scene.FindEntity("tiled");
             if (tiledEntity == null) {
-                tiledEntity = base.scene.createEntity("tiled");
+                tiledEntity = base.Scene.CreateEntity("tiled");
             } else {
                 tiledEntity.rm<TiledMapComponent>();
             }
 
             { // load tiled map
-                this.tiled = base.scene.content.Load<TiledMap>(path); {
+                this.tiled = base.Scene.Content.Load<TiledMap>(path); {
                     var tiledComp = tiledEntity
                         .add(new TiledMapComponent(tiled))
                         .layer(layer: Layers.Stage, depth: ZOrders.Stage);
 
-                    var topLeft = new Vector2(tiled.tileWidth, tiled.tileWidth);
-                    var bottomRight = new Vector2(tiled.tileWidth * (tiled.width - 1), tiled.tileWidth * (tiled.height - 1));
-                    tiledComp.entity.add(new CameraBounds(topLeft, bottomRight));
+                    var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
+                    var bottomRight = new Vector2(tiled.TileWidth * (tiled.Width - 1), tiled.TileWidth * (tiled.Height - 1));
+                    tiledComp.Entity.add(new CameraBounds(topLeft, bottomRight));
                 }
-                this.posUtil = new PosUtil(tiled, base.scene.camera);
+                this.posUtil = new PosUtil(tiled, base.Scene.Camera);
                 this.gameCtx = new RlGameContext(new TiledRlStage(tiled), new RotEntityList());
                 this.gameState = new RlGameState(this.gameCtx.evHub, this.gameCtx.entities as iRlActorIterator);
             }
@@ -117,16 +117,16 @@ namespace Rot.Game {
                 this.gameCtx.entities.Add(player);
             } else {
                 this.gameCtx.entities.Add(
-                    EntityFactory.genPlayer(base.scene, this.posUtil).entity
+                    EntityFactory.genPlayer(base.Scene, this.posUtil).entity
                 );
-                base.scene.camera.entity.add(new FollowCamera(player));
+                base.Scene.Camera.Entity.add(new FollowCamera(player));
             }
 
-            this.scene.getSceneComponent<RlHook>().afterLoadingMap();
+            this.Scene.GetSceneComponent<RlHook>().afterLoadingMap();
         }
 
         void addDungeon() {
-            var gen = base.scene.add(new DungeonComp(this.tiled, this));
+            var gen = base.Scene.add(new DungeonComp(this.tiled, this));
             this.systems.add(new Sys.StairSystem(gen));
         }
     }
@@ -148,13 +148,13 @@ namespace Rot.Game {
             systems.add(new Sys.CtrlEntitySystem(ctrlCtx));
 
             // view systems
-            systems.add(new Sys.InteractSystems(ctrlCtx, posUtil));
+            systems.add(new Sys.InteractSystem(ctrlCtx, posUtil));
         }
 
         public static void initViews(RlViewStorage views) {
             // action views
             views.add(new View.BodyRlView());
-            views.add(new View.HitRlView());
+            views.add(new View.HitView());
         }
 
         public static void initScriptViews(ScriptControl ctrl, ControlContext ctrlCtx, PosUtil posUtil) {
@@ -181,14 +181,14 @@ namespace Rot.Game {
             // gen.newFloor();
 
             // ##### TEST ######
-            var player = this.ctx.scene.findEntity("player");
+            var player = this.ctx.Scene.FindEntity("player");
             var tiled = this.ctx.tiled;
-            var actors = tiled.getObjectGroup("actors");
+            var actors = tiled.GetObjectGroup("actors");
             if (actors == null) return;
 
-            var actor = actors.objects[0];
+            var actor = actors.Objects[0];
             var pos = actor.tilePos(tiled);
-            var actorEntity = base.scene.createEntity("script-test");
+            var actorEntity = base.Scene.CreateEntity("script-test");
             var factory = EntityFactory
                 .begin(actorEntity, this.ctx.posUtil)
                 .body(pos, EDir.S, true, true)

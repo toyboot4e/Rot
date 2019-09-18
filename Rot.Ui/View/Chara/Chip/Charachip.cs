@@ -30,19 +30,19 @@ namespace Rot.Ui {
 
         public CharaChip setToGridPos(Vec2 gridPos) {
             var worldPos = this.posUtil.gridToWorldCentered(gridPos);
-            this.entity.setLocalPosition(worldPos);
+            this.Entity.SetLocalPosition(worldPos);
             // this.chip?.tweenLocalOffset(this.basePos, 0f);
             return this;
         }
 
         public CharaChip setDir(EDir dir) {
             // prevents stoping walking animation
-            if (EnumDirUtil.fromEDir(dir) == this.chip.currentAnimation) {
+            if (EnumDirUtil.fromEDir(dir) == this.chip.CurrentAnimation) {
                 return this;
             }
 
             var animDir = EnumDirUtil.fromEDir(dir);
-            this.chip.play(animDir);
+            this.chip.Play(animDir);
             return this;
         }
     }

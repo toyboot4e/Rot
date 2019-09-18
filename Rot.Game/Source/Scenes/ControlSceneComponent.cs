@@ -12,7 +12,7 @@ namespace Rot.Game {
             this.ctx.cradle.setContext(this.ctx);
         }
 
-        public override void update() {
+        public override void Update() {
             this.ctx.input.update();
             this.ctx.cradle.update();
         }

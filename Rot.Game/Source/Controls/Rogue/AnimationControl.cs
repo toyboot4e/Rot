@@ -43,7 +43,7 @@ namespace Rot.Game {
 
         public override ControlResult update() {
             if (this.anim == null) {
-                Nez.Debug.log("found null animation in AnimationControl.update()");
+                Nez.Debug.Log("found null animation in AnimationControl.update()");
                 this.clear();
                 base.ctrlCtx.cradle.pop();
                 return ControlResult.SeeYouNextFrame;

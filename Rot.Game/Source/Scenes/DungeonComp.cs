@@ -28,7 +28,7 @@ namespace Rot.Game {
         public void genDungeon() {
             this.gen = new KarceroTiledGenerator();
             // Karcero's coordinates begins with zero, so we have to consider about it
-            this.gen.generate(tiled.width - 1, tiled.height - 1);
+            this.gen.generate(tiled.Width - 1, tiled.Height - 1);
             this.gen.copyToTiled(tiled);
         }
 
@@ -41,7 +41,7 @@ namespace Rot.Game {
                 if (entity.has<Player>()) continue;
                 entities.Remove(entity);
                 i--;
-                entity.destroy();
+                entity.Destroy();
             }
         }
 
@@ -49,9 +49,9 @@ namespace Rot.Game {
             var posUtil = this.rlCtx.posUtil;
             var entities = this.rlCtx.gameCtx.entities;
 
-            int N = Nez.Random.range(3, 7);
+            int N = Nez.Random.Range(3, 7);
             for (int i = 0; i < N; i++) {
-                var enemyGen = EntityFactory.begin(scene, $"actor_{i}", posUtil);
+                var enemyGen = EntityFactory.begin(base.Scene, $"actor_{i}", posUtil);
                 entities.Add(enemyGen
                     .body(new Vec2(10 + 1, 5 + i), EDir.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
@@ -62,7 +62,7 @@ namespace Rot.Game {
                 continue;
             }
 
-            var stairGen = EntityFactory.begin(scene, "stair", posUtil);
+            var stairGen = EntityFactory.begin(base.Scene, "stair", posUtil);
             entities.Add(stairGen
                 .body(new Vec2(5, 5), EDir.random(), false, false)
                 .wodi8Chip(Content.Chips.Wodi8.cook_a)
@@ -71,9 +71,9 @@ namespace Rot.Game {
             );
         }
 
-        public override void update() {
+        public override void Update() {
 #if DEBUG
-            if (Nez.Input.isKeyPressed(Keys.G)) {
+            if (Nez.Input.IsKeyPressed(Keys.G)) {
                 this.newFloor();
             }
 #endif

@@ -17,7 +17,7 @@ namespace Rot.Ui {
         }
 
         public static NinePatchSubtexture subTexture(string path, int divX = 3, int divY = 3) {
-            var t = Nez.Core.scene.content.Load<Texture2D>(path);
+            var t = Nez.Core.Scene.Content.Load<Texture2D>(path);
             return subtexture(t, divX, divY);
         }
 
@@ -40,29 +40,29 @@ namespace Rot.Ui {
 
     public static class NineSliceSpriteExt {
         public static Vector2 size(this NineSliceSprite self) {
-            return new Vector2(self.width, self.height);
+            return new Vector2(self.Width, self.Height);
         }
 
         public static NineSliceSprite setSize(this NineSliceSprite self, int w, int h) {
-            self.width = w;
-            self.height = h;
+            self.Width = w;
+            self.Height = h;
             return self;
         }
 
         public static NineSliceSprite setSize(this NineSliceSprite self, float w, float h) {
-            self.width = w;
-            self.height = h;
+            self.Width = w;
+            self.Height = h;
             return self;
         }
 
         public static NineSliceSprite setSize(this NineSliceSprite self, Vector2 s) {
-            self.width = s.X;
-            self.height = s.Y;
+            self.Width = s.X;
+            self.Height = s.Y;
             return self;
         }
 
         public static ITween<float> tweenWidth(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return self.tween("width", to, d);
+            return self.Tween("width", to, d);
             // return new FloatFnTween(e, d).setFuncs(
             //     () => self.width,
             //     v => self.width = v
@@ -70,7 +70,7 @@ namespace Rot.Ui {
         }
 
         public static ITween<float> tweenHeight(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return self.tween("height", to, d);
+            return self.Tween("height", to, d);
             // return new FloatFnTween(e, d).setFuncs(
             //     () => self.height,
             //     v => self.height = v

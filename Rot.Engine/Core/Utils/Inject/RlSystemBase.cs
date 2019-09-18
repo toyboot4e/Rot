@@ -41,7 +41,7 @@ namespace Rot.Engine {
         }
 
         public void add(RlSystem sys) {
-            if (this.systems.addIfNotPresent(sys)) {
+            if (this.systems.AddIfNotPresent(sys)) {
                 sys.injectCtx(this.gameCtx);
                 sys.setup();
             }

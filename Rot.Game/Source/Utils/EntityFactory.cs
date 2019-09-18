@@ -20,7 +20,7 @@ namespace Rot.Game {
         }
 
         public static EntityFactory begin(Scene scene, string name, PosUtil posUtil) {
-            return EntityFactory.begin(scene.createEntity(name), posUtil);
+            return EntityFactory.begin(scene.CreateEntity(name), posUtil);
         }
 
         public static EntityFactory genPlayer(Scene scene, PosUtil posUtil) {
