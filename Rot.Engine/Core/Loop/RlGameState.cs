@@ -21,6 +21,9 @@ namespace Rot.Engine {
         }
 
         public RlTickReport tick() {
+            if (this.loop == null) {
+                return RlTickReport.error("Somehow the loop is null!");
+            }
             if (this.loop.MoveNext() == false) {
                 return RlTickReport.error("The game loop is finished!");
             }

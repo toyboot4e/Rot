@@ -1,5 +1,7 @@
 namespace Rot.Engine {
-    /// <summary> Provides enough information or references to observe what happened in the game after a tick </summary>
+    /// <summary>
+    /// Provides enough information to observe what happened in the game after a tick
+    /// </summary>
     public abstract class RlTickReport {
         public static Error error(string message) => new Error(message);
         public static Ev event_(RlEvent ev) => new Ev(ev);
