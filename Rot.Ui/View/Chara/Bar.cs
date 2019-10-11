@@ -76,7 +76,7 @@ namespace Rot.Ui {
 			var curBar = this.bars[BarLayer.Current];
 			curBar.Width = preWidth;
 			// curBar.tweenWidth(newWidth, e : easeType, d : currentAnimDuration)
-			curBar.Tween("width", newWidth, currentAnimDuration)
+			curBar.Tween("Width", newWidth, currentAnimDuration)
 				.SetEaseType(easeType)
 				.Start();
 
@@ -84,7 +84,7 @@ namespace Rot.Ui {
 			effectBar.Width = preWidth;
 			effectBar.SetColor(effectColor);
 			// effectBar.tweenWidth(newWidth, e : easeType, d : effectDuration)
-			effectBar.Tween("width", newWidth, effectDuration)
+			effectBar.Tween("Width", newWidth, effectDuration)
 				.SetDelay(effectDelay)
 				.SetEaseType(easeType)
 				.SetCompletionHandler(_ => {

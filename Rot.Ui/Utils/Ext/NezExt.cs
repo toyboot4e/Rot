@@ -14,7 +14,7 @@ namespace Rot.Ui {
         }
 
         public static ITween<Vector2> tweenLocalOffset(this RenderableComponent self, Vector2 to, float dur, EaseType ease = EaseType.Linear) {
-            return self.Tween("localOffset", to, dur).SetEaseType(ease);
+            return self.Tween("LocalOffset", to, dur).SetEaseType(ease);
         }
 
         public static ITween<Color> tweenColorW(this RenderableComponent self, float opacity, float dur, EaseType ease = EaseType.Linear) {

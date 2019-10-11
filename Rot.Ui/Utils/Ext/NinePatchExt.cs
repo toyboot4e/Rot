@@ -62,7 +62,7 @@ namespace Rot.Ui {
         }
 
         public static ITween<float> tweenWidth(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return self.Tween("width", to, d);
+            return self.Tween("Width", to, d);
             // return new FloatFnTween(e, d).setFuncs(
             //     () => self.width,
             //     v => self.width = v
@@ -70,7 +70,7 @@ namespace Rot.Ui {
         }
 
         public static ITween<float> tweenHeight(this NineSliceSprite self, float to, EaseType e = EaseType.Linear, float d = 0.3f) {
-            return self.Tween("height", to, d);
+            return self.Tween("Height", to, d);
             // return new FloatFnTween(e, d).setFuncs(
             //     () => self.height,
             //     v => self.height = v
