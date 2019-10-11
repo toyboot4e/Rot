@@ -26,16 +26,18 @@ namespace Rot.Game {
         public bool isDecided => this.action != null;
     }
 
-    /// <summary> Predictive converter: Input → RlEvent </summary>
+    /// <summary> Maps input → RlEvent </summary>
     public static class PlayerCommands {
         /// <summary> Attack, interact or just swing </summary>
-        public static RlEvent onEnterKey(Entity actor, RlGameContext ctx) {
+        public static RlEvent onSelectKeyPressed(Entity actor, RlGameContext ctx) {
             var body = actor.get<Body>();
             var dir = body.facing;
             var es = ctx.entitiesAt(body.pos + body.facing.vec).ToList(); // avoid null entity
             if (es.Count == 0) {
+                // no entity found
                 return new RlEv.JustSwing(actor, dir);
             }
+            // trying to find an attackable or interactable entity
             for (int i = 0; i < es.Count; i++) {
                 var e = es[i];
                 if (e.has<Interactable>()) {
@@ -55,7 +57,7 @@ namespace Rot.Game {
 
         /// <summary> Filters cardinal directional input while it's on. </summary>
         KeyMode diaMode;
-        /// <summary> Changes direction instead of walking while it's on. </summary>
+        /// <summary> Forces just to change direction, not to walk, while it's on. </summary>
         KeyMode dirMode;
 
         public PlayerControl(RlGameContext gameCtx) {
@@ -64,7 +66,7 @@ namespace Rot.Game {
             this.dirMode = new KeyMode(VKey.Dir);
         }
 
-        /// <summary> To be called before entering </summary>
+        /// <summary> To be called before entering it </summary>
         public void setController(EntityController ctrl) {
             this.controller = ctrl;
         }
@@ -83,6 +85,7 @@ namespace Rot.Game {
             }
         }
 
+        /// <summary> Updates input mode and maybe creates directional modification for the player controllerd </summary>
         RlEvent updateModes(VInput input) {
             this.diaMode.update(input);
 
@@ -99,12 +102,11 @@ namespace Rot.Game {
 
         /// <summary> Maybe dispatches a sub routine to the input </summary>
         RlEvent handleInput(VInput input) {
-            // pressed VKey or down axis input
             var top = input.consumeTopPressedIgnoring(VKey.Dia, VKey.Dir, VKey.AxisKey);
             if (top.isKey) {
                 return this.handleVKey(top.asKey, input);
             } else if (input.isDirDown) {
-                // FIXME: 壁に頭をぶつけつづける？
+                // XXX: HACK to avoid walking to block at the same frame again
                 input.vDir.clearBuf();
                 return this.handleDir(input.dirDown);
             } else {
@@ -112,10 +114,10 @@ namespace Rot.Game {
             }
         }
 
-        // TODO: rest
+        /// <summary> Maps directional input to events depending on mode </summary>
         RlEvent handleDir(EDir dir) {
             if (this.diaMode.isOn && dir.isCardinal) {
-                return null;
+                return null; // filtered
             }
 
             return dirMode.isOn ?
@@ -123,13 +125,14 @@ namespace Rot.Game {
                 (RlEvent) new RlEv.Walk(this.controller.actor, dir);
         }
 
+        /// <summary> Maps key input to events </summary>
         RlEvent handleVKey(VKey key, VInput input) {
             var entity = this.controller.actor;
             var dir = entity.get<Body>().facing;
 
             switch (key) {
                 case VKey.Select:
-                    return PlayerCommands.onEnterKey(entity, this.gameCtx);
+                    return PlayerCommands.onSelectKeyPressed(entity, this.gameCtx);
 
                 case VKey.Cancel:
                     // this.cradle.push(new MenuControl(this.god, new InvMenu(this.god, this.context.controlled.get<Inventory>())));

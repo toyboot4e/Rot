@@ -10,7 +10,7 @@ using Scr = Rot.Script;
 using Cmd = Rot.Script.Cmd;
 
 namespace Rot.Ui {
-    /// <summary> Plays script </summary>
+    /// <summary> Plays script (using an <c>IEnumerable</c>, internally) </summary>
     public class ScriptControl : Control {
         Dictionary<Type, Cmd.iCmdView> views;
         IEnumerable<Cmd.iCmd> script; // To be replaced with more generic object or adaptor
@@ -46,6 +46,7 @@ namespace Rot.Ui {
             }
         }
 
+        /// <summary> The behavior of this control in time </summary>
         IEnumerable flow() {
             Insist.IsNotNull(this.script);
             foreach(var cmd in this.script) {

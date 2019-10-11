@@ -51,9 +51,9 @@ namespace Rot.Ui {
             var body = entity.get<Body>();
             var chip = entity.get<CharaChip>().chip;
 
-            var deltaPos = 0.5f * body.facing.vector2 * posUtil.tileSize;
-            // TODO: consider offset of charachip
+            // TODO: consider adjustable offset of charachips
             var offset = new Vector2(0, 0);
+            var deltaPos = 0.5f * body.facing.vector2 * posUtil.tileSize;
 
             var easeType = EaseType.Linear;
             var first = chip.tweenLocalOffset(offset + deltaPos, duration, easeType);

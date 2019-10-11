@@ -18,7 +18,9 @@ namespace Rot.Game {
     /// <summary> Initializes and controls the roguelike game </summary>
     public class RlSceneComp : SceneComponent {
         public ControlContext ctrlCtx;
+        /// <summary> Extensions to the Engine </summary>
         public RlSystemStorage systems;
+        /// <summary> Extensions to the UI </summary>
         public RlViewPlatform view;
 
         // temporary states
@@ -30,20 +32,21 @@ namespace Rot.Game {
         public RlGameContext gameCtx;
 
         public override void OnEnabled() {
-            this.Scene.add(new RlHook(this));
+            this.Scene.add(new RlHooks(this));
             this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
             base.Scene.add(new ControlSceneComponent(this.ctrlCtx));
 
-            // load initial stage
+            // loading an initial stage
             const string initialStage = Content.Stages.@static;
             this.loadTiledMap(initialStage);
 
+            // store extensions
             this.systems = new RlSystemStorage(this.gameCtx);
             this.view = new RlViewPlatform(
                 new RlViewServices(this.ctrlCtx, this.gameCtx, this.posUtil)
             );
-            RlPlugin.initSystems(this.systems, this.ctrlCtx, this.posUtil);
-            RlPlugin.initViews(this.view);
+            RlExtensionMgr.initSystems(this.systems, this.ctrlCtx, this.posUtil);
+            RlExtensionMgr.initViews(this.view);
 
             { // create controls
                 var cradle = this.ctrlCtx.cradle;
@@ -52,10 +55,10 @@ namespace Rot.Game {
                 cradle.add(new PlayerControl(gameCtx));
             }
 
-            { // add script control
+            { // script control
                 var cradle = this.ctrlCtx.cradle;
                 var scripter = cradle.add(new ScriptControl());
-                RlPlugin.initScriptViews(scripter, this.ctrlCtx, this.posUtil);
+                RlExtensionMgr.initScriptViews(scripter, this.ctrlCtx, this.posUtil);
             }
 
 #if DEBUG
@@ -65,7 +68,7 @@ namespace Rot.Game {
 
         /// <summary> Loads a tiled map and updates contexts dependent on it </summary>
         public void loadTiledMap(string path) {
-            // dispose all the entities expect the player
+            // dispose all the entities except the player
             Entity player = null;
             if (this.gameCtx != null) {
                 for (int i = 0; i < this.gameCtx.entities.Count; i++) {
@@ -122,7 +125,7 @@ namespace Rot.Game {
                 base.Scene.Camera.Entity.add(new FollowCamera(player));
             }
 
-            this.Scene.GetSceneComponent<RlHook>().afterLoadingMap();
+            this.Scene.GetSceneComponent<RlHooks>().afterLoadingMap();
         }
 
         void addDungeon() {
@@ -131,7 +134,7 @@ namespace Rot.Game {
         }
     }
 
-    public class RlPlugin {
+    public class RlExtensionMgr {
         public static void initSystems(RlSystemStorage systems, ControlContext ctrlCtx, PosUtil posUtil) {
             // primitive systems
             systems.add(new Sys.PrimSystems());
@@ -169,10 +172,11 @@ namespace Rot.Game {
         }
     }
 
-    public class RlHook : Nez.SceneComponent {
+    /// <summary> Event methods for the roguelike game </summary>
+    public class RlHooks : Nez.SceneComponent {
         RlSceneComp ctx;
 
-        public RlHook(RlSceneComp ctx) {
+        public RlHooks(RlSceneComp ctx) {
             this.ctx = ctx;
         }
 
@@ -193,7 +197,7 @@ namespace Rot.Game {
                 .begin(actorEntity, this.ctx.posUtil)
                 .body(pos, EDir.S, true, true)
                 .wodi8Chip(Content.Chips.Wodi8.cook_a)
-                .script(RlHook.testScript(player, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
+                .script(RlHooks.testScript(player, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
             this.ctx.gameCtx.entities.Add(actorEntity);
         }
 
