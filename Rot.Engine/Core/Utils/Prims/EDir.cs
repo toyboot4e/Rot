@@ -87,12 +87,16 @@ namespace Rot.Engine {
         /// <summary> Follows numpads. </summary>
         public int numpadIndex => 5 + x + y * (-3);
 
+        /// <summary> Useful for string keys </smmary>
+        public string asStr => this.ToString();
+
         // -> [Self]1
-        public static IList<EDir> all => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
-        public static IList<EDir> clockwise => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
-        public static IList<EDir> Counterclockwise => new List<EDir> { N, NW, W, SW, S, SE, E, NE };
-        public static IList<EDir> cardinals => new List<EDir> { N, S, E, W };
-        public static IList<EDir> diagonals => new List<EDir> { NE, NW, SE, SW };
+        public static EDir[] all => new [] { N, NE, E, SE, S, SW, W, NW };
+        // public static IList<EDir> clockwise => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
+        public static EDir[] clockwise => new [] { N, NE, E, SE, S, SW, W, NW };
+        public static EDir[] Counterclockwise => new [] { N, NW, W, SW, S, SE, E, NE };
+        public static EDir[] cardinals => new [] { N, S, E, W };
+        public static EDir[] diagonals => new [] { NE, NW, SE, SW };
 
         // &Self -> bool
         public bool isCardinal => this.belongsTo(EDir.cardinals);
@@ -172,7 +176,7 @@ namespace Rot.Engine {
             else if (this == NW) return "NW";
             else if (this == Ground) return "Ground";
 
-            throw new System.Exception("Dir.ToString(): the size is over one.");
+            throw new System.Exception("Dir.ToString() : the size is over one.");
         }
     }
 

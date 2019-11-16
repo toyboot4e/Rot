@@ -87,23 +87,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "run",
-            "type": "shell",
-            "group": "build",
-            "osx": {
-                "command": "DYLD_LIBRARY_PATH=${workspaceFolder}/Rot.Game/bin/Debug/osx/ mono ${workspaceFolder}/Rot.Game/bin/Debug/Rot.Game.exe"
-            },
-            "windows": {
-                "command": "cmd",
-                "args": [
-                    "/k",
-                    "${workspaceFolder}/Rot.Game/bin/Debug/Rot.Game.exe"
-                ]
-            },
-            "dependsOn": "Build (Debug)",
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "Build and Run (Release)",
             "type": "shell",
             "group": "build",

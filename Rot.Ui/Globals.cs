@@ -9,7 +9,7 @@ namespace Rot.Ui {
     }
 
     /// <summary> The higher, the deeper </summar>
-    public static class ZOrders {
+    public static class Depths {
         public static float Stage => 0.6f;
         public static float Charachip => 0.5f;
         public static float CharaGage => 0.4f;
@@ -23,21 +23,21 @@ namespace Rot.Ui {
     /// <summary> Ease for prototyping </summary>
     public static class Colors {
         public static class Gage {
-            public static Color frame = new Color(255, 255, 255);
-            public static Color background = new Color(0, 0, 0);
-            public static Color life = new Color(32, 32, 255);
-            public static Color recover = new Color(204, 255, 255);
-            public static Color damage = new Color(255, 0, 0);
-            public static Color opaque = new Color(0, 0, 0, 0);
+            public static Color frame => new Color(255, 255, 255);
+            public static Color background => new Color(0, 0, 0);
+            public static Color life => new Color(32, 32, 255);
+            public static Color recover => new Color(204, 255, 255);
+            public static Color damage => new Color(255, 0, 0);
+            public static Color opaque => new Color(0, 0, 0, 0);
         }
 
         public static class Message {
-            public static Color default_ = new Color(255, 255, 255);
-            public static Color endDelta = new Color(32, 196, 128);
-            public static Color keyword = new Color(192, 192, 32);
-            public static Color chara = new Color(32, 196, 128);
-            public static Color item = new Color(32, 178, 196);
-            public static Color mana = new Color(178, 32, 170);
+            public static Color default_ => new Color(255, 255, 255);
+            public static Color endDelta => new Color(32, 196, 128);
+            public static Color keyword => new Color(192, 192, 32);
+            public static Color chara => new Color(32, 196, 128);
+            public static Color item => new Color(32, 178, 196);
+            public static Color mana => new Color(178, 32, 170);
 
         }
 
@@ -45,7 +45,18 @@ namespace Rot.Ui {
 
         }
 
-        public static Color available = new Color(32, 178, 170);
-        public static Color unavaliable = new Color(255, 100, 100);
+        public static Color available => new Color(32, 178, 170);
+        public static Color unavaliable => new Color(255, 100, 100);
+    }
+
+    public static class DirKeys {
+        public static string left => "left";
+        public static string right => "right";
+        public static string up => "up";
+        public static string down => "down";
+        public static string leftUp => "leftUp";
+        public static string leftDown => "leftDown";
+        public static string rightUp => "rigthUp";
+        public static string rightDown => "rigthDown";
     }
 }

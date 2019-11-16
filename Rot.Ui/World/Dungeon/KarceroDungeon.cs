@@ -19,19 +19,19 @@ namespace Rot.Ui {
             this.gen = new DungeonGenerator<KCell>();
         }
 
-        public void copyToTiled(TiledMap tiled) {
-            var layers = tiled.tileLayers();
+        public void copyToTiled(TmxMap map) {
+            var layers = map.tileLayers();
 
             layers.forEach(layer => layer.clear());
-            tiled.clearCollisionLayer();
+            map.clearCollisionLayer();
 
             foreach(var cell in this.map.AllCells) {
                 int x = cell.Column;
                 int y = cell.Row;
-                var tiles = kTerrainToTiles(cell.Terrain, x, y);
+                var tiles = kTerrainToTiles(map, cell.Terrain, x, y);
                 for (int i = 0; i < tiles.Length; i++) {
                     setOrRemoveTile(layers[i], x, y, tiles[i]);
-                    tiled.setCollision(x, y, cell.Terrain == KTerrain.Rock);
+                    map.setCollision(x, y, cell.Terrain == KTerrain.Rock);
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace Rot.Ui {
             this.map = gen.Generate(conf);
         }
 
-        static void setOrRemoveTile(TiledTileLayer layer, int x, int y, TiledTile t) {
+        static void setOrRemoveTile(TmxLayer layer, int x, int y, TmxLayerTile t) {
             if (t == null) {
                 layer.RemoveTile(x, y);
             } else {
@@ -60,24 +60,27 @@ namespace Rot.Ui {
             }
         }
 
-        static Dictionary<KTerrain, int[]> terrainChipMap = new Dictionary<KTerrain, int[]> { { KTerrain.Door, new int[] { 2, 29, 0 } },
-            { KTerrain.Floor, new int[] { 2, 0, 0 } },
-            { KTerrain.Rock, new int[] { 2, 16, 0 } },
+        static Dictionary<KTerrain, uint[]> terrainChipMap = new Dictionary<KTerrain, uint[]> { //
+            { KTerrain.Door, new uint[] { 2, 29, 0 } },
+            { KTerrain.Floor, new uint[] { 2, 0, 0 } },
+            { KTerrain.Rock, new uint[] { 2, 16, 0 } },
         };
 
-        static int[] kTerrainToTileIds(KTerrain t) {
+        static uint[] kTerrainToTileIds(KTerrain t) {
             return terrainChipMap[t];
         }
 
         // TODO: static map
-        static TiledTile[] kTerrainToTiles(KTerrain t, int x, int y) {
-            return kTerrainToTileIds(t).Select(id => id <= 0 ? null : new TiledTile(id).setPos(x, y))
+        static TmxLayerTile[] kTerrainToTiles(TmxMap map, KTerrain t, int x, int y) {
+            // FIXMEEEEEEEEEEEEE
+            return kTerrainToTileIds(t).Select(id => id <= 0 ? null : new TmxLayerTile(map, id, x, y))
                 .ToArray();
         }
 
-        static void fillWithTile(TiledTileLayer l, int id) {
+        // TODO: more efficient initialization
+        static void fillWithTile(TmxLayer l, int id) {
             foreach(var tile in l.Tiles) {
-                tile?.SetTileId(id);
+                tile.Gid = id;
             }
         }
 

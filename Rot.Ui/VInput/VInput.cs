@@ -164,7 +164,13 @@ namespace Rot.Ui {
             }
         }
 
-        /// <summary> Gets prior down key, ignoring some specified keys. </summary>
+        /// <summary>
+        /// Gets prior down key, ignoring some specified keys.
+        ///
+        /// O(N) operation where N = the number of variants in Keys.
+        /// (Never refactor to use caches, for the HACK to avoid clearing cache:
+        /// c.f. BufNodeTemplate.clearBuf)
+        /// </summary>
         public VKeyResult topDownIgnoring(params VKey[] keys) {
             VKey top = EnumUtil.allOf<VKey>()
                 .Where(k => !keys.Contains(k) && buttons[k].isDown)

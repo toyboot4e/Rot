@@ -16,6 +16,7 @@ while read _dir; do
     for file in `find ./"${_root}"/** -name "*.tt"` ;
     do
         t4 -r=System.dll -r=mscorlib.dll -r=netstandard.dll -r=System.IO.FileSystem.dll \
+            -r=System.Collections.dll -r=System.Core.dll -r=netstandard.dll \
             -r=System.Linq.dll -r=System.Text.RegularExpressions.dll `dirname $file`/`basename $file` \
             -o `dirname $file`/Output/`basename $file .tt`.cs
 

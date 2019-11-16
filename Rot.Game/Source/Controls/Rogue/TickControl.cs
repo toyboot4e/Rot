@@ -3,9 +3,9 @@ using Rot.Ui;
 
 namespace Rot.Game {
     // TODO: logger
-    /// <summary> Tick the engine and may dispatche some control to the report after a tick </summary>
+    /// <summary> Tick the engine and may dispatch some control to the report after a tick </summary>
     public class TickControl : Ui.Control {
-        // all fileds are borrows
+        // references
         RlGameState game;
         RlGameContext gameCtx;
         RlViewPlatform view;
@@ -26,6 +26,7 @@ namespace Rot.Game {
                     if (anim == null) {
                         return ControlResult.Continue;
                     } else {
+                        Nez.Debug.Log("animation: " + anim);
                         var cradle = this.ctrlCtx.cradle;
                         var animCtrl = cradle.get<AnimationControl>();
                         return animCtrl.beginOrParallelize(anim);
@@ -44,7 +45,7 @@ namespace Rot.Game {
 
                 case RlTickReport.Error errorReport:
                     var message = errorReport.message;
-                    Nez.Debug.Log(message);
+                    Nez.Debug.Log("error: " + message);
                     // maybe avoids stack overflow
                     return ControlResult.SeeYouNextFrame;
 
