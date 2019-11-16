@@ -9,6 +9,7 @@ namespace Rot.Game {
     public class EntityFactory {
         public Entity entity;
         PosUtil posUtil;
+        Nez.Systems.NezContentManager content => entity.Scene.Content;
 
         public EntityFactory(Entity entity, PosUtil posUtil) {
             this.entity = entity;
@@ -28,7 +29,7 @@ namespace Rot.Game {
             self
                 .body(new Vec2(7, 7), EDir.random(), true, false)
                 .actor(new Engine.Beh.Player(self.entity), 3)
-                .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_blue)
+                .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
                 .performance(50, 10, 5)
                 .add(new Player());
             return self;
@@ -50,12 +51,11 @@ namespace Rot.Game {
         }
 
         public EntityFactory wodi8Chip(string imgPath, float? depth = null) {
-            float d = depth == null ? ZOrders.Charachip : (float) depth;
+            float d = depth == null ? Depths.Charachip : (float) depth;
             var body = this.entity.get<Body>();
             // TODO: apply depth
-            var chip = CharachipFactory.wodi8(imgPath);
-            var image = CharaChip.fromSprite(this.entity, this.posUtil, chip);
-            image.setDir(body.facing).setToGridPos(body.pos);
+            var chip = Charachip.wodi8(this.entity, this.posUtil, imgPath, this.content);
+            chip.setDir(body.facing).snapToGridPos(body.pos);
             return this;
         }
 

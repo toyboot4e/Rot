@@ -24,7 +24,7 @@ namespace Rot.Game {
         public RlViewPlatform view;
 
         // temporary states
-        public TiledMap tiled;
+        public TmxMap tiled;
         public PosUtil posUtil;
 
         // contexts dependent on the states
@@ -37,7 +37,7 @@ namespace Rot.Game {
             base.Scene.add(new ControlSceneComponent(this.ctrlCtx));
 
             // loading an initial stage
-            const string initialStage = Content.Stages.@static;
+            string initialStage = Content.Stages.@Static;
             this.loadTiledMap(initialStage);
 
             // store extensions
@@ -88,19 +88,19 @@ namespace Rot.Game {
                 }
             }
 
-            // dispose the previouos tiled map if there is
+            // dispose the previous tiled map if there is one
             var tiledEntity = base.Scene.FindEntity("tiled");
             if (tiledEntity == null) {
                 tiledEntity = base.Scene.CreateEntity("tiled");
             } else {
-                tiledEntity.rm<TiledMapComponent>();
+                tiledEntity.rm<TiledMapRenderer>();
             }
 
             { // load tiled map
-                this.tiled = base.Scene.Content.Load<TiledMap>(path); {
+                this.tiled = base.Scene.Content.LoadTiledMap(path); {
                     var tiledComp = tiledEntity
-                        .add(new TiledMapComponent(tiled))
-                        .layer(layer: Layers.Stage, depth: ZOrders.Stage);
+                        .add(new TiledMapRenderer(tiled))
+                        .layerCtx(layer: Layers.Stage, depth: Depths.Stage);
 
                     var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
                     var bottomRight = new Vector2(tiled.TileWidth * (tiled.Width - 1), tiled.TileWidth * (tiled.Height - 1));
@@ -164,8 +164,8 @@ namespace Rot.Game {
             var talkView = new Scr.View.TalkView(
                 new Scr.View.TalkViewConfig()
                 .margin_(20, 10)
-                .font_(Content.Fonts.arial20)
-                .window_(Content.Sys.Sourve.window, Content.Sys.Sourve.baloon)
+                .font_(Content.Fonts.Arial20)
+                .window_(Content.Sys.Sourve.Window, Content.Sys.Sourve.Baloon)
             );
             talkView.injectUtils(posUtil, ctrlCtx);
             ctrl.addView<Cmd.Talk>(talkView);
@@ -196,7 +196,7 @@ namespace Rot.Game {
             var factory = EntityFactory
                 .begin(actorEntity, this.ctx.posUtil)
                 .body(pos, EDir.S, true, true)
-                .wodi8Chip(Content.Chips.Wodi8.cook_a)
+                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .script(RlHooks.testScript(player, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
             this.ctx.gameCtx.entities.Add(actorEntity);
         }

@@ -24,7 +24,7 @@ namespace Rot.Game.Debug {
 
         void IUpdatable.Update() {
             if (Nez.Input.IsKeyDown(Keys.B)) {
-                // Put break point here.
+                // Put a break point here.
                 // If you use Visual Studio, you can just "Edit and Continue"
                 // (then your code is reloaded at runtime)
             }
@@ -32,12 +32,12 @@ namespace Rot.Game.Debug {
 
         public override void OnAddedToEntity() {
             // register with the ImGuiMangaer letting it know we want to render some IMGUI
-            Core.GetGlobalManager<ImGuiManager>().RegisterDrawCommand(imGuiDraw);
+            Core.GetGlobalManager<ImGuiManager>()?.RegisterDrawCommand(imGuiDraw);
         }
 
         public override void OnRemovedFromEntity() {
             // remove ourselves when we are removed from the Scene
-            Core.GetGlobalManager<ImGuiManager>().UnregisterDrawCommand(imGuiDraw);
+            Core.GetGlobalManager<ImGuiManager>()?.UnregisterDrawCommand(imGuiDraw);
         }
 
         void imGuiDraw() {

@@ -26,7 +26,7 @@ namespace Rot.Game {
                     if (anim == null) {
                         return ControlResult.Continue;
                     } else {
-                        Nez.Debug.Log(anim);
+                        Nez.Debug.Log("animation: " + anim);
                         var cradle = this.ctrlCtx.cradle;
                         var animCtrl = cradle.get<AnimationControl>();
                         return animCtrl.beginOrParallelize(anim);
@@ -45,7 +45,7 @@ namespace Rot.Game {
 
                 case RlTickReport.Error errorReport:
                     var message = errorReport.message;
-                    Nez.Debug.Log(message);
+                    Nez.Debug.Log("error: " + message);
                     // maybe avoids stack overflow
                     return ControlResult.SeeYouNextFrame;
 

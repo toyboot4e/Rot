@@ -9,8 +9,9 @@ using Rot.Ui;
 using static Rot.Ui.EntityBar;
 
 namespace Rot.Game {
+    // TODO: refactor
     public static class EntityBarStyleDef {
-        public static Dictionary < BarLayer, (NinePatchSubtexture, Color) > hpDict;
+        public static Dictionary < BarLayer, (NinePatchSprite, Color) > hpDict;
 
         public static EntityBarStyle hp() {
             init(Core.Scene);
@@ -25,16 +26,33 @@ namespace Rot.Game {
             isInitializerd = true;
 
             var pairs = new Dictionary < BarLayer,
-                (string, Color) > () { { BarLayer.Background, (Content.Sys.Gage.bar, Colors.Gage.background) }, { BarLayer.Effect, (Content.Sys.Gage.bar, Colors.Gage.opaque) }, { BarLayer.Current, (Content.Sys.Gage.bar, Colors.Gage.life) }, { BarLayer.Frame, (Content.Sys.Gage.frame, Colors.Gage.frame) },
+                (string, Color) > () {
+                    // //
+                    // { BarLayer.Background, (Content.Sys.Gage.Bar, Colors.Gage.background) },
+                    // //
+                    // { BarLayer.Effect, (Content.Sys.Gage.Bar, Colors.Gage.opaque) },
+                    // //
+                    // { BarLayer.Current, (Content.Sys.Gage.Bar, Colors.Gage.life) },
+                    // //
+                    // { BarLayer.Frame, (Content.Sys.Gage.Frame, Colors.Gage.frame) },
+                    { BarLayer.Background, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.background) },
+                    //
+                    { BarLayer.Effect, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.opaque) },
+                    //
+                    { BarLayer.Current, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.life) },
+                    //
+                    { BarLayer.Frame, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.frame) },
                 }.Select(xs => {
                     var(layer, (path, color)) = (xs.Key, xs.Value);
-                    var t = NinePatch.subTexture(path, 3, 3);
-                    return (layer, (t, color));
+                    Nez.Debug.Log("load " + path);
+                    var texture = Nez.Core.Scene.Content.LoadTexture(path);
+                    var sprite = new NinePatchSprite(texture, 0, 0, 0, 0);
+                    return (layer, (sprite, color));
                 });
 
-            hpDict = new Dictionary < BarLayer, (NinePatchSubtexture, Color) > ();
+            EntityBarStyleDef.hpDict = new Dictionary < BarLayer, (NinePatchSprite, Color) > ();
             foreach(var pair in pairs) {
-                hpDict.Add(pair.Item1, pair.Item2);
+                EntityBarStyleDef.hpDict.Add(pair.Item1, pair.Item2);
             }
         }
     }

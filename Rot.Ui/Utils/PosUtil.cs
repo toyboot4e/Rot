@@ -6,10 +6,10 @@ using Rot.Engine;
 namespace Rot.Ui {
     /// <summary> Converter of coordinates: tiled <-> world <-> screen </summary>
     public class PosUtil {
-        Nez.Tiled.TiledMap tiled; // tiled <-> world
+        Nez.Tiled.TmxMap tiled; // tiled <-> world
         Camera camera; // world <-> screen
 
-        public PosUtil(TiledMap tiled, Camera camera) {
+        public PosUtil(TmxMap tiled, Camera camera) {
             this.tiled = tiled;
             this.camera = camera;
         }
@@ -52,8 +52,8 @@ namespace Rot.Ui {
         public int tileHeight => tiled.TileHeight;
 
         public int stageWidth => tiled.Width;
-        public int stageWidthInPixels => tiled.WidthInPixels;
+        public int stageWidthInPixels => tiled.TileWidth;
         public int stageHeight => tiled.Width;
-        public int stageHeightInPixels => tiled.WidthInPixels;
+        public int stageHeightInPixels => tiled.TileHeight;
     }
 }

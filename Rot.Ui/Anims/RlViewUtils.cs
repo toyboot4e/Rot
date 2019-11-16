@@ -32,7 +32,7 @@ namespace Rot.Ui {
 
         /// <summary> Changes the direction of image of the entity </summary>
         public void changeDir(Entity entity, EDir dir) {
-            var chip = entity.get<CharaChip>();
+            var chip = entity.get<Charachip>();
             chip.setDir(dir);
         }
 
@@ -49,7 +49,7 @@ namespace Rot.Ui {
 
         public ITween<Vector2>[] swing(Entity entity, EDir to, float duration = 4f / 60f) {
             var body = entity.get<Body>();
-            var chip = entity.get<CharaChip>().chip;
+            var chip = entity.get<Charachip>().anim;
 
             // TODO: consider adjustable offset of charachips
             var offset = new Vector2(0, 0);
