@@ -8,7 +8,7 @@ using Rot.Engine;
 
 namespace Rot.Ui {
 	public class EntityBarStyle {
-		public Dictionary < EntityBar.BarLayer, (NinePatchSubtexture, Color) > defs;
+		public Dictionary < EntityBar.BarLayer, (NinePatchSprite, Color) > defs;
 	}
 
 	public class HpBar : EntityBar {
@@ -27,11 +27,11 @@ namespace Rot.Ui {
 		}
 
 		EntityBarStyle style;
-		Dictionary<BarLayer, NineSliceSprite> bars = new Dictionary<BarLayer, NineSliceSprite>();
+		Dictionary<BarLayer, NineSliceSpriteRenderer> bars = new Dictionary<BarLayer, NineSliceSpriteRenderer>();
 		public IEnumerable<RenderableComponent> sprites => this.bars.Values;
 		public readonly int renderLayer = Layers.Stage;
 		// public float depthBase => ZOrders.CharaGage;
-		float depth(BarLayer layer) => ZOrders.CharaGage - (int) layer * 0.001f;
+		float depth(BarLayer layer) => Depths.CharaGage - (int) layer * 0.001f;
 
 		protected PosUtil posUtil;
 		public Vector2 size { get; private set; }
@@ -48,9 +48,9 @@ namespace Rot.Ui {
 			var content = this.Entity.Scene.Content;
 			foreach(var(layer, def) in this.style.defs) {
 				var(subtextures, color) = def;
-				var sprite = new NineSliceSprite(subtextures);
+				var sprite = new NineSliceSpriteRenderer(subtextures);
 
-				sprite.layer(layer: this.renderLayer, depth: this.depth(layer));
+				sprite.layerCtx(layer: this.renderLayer, depth: this.depth(layer));
 				sprite.SetColor(color);
 				sprite.setSize(this.size);
 				sprite.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
@@ -76,7 +76,7 @@ namespace Rot.Ui {
 			var curBar = this.bars[BarLayer.Current];
 			curBar.Width = preWidth;
 			// curBar.tweenWidth(newWidth, e : easeType, d : currentAnimDuration)
-			curBar.Tween("width", newWidth, currentAnimDuration)
+			curBar.Tween("Width", newWidth, currentAnimDuration)
 				.SetEaseType(easeType)
 				.Start();
 
@@ -84,7 +84,7 @@ namespace Rot.Ui {
 			effectBar.Width = preWidth;
 			effectBar.SetColor(effectColor);
 			// effectBar.tweenWidth(newWidth, e : easeType, d : effectDuration)
-			effectBar.Tween("width", newWidth, effectDuration)
+			effectBar.Tween("Width", newWidth, effectDuration)
 				.SetDelay(effectDelay)
 				.SetEaseType(easeType)
 				.SetCompletionHandler(_ => {

@@ -22,7 +22,7 @@ namespace Rot.Engine {
 
         public RlTickReport tick() {
             if (this.loop == null) {
-                return RlTickReport.error("Somehow the loop is null!");
+                return RlTickReport.error("Somehow the game loop is null!");
             }
             if (this.loop.MoveNext() == false) {
                 return RlTickReport.error("The game loop is finished!");
@@ -37,7 +37,7 @@ namespace Rot.Engine {
             while (true) {
                 var actor = scheduler.next();
                 if (actor == null) {
-                    yield return RlTickReport.error("Given null as an actor in the RlGameState.");
+                    yield return RlTickReport.error("Given null as an actor in RlGameState.flow()");
                     continue;
                 }
 
@@ -53,7 +53,7 @@ namespace Rot.Engine {
         IEnumerable<RlTickReport> processEvent(RlEventHub evHub, RlEvent ev) {
             yield return RlTickReport.event_(ev);
             foreach(var evNested in evHub.handleAny(ev)) {
-                // nesting events
+                // nest events enabled
                 foreach(var report in this.processEvent(evHub, evNested)) {
                     if (report == null) continue;
                     yield return report;

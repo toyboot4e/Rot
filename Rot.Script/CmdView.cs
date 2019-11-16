@@ -62,14 +62,18 @@ namespace Rot.Script.View {
             // load config
             var text = talk.text;
             var color = Color.Black;
+
             // TODO: abstract font loading via config
-            var font = Core.Scene.Content.Load<BitmapFont>(this.conf.font);
+            var content = Core.Scene.Content;
+            // var font = content.Load<BitmapFont>(this.conf.font);
+            var font = content.LoadBitmapFont(this.conf.font);
+            var winTexture = content.LoadTexture(this.conf.window);
 
             // position
             var body = talk.from.get<Body>();
             var pos = posUtil.gridToWorldCentered(body.pos + body.facing.vec);
-            int sign = talk.dir.y <= 0 ? -1 : 1;
-            pos.Y += posUtil.tileHeight * sign; // top or bottom of window should be here
+            int sign = talk.dir.y <= 0 ? -1 : 1; // up or down
+            pos.Y += posUtil.tileHeight * sign;
 
             // entities
             var es = new Entity[] {
@@ -78,7 +82,7 @@ namespace Rot.Script.View {
             };
 
             var textSprite = es[0].add(new TextComponent(font, text, pos, color));
-            var window = es[1].add(NinePatch.sprite(this.conf.window));
+            var window = es[1].add(new NineSliceSpriteRenderer(winTexture, 0, 0, 0, 0));
 
             float winWidth = textSprite.Width + this.conf.marginW;
             float winHeight = textSprite.Height + this.conf.marginH;
@@ -89,7 +93,7 @@ namespace Rot.Script.View {
             textSprite
                 .SetOriginNormalized(new Vector2(0.5f, 0.5f))
                 .SetLocalOffset(pos)
-                .layer(layer: this.layer, depth: this.zOrder);
+                .layerCtx(layer: this.layer, depth: this.zOrder);
 
             // origin not working as intended?
             window
@@ -98,7 +102,7 @@ namespace Rot.Script.View {
                 .setSize(winWidth, winHeight)
                 .SetLocalOffset(pos)
                 // window must come behing the text
-                .layer(layer: this.layer, depth: this.zOrder + 0.00001f);
+                .layerCtx(layer: this.layer, depth: this.zOrder + 0.00001f);
 
             // animate
             var anim = new Ui.Anim.Seq();

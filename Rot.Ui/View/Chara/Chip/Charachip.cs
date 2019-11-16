@@ -1,48 +1,82 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Linq;
 using Nez;
 using Nez.Sprites;
-using Nez.Textures; // Sprite<T>
-using Nez.Tweens;
+using Nez.Systems;
 using Rot.Engine;
 
 namespace Rot.Ui {
     // TODO: disposable
-    // TODO: sharing frame count among directions
-    /// <summary> Image with optional direction for an entity </summary>
-    public class CharaChip : Component {
+    /// <summary>
+    /// Image for entities with direction
+    /// </summary>
+    public class Charachip : Component {
         PosUtil posUtil;
-        public Sprite<EnumDir> chip { get; private set; }
+        public SpriteAnimator anim { get; private set; }
 
-        CharaChip(PosUtil posUtil) {
+        Charachip(PosUtil posUtil) {
             this.posUtil = posUtil;
         }
 
-        public static CharaChip fromSprite(Entity entity, PosUtil posUtil, Sprite<EnumDir> chip) {
-            var self = new CharaChip(posUtil);
-            entity.add(chip);
-            entity.add(self);
-            self.chip = chip;
-            return self;
+        public static Charachip wodi8(Entity entity, PosUtil posUtil, string path, NezContentManager content) {
+            var chip = entity.AddComponent(new Charachip(posUtil));
+            chip.addWodi8(path, content);
+            return chip;
         }
 
-        public CharaChip setToGridPos(Vec2 gridPos) {
+        public void addWodi8(string path, NezContentManager content) {
+            var anim = this.Entity.add(animForWodi8(path, content));
+            this.anim = anim;
+        }
+
+        static SpriteAnimator animForWodi8(string path, NezContentManager content) {
+            // var texture = this.Entity.Scene.Content.LoadTexture(path);
+            var texture = content.LoadTexture(path);
+            var sprites = texture.splitIntoSprites(6, 4);
+            var anim = new SpriteAnimator().layerCtx(Layers.Stage, Depths.Charachip);
+
+            // TODO: make it static
+            var wodi8AnimPatterns = new [] {
+                // N
+                new [] { 18, 19, 20 },
+                // NE
+                new [] { 21, 22, 23 },
+                // E
+                new [] { 12, 13, 14 },
+                // SE
+                new [] { 9, 10, 11 },
+                // S
+                new [] { 0, 1, 2 },
+                // SW
+                new [] { 3, 4, 5 },
+                // W
+                new [] { 6, 7, 8 },
+                // NW
+                new [] { 15, 16, 17 },
+            };
+
+            // foreach(var(keyEnum, patterns) in EnumDirUtil.enumerate().Zip(wodi8AnimPatterns, (key, i) => (key, i))) {
+            var keyEnums = EDir.clockwise;
+            // var fps = System.TimeSpan.FromTicks((long) 10_000_000 / (long) 16);
+            float fps = 2;
+            for (int i = 0; i < 8; i++) {
+                var(keyEnum, patterns) = (keyEnums[i], wodi8AnimPatterns[i]);
+                anim.AddAnimation(keyEnum.asStr, fps, patterns.Select(p => sprites[p]).ToArray());
+            }
+
+            return anim;
+        }
+
+        public Charachip snapToGridPos(Vec2 gridPos) {
             var worldPos = this.posUtil.gridToWorldCentered(gridPos);
             this.Entity.SetLocalPosition(worldPos);
-            // this.chip?.tweenLocalOffset(this.basePos, 0f);
             return this;
         }
 
-        public CharaChip setDir(EDir dir) {
-            // prevents stoping walking animation
-            if (EnumDirUtil.fromEDir(dir) == this.chip.CurrentAnimation) {
-                return this;
+        public Charachip setDir(EDir dir) {
+            var key = dir.asStr;
+            if (key != this.anim.CurrentAnimationName) {
+                this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);
             }
-
-            var animDir = EnumDirUtil.fromEDir(dir);
-            this.chip.Play(animDir);
             return this;
         }
     }

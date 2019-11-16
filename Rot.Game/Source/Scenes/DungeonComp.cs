@@ -8,11 +8,11 @@ using Beh = Rot.Engine.Beh;
 
 namespace Rot.Game {
     public class DungeonComp : Nez.SceneComponent {
-        TiledMap tiled;
+        TmxMap tiled;
         RlSceneComp rlCtx;
         KarceroTiledGenerator gen;
 
-        public DungeonComp(TiledMap tiled, RlSceneComp rlCtx) {
+        public DungeonComp(TmxMap tiled, RlSceneComp rlCtx) {
             this.tiled = tiled;
             this.rlCtx = rlCtx;
         }
@@ -55,7 +55,7 @@ namespace Rot.Game {
                 entities.Add(enemyGen
                     .body(new Vec2(10 + 1, 5 + i), EDir.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .wodi8Chip(Content.Chips.Wodi8.Patched.gremlin_black)
+                    .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
                     .entity
                 );
@@ -65,7 +65,7 @@ namespace Rot.Game {
             var stairGen = EntityFactory.begin(base.Scene, "stair", posUtil);
             entities.Add(stairGen
                 .body(new Vec2(5, 5), EDir.random(), false, false)
-                .wodi8Chip(Content.Chips.Wodi8.cook_a)
+                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );

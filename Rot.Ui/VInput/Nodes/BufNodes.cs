@@ -25,6 +25,10 @@ namespace Rot.Ui {
                 this.buf = 0;
             }
         }
+        /// <summary>
+        /// The HACK to avoid inifinite `isPressed` loop, highly dependent VInput.topDownIgnoring implementation.
+        /// Maybe modifying the state from `pressed` to `down` is better.
+        /// </summary>
         public void clearBuf() {
             this.buf = 0;
         }

@@ -11,6 +11,7 @@ namespace Rot.Ui.View {
 
         }
 
+        // TODO: automate dispatchments using a hub
         public override Animation visualize(RlEvent ev) {
             switch (ev) {
                 case RlEv.Hit hitEv:
@@ -24,6 +25,9 @@ namespace Rot.Ui.View {
 
                 case RlEv.Dodge dodge:
                     return this.visualize(dodge);
+
+                case RlEv.JustSwing swing:
+                    return this.visualize(swing);
 
                 default:
                     return null;
@@ -54,7 +58,7 @@ namespace Rot.Ui.View {
         }
 
         Animation visualize(RlEv.JustSwing swing) {
-            Nez.Debug.Log("on swing");
+            Nez.Debug.Log("on swing view");
             // TODO: not swing if fail
             float duration = 2f / 60f;
             var tweens = _s.viewUtil.swing(swing.entity, swing.dir, duration);

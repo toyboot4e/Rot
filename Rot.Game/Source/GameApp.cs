@@ -8,7 +8,6 @@ using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Game {
-    /// <summary> Everything goes in this scene with <c>RlSceneComp</c>. </summary>
     public class RlScene : Scene {
         public override void Initialize() {
             var policy = Scene.SceneResolutionPolicy.None;
@@ -26,8 +25,6 @@ namespace Rot.Game {
         }
     }
 
-    /// <summary> The game application loop. Creates <c>RlScene</c> </summary>
-    /// <remark> Instantinated from `Program.cs` in Rot.Game. </remark>
     class GameApp : Nez.Core {
         public GameApp() : base() { }
 
@@ -47,7 +44,7 @@ namespace Rot.Game {
 
 #if DEBUG
             // TODO: change font
-            var options = new ImGuiOptions().AddFont(Nez.Content.Fonts.arial24, 24);
+            var options = new ImGuiOptions().AddFont(Nez.Content.Fonts.Arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.RegisterGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;

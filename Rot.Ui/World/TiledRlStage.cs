@@ -6,9 +6,9 @@ using Rot.Engine;
 namespace Rot.Ui {
     /// <summary> Tiled implementation of the stage </summary>
     public class TiledRlStage : Engine.iRlStage {
-        public TiledMap tiled { get; private set; }
+        public TmxMap tiled { get; private set; }
 
-        public TiledRlStage(TiledMap tiled) {
+        public TiledRlStage(TmxMap tiled) {
             this.tiled = tiled;
         }
 
