@@ -65,6 +65,11 @@ namespace Rot.Ui {
                     // throw new System.Exception("The cradle has no top control");
                 }
 
+                if (Nez.Console.DebugConsole.Instance.IsOpen) {
+                    // this may stop animations
+                    break;
+                }
+
                 switch (peek.update()) {
                     case ControlResult.SeeYouNextFrame:
                         return;

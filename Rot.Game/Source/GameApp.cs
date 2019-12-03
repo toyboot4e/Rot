@@ -31,7 +31,8 @@ namespace Rot.Game {
         override protected void Initialize() {
             base.Initialize();
 
-            Nez.Console.DebugConsole.ConsoleKey = Keys.Tab;
+            Nez.Core.ExitOnEscapeKeypress = false;
+            Nez.Console.DebugConsole.ConsoleKey = Keys.OemPeriod;
             base.IsFixedTimeStep = true;
             this.setFps(60);
 
