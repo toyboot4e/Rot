@@ -117,8 +117,8 @@ namespace Rot.Engine {
         }
 
         public bool contains(Vec2 pos) {
-            if (pos.x < mPos.x || pos.x >= mPos.x + mSize.x - 1 ||
-                pos.y < mPos.y || pos.y >= mPos.y + mSize.y - 1) {
+            if (pos.x < mPos.x || pos.x >= mPos.x + mSize.x ||
+                pos.y < mPos.y || pos.y >= mPos.y + mSize.y) {
                 return false;
             }
             return true;
