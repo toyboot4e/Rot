@@ -59,19 +59,6 @@ namespace Rot.Engine.Fov {
             .ToArray();
     }
 
-    public struct Slopes {
-        // from zero to one
-        public float start;
-        public float end;
-
-        public Slopes(float start, float end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public static Slopes init => new Slopes(0f, 1f);
-    }
-
     public interface FovMap {
         void clearAll();
         bool isViewBlocked(int x, int y);
@@ -107,36 +94,38 @@ namespace Rot.Engine.Fov {
         public class OctantScanner {
             Vec rowInc;
             Vec colInc;
-            Slopes slopes;
+            float startSlope;
+            float endSlope;
 
-            public OctantScanner(Octant octant) : this(octant, Slopes.init) { }
+            public OctantScanner(Octant octant) : this(octant, 0f, 1f) { }
 
-            public OctantScanner(Octant octant, Slopes slopes) {
+            public OctantScanner(Octant octant, float startSlope, float endSlope) {
                 (this.rowInc, this.colInc) = octant.toIncVectors();
-                this.slopes = slopes;
+                this.startSlope = startSlope;
+                this.endSlope = endSlope;
             }
 
-            public OctantScanner(Vec rowInc, Vec colInc, Slopes slopes) {
+            public OctantScanner(Vec rowInc, Vec colInc, float startSlope, float endSlope) {
                 this.rowInc = rowInc;
                 this.colInc = colInc;
-                this.slopes = slopes;
+                this.startSlope = startSlope;
+                this.endSlope = endSlope;
             }
 
             public void scanAll(ScanContext cx, int fromDepth) {
-                Console.WriteLine($"scan slope {this.slopes.start}:{this.slopes.end}");
-                if (this.slopes.start > this.slopes.end) return;
+                if (this.startSlope > this.endSlope) return;
                 for (int depth = fromDepth; depth <= cx.radius; depth++) {
                     if (this.scanRow(depth, cx)) break;
                 }
             }
 
             OctantScanner split(float endSlope) {
-                return new OctantScanner(this.rowInc, this.colInc, new Slopes(this.slopes.start, endSlope));
+                return new OctantScanner(this.rowInc, this.colInc, this.startSlope, this.endSlope);
             }
 
             (int, int) colRange(int depth, int radius) {
-                int from = Util.slopeToCol(this.slopes.start, depth);
-                int to = Math.Min(Util.slopeToCol(this.slopes.end, depth), Util.sideLen(radius, depth));
+                int from = Util.slopeToCol(this.startSlope, depth);
+                int to = Math.Min(Util.slopeToCol(this.endSlope, depth), Util.sideLen(radius, depth));
                 return (from, to);
             }
 
@@ -145,20 +134,17 @@ namespace Rot.Engine.Fov {
             bool scanRow(int depth, ScanContext cx) {
                 var row = this.rowInc * depth;
                 (int fromI, int toI) = this.colRange(depth, cx.radius);
-                Console.WriteLine($"depth {depth} | min i: {fromI}, max i: {toI} | min s: {slopes.start}, max s: {slopes.end}");
 
                 bool wasBlocked = true;
                 for (int i = fromI; i <= toI; i++) {
                     var col = this.colInc * i;
                     var pos = cx.localToWorld(row + col);
-                    Console.WriteLine($"{row.x}, {row.y}, {col.x}, {col.y} ({pos.x}, {pos.y})");
                     if (cx.map.isViewBlocked(pos.x, pos.y) && !wasBlocked) {
                         Console.WriteLine($"==============> split with {Util.ijToEndSlope(i, depth)} (i={i}, j={depth})");
                         this.split(Util.ijToEndSlope(i, depth)).scanAll(cx, depth + 1);
-                        Console.WriteLine($"<============== split");
                         wasBlocked = true;
                     } else if (wasBlocked) {
-                        this.slopes.start = Util.ijToStartSlope(i, depth);
+                        this.startSlope = Util.ijToStartSlope(i, depth);
                         wasBlocked = false;
                     }
                     cx.map.light(pos.x, pos.y);
