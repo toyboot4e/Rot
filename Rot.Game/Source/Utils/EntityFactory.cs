@@ -24,15 +24,16 @@ namespace Rot.Game {
             return EntityFactory.begin(scene.CreateEntity(name), posUtil);
         }
 
-        public static EntityFactory genPlayer(Scene scene, PosUtil posUtil) {
-            var self = EntityFactory.begin(scene, "player", posUtil);
-            self
-                .body(new Vec2(7, 7), EDir.random(), true, false)
-                .actor(new Engine.Beh.Player(self.entity), 3)
+        public static EntityFactory genPlayer(Scene scene, TiledRlStage stage, PosUtil posUtil) {
+            var factory = EntityFactory.begin(scene, "player", posUtil);
+            factory
+                .body(new Vec2(7, 7), EDir.S, true, false)
+                .actor(new Engine.Beh.Player(factory.entity), 3)
                 .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
                 .performance(50, 10, 5)
+                .add(new FovComp(stage))
                 .add(new Player());
-            return self;
+            return factory;
         }
 
         public EntityFactory add(Component any) {
@@ -53,7 +54,6 @@ namespace Rot.Game {
         public EntityFactory wodi8Chip(string imgPath, float? depth = null) {
             float d = depth == null ? Depths.Charachip : (float) depth;
             var body = this.entity.get<Body>();
-            // TODO: apply depth
             var chip = Charachip.wodi8(this.entity, this.posUtil, imgPath, this.content);
             chip.setDir(body.facing).snapToGridPos(body.pos);
             return this;

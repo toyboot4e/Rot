@@ -23,6 +23,8 @@ namespace Rot.RlEv {
         }
     }
 
+    public class None : RlEvent { }
+
     /// <summary> Wrapper around an RlEvent </summary>
     public class AnyTry {
         public RlEvent ev;
