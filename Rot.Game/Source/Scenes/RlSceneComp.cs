@@ -87,7 +87,7 @@ namespace Rot.Game {
 
                 var tiledComp = tiledEntity
                     .add(new TiledMapRenderer(tiled))
-                    .layerCtx(layer: Layers.Stage, depth: Depths.Stage);
+                    .zCtx(layer: Layers.Stage, depth: Depths.Stage);
 
                 // add camera bounds
                 // var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
