@@ -1,23 +1,27 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Rot.Engine;
-using Rot.Engine.Fov;
+
+// algorithm for field of view
 
 namespace Rot.Engine.Fov {
-    public static class Util {
-        public static int len(int x, int y) => (int) Math.Sqrt(x * x + y * y);
-        public static int sideLen(int r, int y) => (int) Math.Sqrt(r * r - y * y);
-        public static float ijToSlope(int i, int j) => (float) j / i;
-        public static float ijToStartSlope(int i, int j) => i == 0 ? 0 : (float) j / (i + 0.5f);
-        public static float ijToEndSlope(int i, int j) => i == 0 ? 0 : (float) j / (i - 0.5f);
-        public static int slopeToCol(float slope, int depth) => slope == 0 ? 0 : (int) (depth / slope);
+    #region interfaces
+    public interface iMap {
+        // TODO: visibility with context (whom seen by, in which direction, etc.)
+        bool isViewBlocked(int x, int y);
+        bool contains(int x, int y);
     }
 
+    public interface iFovData {
+        void onRefresh(int radius, int originX, int originY);
+        void light(int x, int y, int row, int col);
+    }
+    #endregion
+
+    #region internal utilities
     public struct Vec {
         public int x;
         public int y;
-        public int len => Util.len(this.x, this.y);
+        public int len => (int) Math.Sqrt(x * x + y * y);
 
         public Vec(int x, int y) {
             this.x = x;
@@ -28,6 +32,7 @@ namespace Rot.Engine.Fov {
         public static Vec operator +(Vec v1, Vec v2) => new Vec(v1.x + v2.x, v1.y + v2.y);
     }
 
+    // Clockwise from zero oclock
     public enum Octant {
         D0,
         D45,
@@ -40,12 +45,12 @@ namespace Rot.Engine.Fov {
     }
 
     public static class OctantExt {
-        public static(Vec, Vec) toIncVectors(this Octant self) {
-            return octantToIncVectors[(int) self];
+        public static(Vec, Vec) toUnitVecs(this Octant self) {
+            return toUnitVec2[(int) self];
         }
 
-        // from north east to north west clockwise. (row, column)
-        static(Vec, Vec) [] octantToIncVectors = new [] {
+        /// <summary> [(row, col)] </summary>
+        static(Vec, Vec) [] toUnitVec2 = new [] {
                 ((0, -1), (1, 0)),
                 ((1, 0), (0, -1)),
                 ((1, 0), (0, 1)),
@@ -58,31 +63,30 @@ namespace Rot.Engine.Fov {
             .Select(vs => (new Vec(vs.Item1.Item1, vs.Item1.Item2), new Vec(vs.Item2.Item1, vs.Item2.Item2)))
             .ToArray();
     }
+    #endregion
 
-    public interface FovMap {
-        void clearAll();
-        bool isViewBlocked(int x, int y);
-        void light(int x, int y);
-    }
-
-    public static class ShadowCasting<T> where T : FovMap {
-        public static void refresh(T map, int x, int y, int radius) {
-            map.clearAll();
+    /// <summary> The algorithm for field of view </summary>
+    public static class ShadowCasting<Map, Fov> where Map : iMap where Fov : iFovData {
+        public static void refresh(Map map, Fov fov, int originX, int originY, int radius) {
+            fov.onRefresh(radius, originX, originY);
 
             var cx = new ScanContext {
                 map = map,
-                origin = new Vec(x, y),
+                fov = fov,
+                origin = new Vec(originX, originY),
                 radius = radius,
             };
 
+            fov.light(originX, originY, 0, 0);
             for (int i = 0; i < 8; i++) {
-                Console.WriteLine((Octant) i);
-                new OctantScanner((Octant) i).scanAll(cx, 1);
+                // Console.WriteLine($"[{(Octant)i}]");
+                new OctantScanner((Octant) i).scanOctant(cx);
             }
         }
 
         public class ScanContext {
-            public T map;
+            public Map map;
+            public Fov fov;
             public Vec origin;
             public int radius;
 
@@ -91,66 +95,102 @@ namespace Rot.Engine.Fov {
             }
         }
 
-        public class OctantScanner {
-            Vec rowInc;
-            Vec colInc;
+        public struct OctantScanner {
+            // (row * rowUnit) + (col * colUnit) = relative position to a cell from an origin
+            Vec colUnit;
+            Vec rowUnit;
             float startSlope;
             float endSlope;
 
             public OctantScanner(Octant octant) : this(octant, 0f, 1f) { }
 
             public OctantScanner(Octant octant, float startSlope, float endSlope) {
-                (this.rowInc, this.colInc) = octant.toIncVectors();
+                (this.rowUnit, this.colUnit) = octant.toUnitVecs();
                 this.startSlope = startSlope;
                 this.endSlope = endSlope;
             }
 
             public OctantScanner(Vec rowInc, Vec colInc, float startSlope, float endSlope) {
-                this.rowInc = rowInc;
-                this.colInc = colInc;
+                this.colUnit = colInc;
+                this.rowUnit = rowInc;
                 this.startSlope = startSlope;
                 this.endSlope = endSlope;
             }
 
-            public void scanAll(ScanContext cx, int fromDepth) {
+            static class Rule {
+                public static float slope(int col, int row) => col / row;
+
+                // obstacle as a diagnoal block (more permissive)
+                // public static float startSlope(int col, int row) => (float) (col + 0.5f) / row;
+                // public static float endSlope(int col, int row) => (float) (col - 0.5f) / row;
+
+                // obstacle as a square block (less permissive)
+                public static float startSlope(int col, int row) => (float) (col + 0.5f) / (row - 0.5f);
+                public static float endSlope(int col, int row) => (float) (col - 0.5f) / (row + 0.5f);
+
+                static int colForSlope(float slope, int row) => (int) (slope * row);
+                public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
+                    int from = Rule.colForSlope(startSlope, row);
+                    int maxCol = (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
+                    int slopeCol = Rule.colForSlope(endSlope, row);
+                    int to = Math.Min(slopeCol, maxCol);
+                    return (from, to);
+                }
+            }
+
+            public void scanOctant(ScanContext cx, int fromRow = 1) {
                 if (this.startSlope > this.endSlope) return;
-                for (int depth = fromDepth; depth <= cx.radius; depth++) {
-                    if (this.scanRow(depth, cx)) break;
+                // Console.WriteLine($"{fromDepth}: {startSlope}, {endSlope}");
+                int radius = cx.radius;
+                for (int row = fromRow; row <= radius; row++) {
+                    if (this.scanRow(row, cx)) break;
                 }
             }
 
-            OctantScanner split(float endSlope) {
-                return new OctantScanner(this.rowInc, this.colInc, this.startSlope, this.endSlope);
+            OctantScanner splitScan(float endSlope) {
+                return new OctantScanner(this.rowUnit, this.colUnit, this.startSlope, endSlope);
             }
 
-            (int, int) colRange(int depth, int radius) {
-                int from = Util.slopeToCol(this.startSlope, depth);
-                int to = Math.Min(Util.slopeToCol(this.endSlope, depth), Util.sideLen(radius, depth));
-                return (from, to);
+            /// <summary> Represents a previous scan result </summary>
+            enum ScanState {
+                Initial,
+                Block,
+                Light,
             }
 
-            // TODO: not out of map
-            // OctantScanner
-            bool scanRow(int depth, ScanContext cx) {
-                var row = this.rowInc * depth;
-                (int fromI, int toI) = this.colRange(depth, cx.radius);
+            // TODO: reduce checking map bounds using max row/column
+            /// <summary> Returns whether it's finished or not </summary>
+            bool scanRow(int row, ScanContext cx) {
+                var rowVec = this.rowUnit * row;
+                (int fromI, int toI) = Rule.colRangeForRow(row, cx.radius, this.startSlope, this.endSlope);
+                // Console.WriteLine($"at {depth}: {fromI} -> {toI} ({startSlope}, {endSlope})");
 
-                bool wasBlocked = true;
-                for (int i = fromI; i <= toI; i++) {
-                    var col = this.colInc * i;
-                    var pos = cx.localToWorld(row + col);
-                    if (cx.map.isViewBlocked(pos.x, pos.y) && !wasBlocked) {
-                        Console.WriteLine($"==============> split with {Util.ijToEndSlope(i, depth)} (i={i}, j={depth})");
-                        this.split(Util.ijToEndSlope(i, depth)).scanAll(cx, depth + 1);
-                        wasBlocked = true;
-                    } else if (wasBlocked) {
-                        this.startSlope = Util.ijToStartSlope(i, depth);
-                        wasBlocked = false;
+                { // check map bounds
+                    var initPos = cx.localToWorld(rowVec);
+                    if (!cx.map.contains(initPos.x, initPos.y)) return true;
+                }
+
+                var state = ScanState.Initial;
+                for (int col = fromI; col <= toI; col++) {
+                    var pos = cx.localToWorld((Vec) (rowVec + this.colUnit * col));
+                    // check map bounds
+                    if (!cx.map.contains(pos.x, pos.y)) return true;
+                    // update visibility
+                    if (cx.map.isViewBlocked(pos.x, pos.y)) {
+                        if (state == ScanState.Light) {
+                            this.splitScan(Rule.endSlope(col, row)).scanOctant(cx, row + 1);
+                        }
+                        state = ScanState.Block;
+                    } else {
+                        if (state == ScanState.Block) {
+                            this.startSlope = Rule.startSlope(col, row);
+                        }
+                        state = ScanState.Light;
                     }
-                    cx.map.light(pos.x, pos.y);
+                    cx.fov.light(pos.x, pos.y, col, row);
                 }
 
-                return wasBlocked;
+                return state == ScanState.Block;
             }
         }
     }
