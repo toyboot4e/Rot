@@ -29,14 +29,6 @@ namespace Rot.Ui {
         }
     }
 
-    public static class SpriteExt {
-        public static List<Sprite> splitIntoSprites(this Texture2D t, int divX, int divY) {
-            var w = t.Width / divX;
-            var h = t.Height / divY;
-            return Sprite.SpritesFromAtlas(t, w, h);
-        }
-    }
-
     public static class TiledObjectExt {
         public static Vec2 tilePos(this TmxObject self, TmxMap tiled) {
             var x = tiled.WorldToTilePositionX(self.X);
