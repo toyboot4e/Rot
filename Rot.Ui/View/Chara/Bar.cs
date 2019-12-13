@@ -50,7 +50,7 @@ namespace Rot.Ui {
 				var(ninepatch, color) = def;
 				var img = new NineSliceSpriteRenderer(ninepatch);
 
-				img.layerCtx(layer: this.renderLayer, depth: this.depth(layer));
+				img.zCtx(layer: this.renderLayer, depth: this.depth(layer));
 				img.SetColor(color);
 				img.setSize(this.size);
 				img.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));

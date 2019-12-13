@@ -11,7 +11,7 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     public static class RenderableComponentExt {
-        public static T layerCtx<T>(this T self, int layer, float depth) where T : RenderableComponent {
+        public static T zCtx<T>(this T self, int layer, float depth) where T : RenderableComponent {
             self.SetRenderLayer(layer).SetLayerDepth(depth);
             return self;
         }
