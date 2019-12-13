@@ -38,8 +38,6 @@ namespace Rot.Script.View {
     }
 
     public class TalkView : Cmd.iCmdView {
-        float zOrder = 0.15f;
-        int layer = 1000;
         TalkViewConfig conf;
 
         PosUtil posUtil;
@@ -59,78 +57,66 @@ namespace Rot.Script.View {
         }
 
         public Animation anim(Cmd.Talk talk) {
-            // load config
             var text = talk.text;
             var color = Color.Black;
 
-            // TODO: abstract font loading via config
             var content = Core.Scene.Content;
-            // var font = content.Load<BitmapFont>(this.conf.font);
             var font = content.LoadBitmapFont(this.conf.font);
-            var winTexture = content.LoadTexture(this.conf.window);
+            var winTex = content.LoadTexture(this.conf.window);
+            var balloonTex = content.LoadTexture(this.conf.baloon);
 
-            // position
             var body = talk.from.get<Body>();
-            var pos = posUtil.gridToWorldCentered(body.pos + body.facing.vec);
             int sign = talk.dir.y <= 0 ? -1 : 1; // up or down
-            pos.Y += posUtil.tileHeight * sign;
+            int balloonPattern = talk.dir.y <= 0 ? 0 : 1; // down or up
+            var balloonPos = new Vector2(0, posUtil.tileHeight * sign);
 
-            // entities
-            var es = new Entity[] {
-                Core.Scene.CreateEntity("talk-text"),
-                Core.Scene.CreateEntity("talk-window"),
-            };
+            var entity = Core.Scene.CreateEntity("talk").SetParent(talk.to);
+            var textRenderer = entity.add(new TextComponent(font, text, Vector2.Zero, color));
+            var winRenderer = entity.add(winTex.toNineRenderer());
+            var baloonRenderer = entity.add(balloonTex.split(2, 2, balloonPattern));
 
-            var textSprite = es[0].add(new TextComponent(font, text, pos, color));
-            var window = es[1].add(new NineSliceSpriteRenderer(winTexture, 0, 0, 0, 0));
+            // ****** setup renderers *****
+            float winWidth = textRenderer.Width + this.conf.marginW;
+            float winHeight = textRenderer.Height + this.conf.marginH;
+            var textPos = balloonPos + new Vector2(0, winHeight / 2f * sign);
 
-            float winWidth = textSprite.Width + this.conf.marginW;
-            float winHeight = textSprite.Height + this.conf.marginH;
-            // float height = 20 + this.conf.marginH;
-            pos += new Vector2(0, winHeight / 2f * sign);
-
-            // setup
-            textSprite
+            textRenderer
                 .SetOriginNormalized(new Vector2(0.5f, 0.5f))
-                .SetLocalOffset(pos)
-                .layerCtx(layer: this.layer, depth: this.zOrder);
+                .SetLocalOffset(textPos)
+                .zCtx(Layers.Stage, Depths.Talk - Depths._inc * 2);
 
-            // origin not working as intended?
-            window
-                .SetLocalOffset(window.LocalOffset - window.size() / 2);
-            window
+            winRenderer
                 .setSize(winWidth, winHeight)
-                .SetLocalOffset(pos)
-                // window must come behing the text
-                .layerCtx(layer: this.layer, depth: this.zOrder + 0.00001f);
+                .SetLocalOffset(textPos)
+                .zCtx(Layers.Stage, Depths.Talk);
 
-            // animate
+            baloonRenderer
+                .SetLocalOffset(balloonPos)
+                .zCtx(Layers.Stage, Depths.Talk - Depths._inc);
+
+            // ***** animate *****
             var anim = new Ui.Anim.Seq();
 
             var ease = EaseType.SineIn;
             float duration = 8f / 60f; // for smooth animation
-            var baseOffset = window.LocalOffset + new Vector2(0, -window.Height / 2);
+            var baseOffset = winRenderer.LocalOffset + new Vector2(0, -winRenderer.Height / 2);
             var resize = new FloatFnTween(winWidth, duration, ease).setFuncs(
-                () => window.Width,
+                () => winRenderer.Width,
                 (set) => {
-                    window.SetLocalOffset(baseOffset - new Vector2(window.Width / 2, 0));
-                    window.Width = set;
+                    winRenderer.SetLocalOffset(baseOffset - new Vector2(winRenderer.Width / 2, 0));
+                    winRenderer.Width = set;
                 }
             );
-            window.Width = 9f;
+            winRenderer.Width = 9f;
 
             anim
                 .tween(resize)
-                .waitForInput(this.ctrlCtx.input, new [] {
-                    VKey.Select, VKey.Cancel,
-                })
-                // TODO: reduce closure
+                .waitForInput(this.ctrlCtx.input, new [] { VKey.Select, VKey.Cancel, })
                 .setCompletionHandler(_ => {
-                    for (int i = 0; i < es.Length; i++) {
-                        es[i].Destroy();
-                    }
+                    // we have to disable the entity so that components don't in
+                    // screen while it's deleted (, which requires some frames?)
+                    entity.SetEnabled(false).Destroy();
                 });
-            // anim.waitForInput(this.ctrlCtx.input, new VKey[] { VKey.Select });
             return anim;
         }
     }

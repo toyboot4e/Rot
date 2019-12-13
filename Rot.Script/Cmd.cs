@@ -21,10 +21,12 @@ namespace Rot.Script.Cmd {
     public struct Talk : iCmd {
         public readonly Entity from;
         public readonly EDir dir;
+        public readonly Entity to;
         public readonly string text;
 
-        public Talk(Entity from, EDir dir, string text) {
+        public Talk(Entity from, Entity to, EDir dir, string text) {
             this.from = from;
+            this.to = to;
             this.dir = dir;
             this.text = text;
         }
@@ -79,11 +81,4 @@ namespace Rot.Script.Cmd {
             this.value = value;
         }
     }
-
-    // public class ScriptBase {
-    //     List<iClosure> cmds;
-    //     protected void set<T>(string key, T value) {
-    //         this.cmds.Add(new Set<T>(key, value));
-    //     }
-    // }
 }
