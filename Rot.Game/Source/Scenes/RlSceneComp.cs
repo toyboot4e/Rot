@@ -21,7 +21,7 @@ namespace Rot.Game {
         public RlGameContext gameCtx;
 
         public override void OnEnabled() {
-            this.Scene.add(new RlHooks(this));
+            base.Scene.add(new RlHooks(this));
             this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
             base.Scene.add(new ControlSceneComponent(this.ctrlCtx));
 
@@ -32,8 +32,8 @@ namespace Rot.Game {
             this.view = new RlViewPlatform(
                 new RlViewServices(this.ctrlCtx, this.gameCtx, this.posUtil)
             );
-            RlExtensionMgr.initSystems(this.systems, this.ctrlCtx, this.posUtil);
-            RlExtensionMgr.initViews(this.view);
+            RlPluginSetter.initSystems(this.systems, this.ctrlCtx, this.posUtil);
+            RlPluginSetter.initViews(this.view);
 
             { // create controls
                 var cradle = this.ctrlCtx.cradle;
@@ -45,7 +45,7 @@ namespace Rot.Game {
             { // script control
                 var cradle = this.ctrlCtx.cradle;
                 var scripter = cradle.add(new ScriptControl());
-                RlExtensionMgr.initScriptViews(scripter, this.ctrlCtx, this.posUtil);
+                RlPluginSetter.initScriptViews(scripter, this.ctrlCtx, this.posUtil);
             }
 
 #if DEBUG
@@ -61,7 +61,7 @@ namespace Rot.Game {
                 for (int i = 0; i < this.gameCtx.entities.Count; i++) {
                     var e = this.gameCtx.entities[i];
                     if (e == null) {
-                        Nez.Debug.Log("Null found as an entity in the roguelike world");
+                        Nez.Debug.Log("Null found as an entity in the roguelike world when clearing it");
                         this.gameCtx.entities.RemoveAt(i);
                         continue;
                     }
@@ -89,10 +89,14 @@ namespace Rot.Game {
                     .add(new TiledMapRenderer(tiled))
                     .layerCtx(layer: Layers.Stage, depth: Depths.Stage);
 
-                var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
-                var bottomRight = new Vector2(tiled.TileWidth * (tiled.Width - 1), tiled.TileWidth * (tiled.Height - 1));
-                tiledComp.Entity.add(new CameraBounds(topLeft, bottomRight));
+                // add camera bounds
+                // var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
+                // var bottomRight = new Vector2(tiled.TileWidth * (tiled.Width - 1), tiled.TileWidth * (tiled.Height - 1));
+                // var topLeft = new Vector2(0, 0);
+                // var bottomRight = new Vector2(tiled.TileWidth * tiled.Width, tiled.TileWidth * tiled.Height);
+                // tiledEntity.add(new CameraBounds(topLeft, bottomRight));
 
+                // restore all contexts
                 this.posUtil = new PosUtil(tiled, base.Scene.Camera);
                 this.gameCtx = new RlGameContext(new TiledRlStage(tiled), new RotEntityList());
                 this.gameState = new RlGameState(this.gameCtx.evHub, this.gameCtx.entities as iRlActorIterator);
@@ -102,15 +106,17 @@ namespace Rot.Game {
             this.systems?.replCtx(this.gameCtx);
             this.view?.replCtx(this.gameCtx, this.posUtil);
 
-            // add player
+            // add a player entity
             if (player != null) {
                 this.gameCtx.entities.Add(player);
             } else {
-                this.gameCtx.entities.Add(
-                    EntityFactory.genPlayer(base.Scene, this.gameCtx.stage as TiledRlStage, this.posUtil).entity
-                );
-                base.Scene.Camera.Entity.add(new FollowCamera(player));
+                player = EntityFactory.genPlayer(base.Scene, this.gameCtx.stage as TiledRlStage, this.posUtil).entity;
+                this.gameCtx.entities.Add(player);
             }
+            // have the camera follow the player
+            var camera = base.Scene.Camera.Entity.get<FollowCamera>() ?? base.Scene.Camera.Entity.add(new FollowCamera(player));
+            camera.MapSize = new Vector2(tiled.WorldWidth, tiled.WorldHeight);
+            camera.MapLockEnabled = true;
 
             this.Scene.GetSceneComponent<RlHooks>().afterLoadingMap();
         }
@@ -121,7 +127,7 @@ namespace Rot.Game {
         }
     }
 
-    public class RlExtensionMgr {
+    public class RlPluginSetter {
         public static void initSystems(RlSystemStorage systems, ControlContext ctrlCtx, PosUtil posUtil) {
             // primitive systems
             systems.add(new Sys.PrimSystems());
