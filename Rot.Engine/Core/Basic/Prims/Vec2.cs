@@ -6,7 +6,7 @@ using Rot.Engine;
 
 namespace Rot.Engine {
     /// <Summary>
-    /// An immutable 2D int vector.
+    /// An immutable 2D int vector. May be a postion or a size.
     /// </Summary>
     public struct Vec2 : IEquatable<Vec2> {
         public readonly int x;

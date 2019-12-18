@@ -6,90 +6,91 @@ using F = System.Func<Rot.Engine.RlEvent, System.Collections.Generic.IEnumerable
 using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 
 namespace Rot.Engine {
-    /// <summary> <c>RlEvent</c> mediator </summary>
-    public class RlEventHub {
-        /// <summary> Maps specific <c>RlEvent</c>s to corresponding bands of helpers </summary>
-        Dictionary<Type, IRlEvHandlerBand> bands;
+    /// <summary>
+    /// Chain of Responsibility pattern for each concrete <c>RlEvent</c>s.
+    ///
+    /// In other words, it dispatches handlers one by one to a <c>RlEvent</c> until one of them "handle" it,
+    /// ordering handlers with their precedence.
+    /// </summary>
+    public class GenericRlEvHub {
+        /// <summary> Concrete event handlers </summary>
+        Dictionary<Type, IConcRlEvHub> concHubs;
 
-        public RlEventHub() {
-            this.bands = new Dictionary<Type, IRlEvHandlerBand>();
-        }
-
-        /// <summary> Let the handlers deal with the upcasted <c>RlEvent</c> </summary>
-        /// <remark> Always returns some <c>IEunmerable</c>, it's never null </summary>
-        public IEnumerable<RlEvent> handleAny(RlEvent e) {
-            IRlEvHandlerBand band = null;
-            if (e == null) {
-                Nez.Debug.Log("Given null as RlEvent in RlEventHub.handleAny()");
-                yield break;
-            }
-            if (!this.bands.TryGetValue(e.GetType(), out band)) {
-                // Think about `NotYetDecided` action; we don't have any handler for that.
-                yield break;
-            }
-            foreach(var ev in band.handleAbs(e)) {
-                yield return ev;
-            }
-        }
-
-        /// <summary> Let the handlers deal with the downcasted <c>RlEvent</c> </summary>
-        public IEnumerable<RlEvent> handleConc<T>(T e) where T : RlEvent {
-            return this.band<T>()?.handleConc(e);
-        }
-
-        /// <summary> Handlers of a specific type, may be null </summary>
-        public RlEvHandlerBand<T> band<T>() where T : RlEvent {
-            IRlEvHandlerBand band;
-            if (!this.bands.TryGetValue(typeof(T), out band)) {
-                return null;
-            } else {
-                return band as RlEvHandlerBand<T>;
-            }
-        }
-
-        /// <summary> Handlers of a specific type, created if not exists </summary>
-        public RlEvHandlerBand<T> bandOrNew<T>() where T : RlEvent {
-            IRlEvHandlerBand band;
-            if (this.bands.TryGetValue(typeof(T), out band)) {
-                return band as RlEvHandlerBand<T>;
-            } else {
-                var new_ = new RlEvHandlerBand<T>();
-                this.bands.Add(typeof(T), new_);
-                return new_;
-            }
+        public GenericRlEvHub() {
+            this.concHubs = new Dictionary<Type, IConcRlEvHub>();
         }
 
         /// <remark> Use a concrete event type when calling </remark>
-        public RlEventHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
-            this.bandOrNew<T>().add(new RlEvHandler<T>(precedence, f));
+        public GenericRlEvHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
+            this.handlersOrNew<T>().add(new RlEvHandler<T>(precedence, f));
             return this;
         }
 
         /// <remark> Use a concrete event type when calling </remark>
         public bool unsubscribe<T>(Func<T, Evs> f) where T : RlEvent {
-            return this.band<T>()?.rm(f) ?? false;
+            return this.handlers<T>()?.rm(f) ?? false;
+        }
+
+        public IEnumerable<RlEvent> handleAbs(RlEvent e) {
+            if (e == null) {
+                Nez.Debug.Log("Given null as RlEvent in RlEventHub.handleAny()");
+                yield break;
+            }
+            if (!this.concHubs.TryGetValue(e.GetType(), out var concHub)) {
+                // we don't have any handler for that. think about `NotYetDecided` action
+                yield break;
+            }
+            foreach(var ev in concHub.handleAbs(e)) {
+                yield return ev;
+            }
+        }
+
+        public IEnumerable<RlEvent> handleConc<T>(T e) where T : RlEvent {
+            return this.handlers<T>()?.handleConc(e);
+        }
+
+        /// <summary> Handlers of a specific type, may be null </summary>
+        public ConcRlEvHub<T> handlers<T>() where T : RlEvent {
+            IConcRlEvHub band;
+            if (!this.concHubs.TryGetValue(typeof(T), out band)) {
+                return null;
+            } else {
+                return band as ConcRlEvHub<T>;
+            }
+        }
+
+        /// <summary> Handlers of a specific type, created if not exists </summary>
+        public ConcRlEvHub<T> handlersOrNew<T>() where T : RlEvent {
+            IConcRlEvHub band;
+            if (this.concHubs.TryGetValue(typeof(T), out band)) {
+                return band as ConcRlEvHub<T>;
+            } else {
+                var new_ = new ConcRlEvHub<T>();
+                this.concHubs.Add(typeof(T), new_);
+                return new_;
+            }
         }
     }
 
     /// <summary> Upcasted handlers of a specific <c>RlEvent</c> </summary>
-    internal interface IRlEvHandlerBand {
+    internal interface IConcRlEvHub {
         IEnumerable<RlEvent> handleAbs(RlEvent ev);
     }
 
     /// <summary> Handlers of a specific <c>RlEvent</c> </summary>
-    public class RlEvHandlerBand<T> : IRlEvHandlerBand where T : RlEvent {
+    public class ConcRlEvHub<T> : IConcRlEvHub where T : RlEvent {
         public List<RlEvHandler<T>> handlers;
 
-        public RlEvHandlerBand() {
+        public ConcRlEvHub() {
             this.handlers = new List<RlEvHandler<T>>();
         }
 
         /// <summary> Downcasts give event to <c>T</c> and dispaches them to the handlers. </summary>
-        IEnumerable<RlEvent> IRlEvHandlerBand.handleAbs(RlEvent ev) => this.handleConc(ev as T);
+        IEnumerable<RlEvent> IConcRlEvHub.handleAbs(RlEvent ev) => this.handleConc(ev as T);
 
-        public RlEvHandlerBand<T> add(RlEvHandler<T> handler) {
+        public ConcRlEvHub<T> add(RlEvHandler<T> handler) {
             this.handlers.Add(handler);
-            // sort in descending order
+            // the higher, the earlier
             this.handlers.Sort((a, b) => b.precedence.CompareTo(a.precedence));
             return this;
         }
@@ -114,7 +115,7 @@ namespace Rot.Engine {
         }
     }
 
-    /// <summary> Event handler with precedence for evaluation </summary>
+    /// <summary> Event handler with precedence for ordering </summary>
     public class RlEvHandler<T> where T : RlEvent {
         /// <summary> The order of process. 0.0 is used for default implmentations </summary>
         public float precedence;

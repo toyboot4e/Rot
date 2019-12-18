@@ -19,7 +19,6 @@ namespace Rot.Sys {
         // BE CAREFUL when you iterate through entities.
         // It removes entities from the list immediately when they die
         public IEnumerable<RlEvent> handle(RlEv.Death death) {
-            death.entity.add<Dead>(); // FIXME: the hack
             (base.gameCtx.entities as RotEntityList).delete(death.entity);
             death.entity.Destroy(); // FIXME: not delete entity until animation is finished
             yield break;

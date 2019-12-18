@@ -10,30 +10,30 @@ namespace Rot.Engine {
         iRlActor next();
     }
 
-    /// <summary> The tickable game state / wrapper around an actor iterator. </summary>
-    /// <remark> You can visualize the game progress referring to returned <c>RlTickReport</c>s. </remark>
+    /// <summary> The internal game state of a roguelike game </summary>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
-        public RlGameState(RlEventHub evHub, iRlActorIterator scheduler) {
-            Nez.Insist.IsNotNull(scheduler, "Given null as a scheduler");
-            this.loop = this.flow(scheduler, evHub).GetEnumerator();
+        public RlGameState(GenericRlEvHub evHub, iRlActorIterator scheduler) {
+            Nez.Insist.IsNotNull(scheduler, "Given null as a scheduler to the game state");
+            this.loop = RlGameState.flow(scheduler, evHub).GetEnumerator();
         }
 
+        /// <summary> Advances the game for "one step", which can be observed & visualized externally </summary>
         public RlTickReport tick() {
             if (this.loop == null) {
                 return RlTickReport.error("Somehow the game loop is null!");
             }
             if (this.loop.MoveNext() == false) {
-                return RlTickReport.error("The game loop is finished!");
+                return RlTickReport.error("The game loop is finished, it must not!");
             }
 
             return loop.Current;
         }
 
-        /// <summary> Creates the internal game state. </summary>
-        /// <remarks> Becomes infinite loop if there's no event. </remarks>
-        IEnumerable<RlTickReport> flow(iRlActorIterator scheduler, RlEventHub evHub) {
+        /// <summary> A turn-based game loop </summary>
+        /// <remarks> Becomes an infinite loop if there's no event to process. </remarks>
+        static IEnumerable<RlTickReport> flow(iRlActorIterator scheduler, GenericRlEvHub evHub) {
             while (true) {
                 var actor = scheduler.next();
                 if (actor == null) {
@@ -42,7 +42,7 @@ namespace Rot.Engine {
                 }
 
                 foreach(var ev in actor.takeTurn().Where(e => e != null)) {
-                    foreach(var report in this.processEvent(evHub, ev).Where(e => e != null)) {
+                    foreach(var report in RlGameState.processEvent(evHub, ev).Where(e => e != null)) {
                         yield return report;
                     }
                 }
@@ -50,11 +50,11 @@ namespace Rot.Engine {
         }
 
         /// <summary> The nestable <c>RlEvent</c> handling </summary>
-        IEnumerable<RlTickReport> processEvent(RlEventHub evHub, RlEvent ev) {
+        static IEnumerable<RlTickReport> processEvent(GenericRlEvHub evHub, RlEvent ev) {
             yield return RlTickReport.event_(ev);
-            foreach(var evNested in evHub.handleAny(ev)) {
+            foreach(var evNested in evHub.handleAbs(ev)) {
                 // nest events enabled
-                foreach(var report in this.processEvent(evHub, evNested)) {
+                foreach(var report in RlGameState.processEvent(evHub, evNested)) {
                     if (report == null) continue;
                     yield return report;
                 }

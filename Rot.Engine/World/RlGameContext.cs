@@ -8,13 +8,13 @@ namespace Rot.Engine {
         /// <summary> BE CAREFUL when you enumerate entities; they may be deleted when they die </summary>
         public IList<Entity> entities { get; private set; }
         public RlLogic logic { get; private set; }
-        public RlEventHub evHub { get; private set; }
+        public GenericRlEvHub evHub { get; private set; }
 
         public RlGameContext(iRlStage stage, IList<Entity> es) {
             this.stage = stage;
             this.entities = es;
             this.logic = new RlLogic(this);
-            this.evHub = new RlEventHub();
+            this.evHub = new GenericRlEvHub();
         }
 
         /// <summary> BE CAREFUL when you enumerate entities; they may be deleted when they die </summary>
