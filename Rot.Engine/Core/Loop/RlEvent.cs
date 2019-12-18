@@ -18,6 +18,10 @@ namespace Rot.RlEv {
             return new Cause(ev);
         }
 
+        public static Cause none() {
+            return new Cause(null);
+        }
+
         Cause(RlEvent ev) {
             this.e = ev;
         }

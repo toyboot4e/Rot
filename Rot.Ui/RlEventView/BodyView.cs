@@ -40,16 +40,11 @@ namespace Rot.Ui.View {
         }
 
         Animation onDirChange(RlEv.DirChange dirChange) {
-            switch (dirChange.cause.e) {
-                case RlEv.Face face:
-                    var tween = _s.viewUtil.turn(face.entity, face.dir);
-                    if (tween != null) {
-                        return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
-                    } else {
-                        return null;
-                    }
-                default:
-                    return null;
+            var tween = _s.viewUtil.turn(dirChange.entity, dirChange.to);
+            if (tween != null) {
+                return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
+            } else {
+                return null;
             }
         }
     }

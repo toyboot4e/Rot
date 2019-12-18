@@ -36,6 +36,14 @@ namespace Rot.RlEv {
         }
     }
 
+    public class Miss : RlEvent {
+        public readonly Dodge cause;
+
+        public Miss(Dodge dodge) {
+            this.cause = dodge;
+        }
+    }
+
     public class Dodge : RlEvent {
         public readonly Entity entity;
         public readonly Cause cause;
