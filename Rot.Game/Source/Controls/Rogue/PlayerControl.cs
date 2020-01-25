@@ -94,7 +94,7 @@ namespace Rot.Game {
                 this.findOnlyNeighbor(this.controller.actor) is Entity neighbor) {
                 var entity = this.controller.actor;
                 var dir = this.gameCtx.logic.dirTo(entity, neighbor);
-                return new RlEv.Face(entity, dir);
+                return RlEv.DirChange.turn(entity, dir);
             }
 
             return null;
@@ -120,8 +120,9 @@ namespace Rot.Game {
                 return null; // filtered
             }
 
+            var body = this.controller.actor.get<Body>();
             return dirMode.isOn ?
-                (RlEvent) new RlEv.Face(this.controller.actor, dir) :
+                (RlEvent) RlEv.DirChange.turn(this.controller.actor, dir) :
                 (RlEvent) new RlEv.Walk(this.controller.actor, dir);
         }
 

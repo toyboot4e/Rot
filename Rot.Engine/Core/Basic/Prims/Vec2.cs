@@ -6,7 +6,7 @@ using Rot.Engine;
 
 namespace Rot.Engine {
     /// <Summary>
-    /// An immutable 2D int vector.
+    /// An immutable 2D int vector. May be a postion or a size.
     /// </Summary>
     public struct Vec2 : IEquatable<Vec2> {
         public readonly int x;
@@ -48,6 +48,7 @@ namespace Rot.Engine {
         // &Self -> int | double
         public int area => x * y;
         public double len => Math.Sqrt((x * x) + (y * y));
+        public float lenF => (float) Math.Sqrt((x * x) + (y * y));
         public int lenSquared => (x * x) + (y * y);
         public int lenRock => Math.Abs(x) + Math.Abs(y);
         public int lenKing => Math.Max(Math.Abs(x), Math.Abs(y));

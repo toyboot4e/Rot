@@ -34,23 +34,20 @@ namespace Rot.Ui.View {
                     var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
-                    // TODO: just update the position
+                    posChange.entity.get<Charachip>().forceUpdatePos();
                     return null;
             }
         }
 
         Animation onDirChange(RlEv.DirChange dirChange) {
-            switch (dirChange.cause.e) {
-                case RlEv.Face face:
-                    var tween = _s.viewUtil.turn(face.entity, face.dir);
-                    if (tween != null) {
-                        return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
-                    } else {
-                        return null;
-                    }
-                default:
-                    return null;
+            if (dirChange.isSmooth) {
+                var tween = _s.viewUtil.turn(dirChange.entity, dirChange.to);
+                if (tween != null) {
+                    return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
+                }
             }
+            dirChange.entity.get<Charachip>().setDir(dirChange.to);
+            return null;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Rot.Sys {
 
             var body = entity.get<Body>();
             if (body.facing != dir) {
-                yield return new RlEv.Face(entity, dir);
+                yield return RlEv.DirChange.turn(entity, dir);
             }
 
             var pos = melee.entity.get<Body>().pos;

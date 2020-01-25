@@ -1,5 +1,3 @@
-using Nez;
-
 namespace Rot.Engine {
     public class ActionMeans {
         public class Weapon : ActionMeans {

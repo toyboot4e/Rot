@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Nez;
+using Rot.Engine.Fov;
 
 namespace Rot.Engine {
     // TODO: refactor RlStage
@@ -9,7 +7,8 @@ namespace Rot.Engine {
     public interface iRlStage {
         Rect bounds { get; }
         RlTiles tilesAt(Vec2 pos);
-        // RlCell at(Vec2 pos);
+        bool isBlocked(Vec2 pos);
+        bool isBlocked(int x, int y);
     }
 
     /// <summary> Helper <summary>
@@ -25,7 +24,7 @@ namespace Rot.Engine {
     }
 
     public static class RlTilesExt {
-        public static bool isInsideStage(this RlTiles self) =>
+        public static bool isInStage(this RlTiles self) =>
             self.stage.contains(self.pos);
 
         public static bool areBlocking(this RlTiles self) =>

@@ -4,6 +4,7 @@ using Nez;
 using Nez.Tweens;
 
 namespace Rot.Ui.Tweens {
+    // TODO: consider using TransformVector2Tween
     public class Walk : Tween<Vector2>, ITweenTarget<Vector2> {
         Transform transform;
 

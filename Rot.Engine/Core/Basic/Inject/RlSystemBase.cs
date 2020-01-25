@@ -20,6 +20,7 @@ namespace Rot.Engine {
         // }
 
         public virtual void setup() { }
+        // TODO: Should I use IDispose?
         public virtual void onDelete() { }
     }
 

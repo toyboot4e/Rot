@@ -47,16 +47,16 @@ namespace Rot.Ui {
 		public override void OnAddedToEntity() {
 			var content = this.Entity.Scene.Content;
 			foreach(var(layer, def) in this.style.defs) {
-				var(subtextures, color) = def;
-				var sprite = new NineSliceSpriteRenderer(subtextures);
+				var(ninepatch, color) = def;
+				var img = new NineSliceSpriteRenderer(ninepatch);
 
-				sprite.layerCtx(layer: this.renderLayer, depth: this.depth(layer));
-				sprite.SetColor(color);
-				sprite.setSize(this.size);
-				sprite.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
+				img.zCtx(layer: this.renderLayer, depth: this.depth(layer));
+				img.SetColor(color);
+				img.setSize(this.size);
+				img.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
 
-				this.Entity.AddComponent(sprite);
-				this.bars.Add(layer, sprite);
+				this.Entity.AddComponent(img);
+				this.bars.Add(layer, img);
 			}
 		}
 

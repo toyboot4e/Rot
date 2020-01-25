@@ -19,13 +19,4 @@ namespace Rot.RlEv {
             (this.entity, this.dir) = (e, d);
         }
     }
-
-    public class Face : RlEvent {
-        public readonly Entity entity;
-        public readonly EDir dir;
-
-        public Face(Entity e, EDir d) {
-            (this.entity, this.dir) = (e, d);
-        }
-    }
 }

@@ -1,3 +1,5 @@
+// Special tags. It's better not to use them.
+
 namespace Rot.Engine {
     public class Dead : Nez.Component { }
 

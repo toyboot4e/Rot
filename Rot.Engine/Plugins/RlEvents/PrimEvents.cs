@@ -20,13 +20,17 @@ namespace Rot.RlEv {
         public readonly Entity entity;
         public readonly EDir from;
         public readonly EDir to;
-        public readonly Cause cause;
+        public readonly bool isSmooth;
 
-        public DirChange(Entity entity, EDir from, EDir to, Cause cause) {
+        public DirChange(Entity entity, EDir from, EDir to, bool isSmooth) {
             this.entity = entity;
             this.from = from;
             this.to = to;
-            this.cause = cause;
+            this.isSmooth = isSmooth;
+        }
+
+        public static DirChange turn(Entity entity, EDir to) {
+            return new DirChange(entity, entity.get<Body>().facing, to, isSmooth : true);
         }
     }
 

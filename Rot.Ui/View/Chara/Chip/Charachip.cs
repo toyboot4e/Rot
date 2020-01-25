@@ -32,7 +32,7 @@ namespace Rot.Ui {
             // var texture = this.Entity.Scene.Content.LoadTexture(path);
             var texture = content.LoadTexture(path);
             var sprites = texture.splitIntoSprites(6, 4);
-            var anim = new SpriteAnimator().layerCtx(Layers.Stage, Depths.Charachip);
+            var anim = new SpriteAnimator().zCtx(Layers.Stage, Depths.Charachip);
 
             // TODO: make it static
             var wodi8AnimPatterns = new [] {
@@ -57,7 +57,7 @@ namespace Rot.Ui {
             // foreach(var(keyEnum, patterns) in EnumDirUtil.enumerate().Zip(wodi8AnimPatterns, (key, i) => (key, i))) {
             var keyEnums = EDir.clockwise;
             // var fps = System.TimeSpan.FromTicks((long) 10_000_000 / (long) 16);
-            float fps = 2;
+            float fps = 60f / 16f;
             for (int i = 0; i < 8; i++) {
                 var(keyEnum, patterns) = (keyEnums[i], wodi8AnimPatterns[i]);
                 anim.AddAnimation(keyEnum.asStr, fps, patterns.Select(p => sprites[p]).ToArray());
@@ -78,6 +78,11 @@ namespace Rot.Ui {
                 this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);
             }
             return this;
+        }
+
+        public Charachip forceUpdatePos() {
+            var pos = this.Entity.get<Body>().pos;
+            return this.snapToGridPos(pos);
         }
     }
 }
