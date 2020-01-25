@@ -79,5 +79,10 @@ namespace Rot.Ui {
             }
             return this;
         }
+
+        public Charachip forceUpdatePos() {
+            var pos = this.Entity.get<Body>().pos;
+            return this.snapToGridPos(pos);
+        }
     }
 }

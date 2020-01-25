@@ -3,6 +3,7 @@ using Nez;
 
 namespace Rot.Engine {
     // TODO: overridable queries
+    // FIXME: to combine blocking logic from TmxMapExt
     public class RlLogic {
         RlGameContext ctx;
 
@@ -24,6 +25,7 @@ namespace Rot.Engine {
         public bool canWalkIn(Entity e, EDir dir) {
             var stage = this.ctx.stage;
             var body = e.get<Body>();
+
             var from = body.pos;
             var to = from + dir.vec;
 
@@ -61,12 +63,12 @@ namespace Rot.Engine {
         // TODO: add diagonal blocking property to stage tiles
         public bool isDiagonallyPassableAt(Vec2 pos) {
             var stage = this.ctx.stage;
-            return stage.tilesAt(pos).arePassable() && !this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
+            return stage.tilesAt(pos).arePassable();
         }
 
         public bool isDiagonallyBlocedAt(Vec2 pos) {
             var stage = this.ctx.stage;
-            return !stage.tilesAt(pos).arePassable() || this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isDiagonalBlocker);
+            return !stage.tilesAt(pos).arePassable();
         }
     }
     #endregion
