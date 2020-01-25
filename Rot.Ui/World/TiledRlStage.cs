@@ -3,7 +3,7 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     /// <summary> Tiled implementation of the stage </summary>
-    public class TiledRlStage : Engine.iRlStage, Engine.Fov.iMap {
+    public class TiledRlStage : Engine.iRlStage, Engine.Fov.iOpacityMap {
         public TmxMap tiled { get; private set; }
 
         public TiledRlStage(TmxMap tiled) {
@@ -19,7 +19,7 @@ namespace Rot.Ui {
         #endregion
 
         #region impl iFovMap
-        bool Engine.Fov.iMap.isViewBlocked(int x, int y) {
+        bool Engine.Fov.iOpacityMap.isOpaeue(int x, int y) {
             return !this.bounds.contains(x, y) || this.tiled.isBlocked(x, y);
         }
 

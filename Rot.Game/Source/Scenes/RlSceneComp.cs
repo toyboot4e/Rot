@@ -86,6 +86,7 @@ namespace Rot.Game {
                 this.tiled = base.Scene.Content.LoadTiledMap(path);
 
                 var tiledComp = tiledEntity
+                    // .add(new TiledMapRenderer(tiled, collisionLayerName: "collision"))
                     .add(new TiledMapRenderer(tiled))
                     .zCtx(layer: Layers.Stage, depth: Depths.Stage);
 
@@ -106,13 +107,8 @@ namespace Rot.Game {
             this.systems?.replCtx(this.gameCtx);
             this.view?.replCtx(this.gameCtx, this.posUtil);
 
-            // add a player entity
-            if (player != null) {
-                this.gameCtx.entities.Add(player);
-            } else {
-                player = EntityFactory.genPlayer(base.Scene, this.gameCtx.stage as TiledRlStage, this.posUtil).entity;
-                this.gameCtx.entities.Add(player);
-            }
+            player = player ?? EntityFactory.genPlayer(base.Scene, this.gameCtx.stage as TiledRlStage, this.posUtil, this.tiled).entity;
+            this.gameCtx.entities.Add(player);
             // have the camera follow the player
             var camera = base.Scene.Camera.Entity.get<FollowCamera>() ?? base.Scene.Camera.Entity.add(new FollowCamera(player));
             camera.MapSize = new Vector2(tiled.WorldWidth, tiled.WorldHeight);
