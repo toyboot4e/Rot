@@ -14,6 +14,7 @@ namespace Rot.Ui {
     public static class Depths {
         public static float Stage => 0.6f;
         public static float Charachip => 0.5f;
+        public static float Fov => 0.45f;
         public static float CharaGage => 0.4f;
         public static float DamageVal => 0.3f;
         public static float Menu => 0.25f;

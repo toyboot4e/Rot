@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Nez;
+using Nez.Tiled;
 using Rot.Engine;
 using Rot.Ui;
 using Cmd = Rot.Script.Cmd;
@@ -24,15 +25,17 @@ namespace Rot.Game {
             return EntityFactory.begin(scene.CreateEntity(name), posUtil);
         }
 
-        public static EntityFactory genPlayer(Scene scene, TiledRlStage stage, PosUtil posUtil) {
+        public static EntityFactory genPlayer(Scene scene, TiledRlStage stage, PosUtil posUtil, TmxMap map) {
             var factory = EntityFactory.begin(scene, "player", posUtil);
             factory
                 .body(new Vec2(7, 7), EDir.S, true, false)
                 .actor(new Engine.Beh.Player(factory.entity), 3)
-                .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
+                // .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
+                .wodi8Chip(Content.Chips.Wodi8.Chicken)
                 .performance(50, 10, 5)
-                .add(new FovComp(stage))
+                .add(new FovComp(stage, map))
                 .add(new Player());
+            // .add(new Nez.Shadows.PolyLight(32 * 6) { Power = 0.8f }.zCtx(Layers.Stage, 0.1f));
             return factory;
         }
 

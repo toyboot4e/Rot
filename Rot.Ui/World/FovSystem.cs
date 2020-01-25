@@ -22,7 +22,7 @@ namespace Rot.Sys {
                 yield break;
             }
             fov.refresh();
-            fov.debugPrint();
+            // fov.debugPrint();
             yield return new RlEv.None();
             yield break;
         }

@@ -24,8 +24,8 @@ namespace Rot.Ui {
             return self.TweenColorTo(Color.White * opacity, dur);
         }
 
-        public static RenderableComponent setColorW(this RenderableComponent self, float opacity) {
-            return self.SetColor(Color.White * opacity);
+        public static PrototypeSpriteRenderer setSize(this PrototypeSpriteRenderer self, float w, float h) {
+            return self.SetWidth(w).SetHeight(h);
         }
     }
 
