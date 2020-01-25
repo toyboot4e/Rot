@@ -2,7 +2,7 @@ using Nez;
 using Rot.Engine;
 
 namespace Rot.Engine {
-    /// <summary> Message handled by systems </summary>
+    /// <summary> What happened in the game. Handled by a System and may be a next event is produced. </summary>
     public abstract class RlEvent {
         /// <summary> Hack to return handling result </summary>
         public bool consumesTurn = true;
@@ -18,10 +18,16 @@ namespace Rot.RlEv {
             return new Cause(ev);
         }
 
+        public static Cause none() {
+            return new Cause(null);
+        }
+
         Cause(RlEvent ev) {
             this.e = ev;
         }
     }
+
+    public class None : RlEvent { }
 
     /// <summary> Wrapper around an RlEvent </summary>
     public class AnyTry {

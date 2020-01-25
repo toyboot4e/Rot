@@ -11,7 +11,7 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     public static class RenderableComponentExt {
-        public static T layerCtx<T>(this T self, int layer, float depth) where T : RenderableComponent {
+        public static T zCtx<T>(this T self, int layer, float depth) where T : RenderableComponent {
             self.SetRenderLayer(layer).SetLayerDepth(depth);
             return self;
         }
@@ -24,16 +24,8 @@ namespace Rot.Ui {
             return self.TweenColorTo(Color.White * opacity, dur);
         }
 
-        public static RenderableComponent setColorW(this RenderableComponent self, float opacity) {
-            return self.SetColor(Color.White * opacity);
-        }
-    }
-
-    public static class SpriteExt {
-        public static List<Sprite> splitIntoSprites(this Texture2D t, int divX, int divY) {
-            var w = t.Width / divX;
-            var h = t.Height / divY;
-            return Sprite.SpritesFromAtlas(t, w, h);
+        public static PrototypeSpriteRenderer setSize(this PrototypeSpriteRenderer self, float w, float h) {
+            return self.SetWidth(w).SetHeight(h);
         }
     }
 

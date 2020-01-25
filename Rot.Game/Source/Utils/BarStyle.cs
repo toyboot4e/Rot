@@ -27,26 +27,27 @@ namespace Rot.Game {
 
             var pairs = new Dictionary < BarLayer,
                 (string, Color) > () {
-                    // //
-                    // { BarLayer.Background, (Content.Sys.Gage.Bar, Colors.Gage.background) },
-                    // //
-                    // { BarLayer.Effect, (Content.Sys.Gage.Bar, Colors.Gage.opaque) },
-                    // //
-                    // { BarLayer.Current, (Content.Sys.Gage.Bar, Colors.Gage.life) },
-                    // //
-                    // { BarLayer.Frame, (Content.Sys.Gage.Frame, Colors.Gage.frame) },
-                    { BarLayer.Background, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.background) },
                     //
-                    { BarLayer.Effect, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.opaque) },
+                    { BarLayer.Background, (Content.Sys.Gage.Bar, Colors.Gage.background) },
                     //
-                    { BarLayer.Current, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.life) },
+                    { BarLayer.Effect, (Content.Sys.Gage.Bar, Colors.Gage.opaque) },
                     //
-                    { BarLayer.Frame, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.frame) },
+                    { BarLayer.Current, (Content.Sys.Gage.Bar, Colors.Gage.life) },
+                    //
+                    { BarLayer.Frame, (Content.Sys.Gage.Frame, Colors.Gage.frame) },
+
+                    // { BarLayer.Background, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.background) },
+                    // //
+                    // { BarLayer.Effect, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.opaque) },
+                    // //
+                    // { BarLayer.Current, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.life) },
+                    // //
+                    // { BarLayer.Frame, (Content.Sys.Nekura.WindowBase_01, Colors.Gage.frame) },
                 }.Select(xs => {
                     var(layer, (path, color)) = (xs.Key, xs.Value);
                     Nez.Debug.Log("load " + path);
                     var texture = Nez.Core.Scene.Content.LoadTexture(path);
-                    var sprite = new NinePatchSprite(texture, 0, 0, 0, 0);
+                    var sprite = texture.toNineSprite();
                     return (layer, (sprite, color));
                 });
 

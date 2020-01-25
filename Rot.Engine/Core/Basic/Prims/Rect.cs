@@ -7,8 +7,8 @@ namespace Rot.Engine {
     /// An immutable 2D rectangle.
     /// </summary>
     public struct Rect : IEquatable<Rect>, IEnumerable<Vec2> {
-        private readonly Vec2 mPos;
-        private readonly Vec2 mSize;
+        readonly Vec2 mPos;
+        readonly Vec2 mSize;
 
         public readonly static Rect empty;
 
@@ -20,27 +20,14 @@ namespace Rot.Engine {
         public static Rect col(int h, int x, int y) => new Rect(x, y, 1, h);
         public static Rect col(Vec2 pos, int h) => new Rect(pos.x, pos.y, 1, h);
 
-        /// <summary>
-        /// Creates a new rectangle that is the intersection of the two given rectangles.
-        /// </summary>
-        /// <example><code>
-        /// .----------.
-        /// | a        |
-        /// | .--------+----.
-        /// | | result |  b |
-        /// | |        |    |
-        /// '-+--------'    |
-        ///   |             |
-        ///   '-------------'
-        /// </code></example>
         public static Rect intersect(Rect a, Rect b) {
             int left = Math.Max(a.left, b.left);
             int right = Math.Min(a.right, b.right);
             int top = Math.Max(a.top, b.top);
             int bottom = Math.Min(a.bottom, b.bottom);
 
-            int width = Math.Max(0, right - left);
-            int height = Math.Max(0, bottom - top);
+            int width = right - left;
+            int height = bottom - top;
 
             return new Rect(left, top, width, height);
         }
@@ -116,33 +103,18 @@ namespace Rot.Engine {
                 mSize.offset(distance * 2, distance * 2));
         }
 
-        public bool contains(Vec2 pos) {
-            if (pos.x < mPos.x || pos.x >= mPos.x + mSize.x - 1 ||
-                pos.y < mPos.y || pos.y >= mPos.y + mSize.y - 1) {
-                return false;
-            }
-            return true;
+        public bool contains(int x, int y) {
+            return !(x < mPos.x || x >= mPos.x + mSize.x || y < mPos.y || y >= mPos.y + mSize.y);
         }
 
-        public bool contains(Rect rect) {
-            // all sides must be within
-            if (rect.left < left) return false;
-            if (rect.right > right) return false;
-            if (rect.top < top) return false;
-            if (rect.bottom > bottom) return false;
+        public bool contains(Vec2 pos) => this.contains(pos.x, pos.y);
 
-            return true;
+        public bool contains(Rect rect) {
+            return !(rect.left < left || rect.right > right || rect.top < top || rect.bottom > bottom);
         }
 
         public bool overlaps(Rect rect) {
-            // fail if they do not overlap on any axis
-            if (left > rect.right) return false;
-            if (right < rect.left) return false;
-            if (top > rect.bottom) return false;
-            if (bottom < rect.top) return false;
-
-            // then they must overlap
-            return true;
+            return !(left > rect.right || right < rect.left || top > rect.bottom || bottom < rect.top);
         }
 
         public Rect intersect(Rect rect) {
@@ -172,15 +144,12 @@ namespace Rot.Engine {
         }
 
         #region IEquatable<Rect> Members
-
         public bool Equals(Rect other) {
             return mPos.Equals(other.mPos) && mSize.Equals(other.mSize);
         }
-
         #endregion
 
         #region IEnumerable<Vec2> Members
-
         public IEnumerator<Vec2> GetEnumerator() {
             if (mSize.x < 0) throw new ArgumentOutOfRangeException("Cannot enumerate a Rectangle with a negative width.");
             if (mSize.y < 0) throw new ArgumentOutOfRangeException("Cannot enumerate a Rectangle with a negative height.");
@@ -191,15 +160,12 @@ namespace Rot.Engine {
                 }
             }
         }
-
         #endregion
 
         #region IEnumerable Members
-
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
-
         #endregion
     }
 }

@@ -1,5 +1,4 @@
 using Nez;
-using Rot.Engine;
 
 namespace Rot.Engine {
     public class Body : Nez.Component {
@@ -12,6 +11,7 @@ namespace Rot.Engine {
         public enum Location {
             Void,
             OnStage,
+            // TODO: enable owing other entity
             Owned,
             InInventory,
             InEquipment

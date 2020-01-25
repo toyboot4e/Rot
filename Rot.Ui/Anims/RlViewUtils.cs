@@ -1,5 +1,3 @@
-using Math = System.Math;
-using System.Collections;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Tweens;
@@ -51,15 +49,11 @@ namespace Rot.Ui {
             var body = entity.get<Body>();
             var chip = entity.get<Charachip>().anim;
 
-            // TODO: consider adjustable offset of charachips
             var offset = new Vector2(0, 0);
-            var deltaPos = 0.5f * body.facing.vector2 * posUtil.tileSize;
+            var deltaPos = body.facing.vector2 * posUtil.tileSize / 2;
 
-            var easeType = EaseType.Linear;
-            var first = chip.tweenLocalOffset(offset + deltaPos, duration, easeType);
-
-            easeType = EaseType.Linear;
-            var second = chip.tweenLocalOffset(offset, duration, easeType);
+            var first = chip.tweenLocalOffset(offset + deltaPos, duration, EaseType.CircIn);
+            var second = chip.tweenLocalOffset(offset, duration, EaseType.CircIn);
 
             return new ITween<Vector2>[] { first, second };
         }

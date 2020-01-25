@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using Nez;
 
 namespace Rot.Engine {
-    /// <summary> Implements <c>ActorScheduler</c>; for ease of prototyping </summary>
-    // TODO: separating scheduler
+    /// <summary> Implements <c>ActorScheduler</c>; for ease of prototyping</summary>
     public class RotEntityList : List<Entity>, iRlActorIterator {
         int index;
 

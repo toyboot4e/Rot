@@ -59,21 +59,17 @@ namespace Rot.Ui.View {
 
         Animation visualize(RlEv.JustSwing swing) {
             Nez.Debug.Log("on swing view");
-            // TODO: not swing if fail
-            float duration = 2f / 60f;
+            float duration = 4f / 60f;
             var tweens = _s.viewUtil.swing(swing.entity, swing.dir, duration);
             tweens[0].SetNextTween(tweens[1]);
             return new Anim.Tween(tweens[0]);
-            // TODO: fix null animation error in AnimationControl
         }
 
         Animation visualize(RlEv.MeleeAttack melee) {
-            // TODO: not swing if fail
-            float duration = 2f / 60f;
+            float duration = 4f / 60f;
             var swing = _s.viewUtil.swing(melee.entity, melee.dir, duration);
             swing[0].SetNextTween(swing[1]);
             return new Anim.Tween(swing[0]);
-            // TODO: fix null animation error in AnimationControl
         }
     }
 }
