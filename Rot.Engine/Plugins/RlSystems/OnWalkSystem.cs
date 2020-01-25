@@ -4,6 +4,7 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 
 namespace Rot.Sys {
+    /// <summary> Invokes events on walk </summary>
     public class OnWalkSystem : RlSystem {
         public override void setup() {
             var hub = base.gameCtx.evHub;

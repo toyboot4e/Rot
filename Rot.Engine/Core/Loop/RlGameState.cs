@@ -10,7 +10,7 @@ namespace Rot.Engine {
         iRlActor next();
     }
 
-    /// <summary> The internal game state of a roguelike game </summary>
+    /// <summary> Tick-based turn state </summary>
     public sealed class RlGameState {
         IEnumerator<RlTickReport> loop;
 
@@ -31,7 +31,7 @@ namespace Rot.Engine {
             return loop.Current;
         }
 
-        /// <summary> A turn-based game loop </summary>
+        /// <summary> A turn-based game flow </summary>
         /// <remarks> Becomes an infinite loop if there's no event to process. </remarks>
         static IEnumerable<RlTickReport> flow(iRlActorIterator scheduler, GenericRlEvHub evHub) {
             while (true) {
