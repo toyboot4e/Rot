@@ -10,6 +10,8 @@ using Rot.Engine;
 using Rot.Engine.Fov;
 using Rot.Ui;
 
+using Fov = Rot.Engine.DoubleBufferedEntityFov<Rot.Ui.TiledRlStage>;
+
 namespace Rot.Ui {
     public enum Adjacency : byte {
         None = 0,
@@ -33,15 +35,14 @@ namespace Rot.Ui {
         //
     }
 
-    /// <summary> Sticks to a <c>Camera</c> </summary>
-    public class FovRenderer<T, U> : RenderableComponent where T : iFovData where U : iRlStage {
-        T fov;
-        U stage;
+    public class DoubleBufferedFovRenderer<Fov, Stage> : RenderableComponent, IUpdatable where Fov : iFovRead, iFovDiff where Stage : iRlStage {
+        Fov fov;
+        Stage stage;
         TmxMap map;
 
-        public FovRenderer(T fov, U rlMap, TmxMap map) {
+        public DoubleBufferedFovRenderer(Fov fov, Stage stage, TmxMap map) {
             this.fov = fov;
-            this.stage = rlMap;
+            this.stage = stage;
             this.map = map;
         }
 
@@ -89,7 +90,7 @@ namespace Rot.Ui {
                     }
 
                     { // draw shadow
-                        var color = colorOfShadow(this.fov, x, y);
+                        var color = Color.Black * this.getAlphaAt(x, y);
                         var destRect = new Rectangle(pos.X + rect.offset.X, pos.Y + rect.offset.Y, rect.size.X, rect.size.Y);
                         batcher.Draw(rect.sprite, destRect, rect.sprite.SourceRect, color,
                             this.Entity.Transform.Rotation, SpriteEffects.None, this.LayerDepth,
@@ -100,21 +101,53 @@ namespace Rot.Ui {
             }
         }
 
-        static Color colorOfShadow(T fov, int x, int y) {
-            const float maxDim = 0.4f;
-            const float unseenDim = 0.7f;
+        float sinceRefresh;
+        public void onRefresh() { this.sinceRefresh = 0; }
 
-            if (!fov.canSee(x, y)) {
-                // just dim
-                return Color.Black * unseenDim;
-            } else {
-                // dim depending on the distance
-                var effectiveRadius = fov.radius() + 0.5f; // FIXME: +0.5f for better look
-                var distanceRatio = (new Vec2(x, y) - fov.origin()).lenF / effectiveRadius;
-                var cofficient = Nez.Tweens.Easing.Cubic.EaseInOut(distanceRatio, 1f);
-                // var cofficient = distanceRatio; // linear: difficult to see difference
-                return Color.Black * maxDim * cofficient;
-            }
+        #region impl IUpdatable
+        bool IUpdatable.Enabled => true;
+        int IUpdatable.UpdateOrder => 1; // TODO: set it properly
+        void IUpdatable.Update() {
+            Nez.Debug.Log(sinceRefresh);
+            this.sinceRefresh += Time.DeltaTime; // TODO: avoid overflow
         }
+        #endregion
+
+        float getAlphaAt(int x, int y) {
+            float updateDuration = 12f / 60f; // FIXME: no hard coding
+            const float maxDimAlpha = 0.4f;
+            const float unseenDimAlpha = 0.7f;
+
+            var(isInView, currentLight) = this.fov.currentLight(x, y);
+            var alphaCurrent = isInView ? maxDimAlpha * alphaEasing(currentLight, 1f) : unseenDimAlpha;
+
+            if (this.sinceRefresh > updateDuration) return alphaCurrent;
+
+            var(wasInView, prevLight) = this.fov.prevLight(x, y);
+            var alphaPrev = wasInView ? maxDimAlpha * alphaEasing(prevLight, 1f) : unseenDimAlpha;
+
+            // linear easing
+            var timeRatio = this.sinceRefresh / updateDuration;
+            return alphaPrev + (alphaCurrent - alphaPrev) * 1 * timeRatio;
+        }
+
+        static float alphaEasing(float value, float max) {
+            return Nez.Tweens.Easing.Cubic.EaseInOut(value, max);
+        }
+
+        // static float alphaAt<T>(T fov, int x, int y) where T : iFovRead {
+        //     const float maxDim = 0.4f;
+        //     const float unseenDim = 0.7f;
+
+        //     if (!fov.canSee(x, y)) {
+        //         // just dim
+        //         return unseenDim;
+        //     } else {
+        //         var effectiveRadius = fov.radius() + 0.5f; // FIXME: +0.5f for better look
+        //         var distanceRatio = (new Vec2(x, y) - fov.origin()).lenF / effectiveRadius;
+        //         var cofficient = alphaEasing(distanceRatio, 1f);
+        //         return maxDim * cofficient;
+        //     }
+        // }
     }
 }

@@ -4,8 +4,65 @@ using Rot.Engine.Fov;
 // concrete data types for the field of view algorithm
 
 namespace Rot.Engine {
+    public class DoubleBufferedEntityFov<T> : iFovWrite, iFovRead, iFovDiff where T : iRlStage {
+        EntityFov<T> a;
+        EntityFov<T> b;
+        int count;
+        /// <summary> For animating FoV </summary>
+        public float sinceRefresh { get; private set; }
+
+        public DoubleBufferedEntityFov(int r) {
+            this.a = new EntityFov<T>(r);
+            this.b = new EntityFov<T>(r);
+        }
+
+        public EntityFov<T> current() => this.count == 0 ? this.b : this.a;
+        public EntityFov<T> prev() => this.count == 0 ? this.a : this.b;
+        void incCount() => this.count = (this.count + 1) % 2;
+
+        #region impl iFovDiff
+        public(bool, float) prevLight(int x, int y) {
+            var fov = this.prev();
+            if (!fov.canSee(x, y)) return (false, 0f);
+            return (true, (new Vec2(x, y) - (fov.origin)).lenF / fov.radius());
+        }
+        public(bool, float) currentLight(int x, int y) {
+            var fov = this.current();
+            if (!fov.canSee(x, y)) return (false, 0f);
+            return (true, (new Vec2(x, y) - (fov.origin)).lenF / fov.radius());
+        }
+        #endregion
+
+        public void debugPrint(iRlStage stage, int originX, int originY) {
+            this.current().debugPrint(stage, originX, originY);
+        }
+
+        #region impl iFovWrite
+        void iFovWrite.onRefresh(int radius, int originX, int originY) {
+            this.sinceRefresh = 0f;
+            this.incCount();
+            ((iFovWrite) this.current()).onRefresh(radius, originX, originY);
+        }
+
+        void iFovWrite.light(int x, int y) {
+            ((iFovWrite) this.current()).light(x, y);
+        }
+        #endregion
+
+        #region impl iFovRead
+        /// <summary> Use world corrdinate system </summary>
+        public bool canSee(int x, int y) {
+            return this.current().canSee(x, y);
+        }
+
+        public Vec2 origin() => this.current().origin;
+
+        public int radius() => this.current().radius();
+        #endregion
+    }
+
     /// <summary> Wrapper of <c>RelativeFovData</c> for Nez ECS </summary>
-    public class EntityFov<T> : Fov.iFovData where T : iRlStage {
+    public class EntityFov<T> : Fov.iFovWrite, Fov.iFovRead where T : iRlStage {
         RelativeFovData data;
         public Vec2 origin { get; private set; }
 
@@ -19,19 +76,21 @@ namespace Rot.Engine {
             this.data.debugPrint(stage, originX, originY);
         }
 
-        #region impl iFovData
-        void iFovData.onRefresh(int radius, int originX, int originY) {
+        #region impl iFovRead
+        void iFovWrite.onRefresh(int radius, int originX, int originY) {
             this.data.onNewRadius(radius);
             this.origin = new Vec2(originX, originY);
         }
 
-        void iFovData.light(int x, int y, int row, int col) {
+        void iFovWrite.light(int x, int y) {
             var idx = RelativeFovData.worldToRelativeAbs(new Vec2(x, y), this.origin, this.data.lastRadius);
             this.data.lightRelativeAbs(idx.x, idx.y);
         }
+        #endregion
 
+        #region impl iFovWrite
         /// <summary> Use world corrdinate system </summary>
-        bool iFovData.canSee(int x, int y) {
+        public bool canSee(int x, int y) {
             var r = this.data.lastRadius;
             var world = new Vec2(x, y);
             var delta = world - this.origin;
@@ -40,9 +99,9 @@ namespace Rot.Engine {
             return this.data.canSeeRelativeAbs(relativeAbs.x, relativeAbs.y);
         }
 
-        Vec2 iFovData.origin() => this.origin;
+        Vec2 iFovRead.origin() => this.origin;
 
-        int iFovData.radius() => this.data.lastRadius;
+        public int radius() => this.data.lastRadius;
         #endregion
     }
 
@@ -92,7 +151,7 @@ namespace Rot.Engine {
             return relativeAbs.offset(-radius, -radius) + origin;
         }
 
-        public void debugPrint(iRlStage stage, int originX, int originY) {
+        public void debugPrint<T>(T stage, int originX, int originY) where T : iRlStage {
             int size = this.size();
             int r = this.lastRadius;
             for (int y = 0; y < size; y++) {

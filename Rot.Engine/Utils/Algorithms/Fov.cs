@@ -5,20 +5,31 @@ using System.Linq;
 
 namespace Rot.Engine.Fov {
     #region interfaces
+    // used to scan through a map
     public interface iOpacityMap {
         // TODO: visibility with context (whom seen by, in which direction, etc.)
         bool isOpaeue(int x, int y);
         bool contains(int x, int y);
     }
 
-    public interface iFovData {
-        // used to update iFovData
+    // used to update fov data
+    public interface iFovWrite {
         void onRefresh(int radius, int originX, int originY);
-        void light(int x, int y, int row, int col);
-        // used to visualize iFovData
+        void light(int x, int y);
+    }
+
+    // used to visualize fov data
+    public interface iFovRead {
         bool canSee(int x, int y);
         Vec2 origin();
         int radius();
+    }
+
+    // used for fov rendering
+    public interface iFovDiff {
+        // light := camSee(x, y) ? (new Vec2i(x, y) - offset).lenF / radius : 0
+        (bool, float) prevLight(int x, int y);
+        (bool, float) currentLight(int x, int y);
     }
     #endregion
 
@@ -35,6 +46,7 @@ namespace Rot.Engine.Fov {
 
         public static Vec2i operator *(Vec2i v, int c) => new Vec2i(v.x * c, v.y * c);
         public static Vec2i operator +(Vec2i v1, Vec2i v2) => new Vec2i(v1.x + v2.x, v1.y + v2.y);
+        public static Vec2i operator -(Vec2i v1, Vec2i v2) => new Vec2i(v1.x - v2.x, v1.y - v2.y);
     }
 
     // Clockwise from zero oclock
@@ -71,8 +83,8 @@ namespace Rot.Engine.Fov {
     #endregion
 
     /// <summary> Refreshes a <c>Fov</c> </summary>
-    public static class ShadowCasting<Map, Fov> where Map : iOpacityMap where Fov : iFovData {
-        public static void refresh(Map map, Fov fov, int originX, int originY, int radius) {
+    public static class ShadowCasting<Fov, Map> where Fov : iFovWrite where Map : iOpacityMap {
+        public static void refresh(Fov fov, Map map, int originX, int originY, int radius) {
             fov.onRefresh(radius, originX, originY);
 
             var cx = new ScanContext {
@@ -82,7 +94,7 @@ namespace Rot.Engine.Fov {
                 radius = radius,
             };
 
-            fov.light(originX, originY, 0, 0);
+            fov.light(originX, originY);
             for (int i = 0; i < 8; i++) {
                 // Console.WriteLine($"[{(Octant)i}]");
                 new OctantScanner((Octant) i).scanOctant(cx);
@@ -102,27 +114,23 @@ namespace Rot.Engine.Fov {
         }
 
         static class Rule {
-            public static float slope(int col, int row) => col / row;
+            // public static float slope(int col, int row) => col / row;
 
-            // obstacle as a diagnoal block (more permissive)
+            // diagnoal blocks (more permissive)
             // public static float startSlope(int col, int row) => (float) (col + 0.5f) / row;
             // public static float endSlope(int col, int row) => (float) (col - 0.5f) / row;
 
-            // obstacle as a square block (less permissive)
-            public static float startSlope(int col, int row) => (float) (col + 0.5f) / (row - 0.5f);
-            // public static float endSlope(int col, int row) => (float) (col - 0.5f) / (row + 0.5f);
-            public static float endSlope(int col, int row) => (float) (col - 0.5f) / (row + 0.5f);
+            // square blocks (less permissive)
+            public static float updateStartSlope(int col, int row) => (float) (col + 0.5f) / (row - 0.5f);
+            public static float updateEndSlope(int col, int row) => (float) (col - 0.5f) / (row + 0.5f);
 
-            /// <summary>[from, to]</summary>
+            /// <summary> [from, to] </summary>
             public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
                 int from = Rule.colForSlope(startSlope, row);
-                int slopeCol = Rule.colForSlope(endSlope, row);
-                int maxCol = (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
-                int to = Math.Min(slopeCol, maxCol);
+                int to = Rule.colForSlope(endSlope, row);
                 return (from, to);
             }
-            // static int colForSlope(float slope, int row) => (int) (slope * row);
-            // enable artifact
+
             static int colForSlope(float slope, int row) {
                 var col = slope * row;
                 // For example, 1.0f is the lowest slope to see (row=1, col=1).
@@ -130,14 +138,15 @@ namespace Rot.Engine.Fov {
                 return (int) Math.Round(col - 0.49f);
             }
 
-            // used for blocking cell only
+            /// <summary>
+            /// Used to detect a cell whose center it not in the range but whose edge is
+            /// </summary>
             public static int colForSlopePermissive(float slope, int row) {
                 return (int) Math.Ceiling(slope * row);
             }
         }
 
         public struct OctantScanner {
-            // (row * rowUnit) + (col * colUnit) = relative position to a cell from an origin
             Vec2i colUnit;
             Vec2i rowUnit;
             float startSlope;
@@ -160,62 +169,62 @@ namespace Rot.Engine.Fov {
 
             public void scanOctant(ScanContext cx, int startRow = 1) {
                 if (this.startSlope > this.endSlope) return;
-                // Console.WriteLine($"{fromDepth}: {startSlope}, {endSlope}");
                 for (int row = startRow; row <= cx.radius; row++) {
                     if (this.scanRow(row, cx)) break;
                 }
             }
 
-            OctantScanner splitScan(float endSlope) {
-                return new OctantScanner(this.rowUnit, this.colUnit, this.startSlope, endSlope);
-            }
-
-            /// <summary> Represents the result of a previous scan </summary>
             enum RowScanState {
                 Initial,
                 WasOpaque,
                 WasTransParent,
             }
 
-            // TODO: reduce checking map bounds using max row/column
+            /// <summary> Creates another scanner updating <c>endslope</c> </summary>
+            OctantScanner splitScan(float endSlope) {
+                return new OctantScanner(this.rowUnit, this.colUnit, this.startSlope, endSlope);
+            }
+
             /// <summary> Returns whether it's finished or not </summary>
+            /// <remark> The core of the algorithm </remark>
             bool scanRow(int row, ScanContext cx) {
                 var rowVec = this.rowUnit * row;
                 (int fromCol, int toCol) = Rule.colRangeForRow(row, cx.radius, this.startSlope, this.endSlope);
-                // Console.WriteLine($"at {depth}: {fromI} -> {toI} ({startSlope}, {endSlope})");
 
-                { // check the map bounds
+                { // check map bounds
                     var initPos = cx.localToWorld(rowVec);
-                    if (!cx.map.contains(initPos.x, initPos.y)) return true;
+                    if (!cx.map.contains(initPos.x, initPos.y)) return true; // finish the scan
                 }
 
                 var state = RowScanState.Initial;
                 for (int col = fromCol; col <= toCol; col++) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * col);
-                    if (!cx.map.contains(pos.x, pos.y)) return true; // finish the scan
+                    if (!cx.map.contains(pos.x, pos.y)) return false; // go to next row
 
                     // scan the cell
                     if (cx.map.isOpaeue(pos.x, pos.y)) {
                         if (state == RowScanState.WasTransParent) {
-                            this.splitScan(Rule.endSlope(col, row)).scanOctant(cx, row + 1);
+                            this.splitScan(Rule.updateEndSlope(col, row)).scanOctant(cx, row + 1);
                         }
                         state = RowScanState.WasOpaque;
                     } else {
                         if (state == RowScanState.WasOpaque) {
-                            this.startSlope = Rule.startSlope(col, row);
+                            this.startSlope = Rule.updateStartSlope(col, row);
                         }
                         state = RowScanState.WasTransParent;
                     }
-                    cx.fov.light(pos.x, pos.y, col, row);
+                    cx.fov.light(pos.x, pos.y);
                 }
 
-                // permissive view for blocks & update endSlope
+                // for an opaque cell that's behind another but whose edge affects the range of the slopes
                 var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row);
                 if (permissiveCol > toCol) {
-                    var pos = cx.localToWorld((Vec2i) (rowVec + this.colUnit * permissiveCol));
+                    var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
                     if (cx.map.isOpaeue(pos.x, pos.y)) {
-                        cx.fov.light(pos.x, pos.y, permissiveCol, row);
-                        this.endSlope = Rule.endSlope(permissiveCol, row);
+                        // light it as an artifact
+                        cx.fov.light(pos.x, pos.y);
+                        // and update the range of the slopes
+                        this.endSlope = Rule.updateEndSlope(permissiveCol, row);
                     } else {
                         // transparent cell is ignored
                     }

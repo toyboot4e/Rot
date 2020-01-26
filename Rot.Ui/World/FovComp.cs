@@ -1,56 +1,42 @@
-using System.Collections.Generic;
-using Nez;
-using Nez.Sprites;
 using Nez.Tiled;
 using Rot.Engine;
 using Rot.Engine.Fov;
 
+using Stage = Rot.Ui.TiledRlStage;
+using Fov = Rot.Engine.DoubleBufferedEntityFov<Rot.Ui.TiledRlStage>;
+
 namespace Rot.Ui {
-    // [System.Flags]
-    // public enum Adjacency {
-    //     Center = 1 << 0,
-    //     Top = 1 << 1,
-    //     Bottom = 1 << 2,
-    //     Left = 1 << 3,
-    //     Right = 1 << 4,
-
-    //     TopLeft = Top | Left,
-    //     TopRight = Top | Right,
-    //     BottomLeft = Bottom | Left,
-    //     BottomRight = Bottom | Right
-    // }
-
     /// <summary> Field of view for an entity specific for <c>TiledRlStage</c> </summary>
     public class FovComp : Nez.Component {
-        EntityFov<TiledRlStage> fov;
-        TiledRlStage stage;
+        Fov fov;
+        Stage stage;
         TmxMap map;
-        // FovView fovView;
-        FovRenderer<EntityFov<TiledRlStage>, TiledRlStage> fovRenderer;
+        DoubleBufferedFovRenderer<Fov, Stage> fovRenderer;
 
-        public FovComp(TiledRlStage stage, TmxMap map) {
+        public FovComp(Stage stage, TmxMap map) {
             this.stage = stage;
             this.map = map;
         }
 
         public override void OnAddedToEntity() {
-            int radius = 6; // TODO: make it dependent on Performance
-            this.fov = new EntityFov<TiledRlStage>(radius);
+            int radius = 6; // TODO: not hard code
+            this.fov = new Fov(radius);
             // this.fovView = new FovView(this.Entity.Scene.CreateEntity("fov-view"));
             var e = this.Entity.Scene.CreateEntity("fov-renderer");
-            this.fovRenderer = e.add(new FovRenderer<EntityFov<TiledRlStage>, TiledRlStage>(this.fov, this.stage, this.map));
+            this.fovRenderer = e.add(new DoubleBufferedFovRenderer<Fov, Stage>(this.fov, this.stage, this.map));
             this.fovRenderer.zCtx(Layers.Stage, Depths.Fov);
         }
 
         public void refresh() {
             var origin = this.Entity.get<Body>().pos;
-            int radius = 6; // TODO: make it dependent on Performance
-            ShadowCasting<TiledRlStage, EntityFov<TiledRlStage>>.refresh(this.stage, this.fov, origin.x, origin.y, radius);
-            // this.fovView.update(ref this.fov.refData, origin);
+            int radius = 6; // TODO: not hard code
+            ShadowCasting<Fov, Stage>.refresh(this.fov, this.stage, origin.x, origin.y, radius);
+            this.fovRenderer.onRefresh();
         }
 
         public void debugPrint() {
-            this.fov.debugPrint(this.stage, this.fov.origin.x, this.fov.origin.y);
+            var origin = this.fov.origin();
+            this.fov.current().debugPrint(this.stage, origin.x, origin.y);
         }
     }
 }
