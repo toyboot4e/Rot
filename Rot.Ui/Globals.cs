@@ -1,6 +1,13 @@
 using Microsoft.Xna.Framework;
 
 namespace Rot.Ui {
+    /// <summary> Temporary class to detect hard-coded values </summary>
+    public static class Preferences {
+        public static float fovUpdateDuration = 10 / 60f;
+        public static float turnDirDuration => 0.02f;
+        public static int fovRadius => 6;
+    }
+
     /// <summary> The higher, the deeper </summary>
     public static class Layers {
         public static int Stage => 1000;

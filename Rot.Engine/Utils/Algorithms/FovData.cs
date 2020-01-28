@@ -7,7 +7,7 @@ namespace Rot.Engine {
     public class DoubleBufferedEntityFov<T> : iFovWrite, iFovRead, iFovDiff where T : iRlStage {
         EntityFov<T> a;
         EntityFov<T> b;
-        int count;
+        int doubleBufCount;
         /// <summary> For animating FoV </summary>
         public float sinceRefresh { get; private set; }
 
@@ -16,9 +16,9 @@ namespace Rot.Engine {
             this.b = new EntityFov<T>(r);
         }
 
-        public EntityFov<T> current() => this.count == 0 ? this.b : this.a;
-        public EntityFov<T> prev() => this.count == 0 ? this.a : this.b;
-        void incCount() => this.count = (this.count + 1) % 2;
+        public EntityFov<T> current() => this.doubleBufCount == 0 ? this.b : this.a;
+        public EntityFov<T> prev() => this.doubleBufCount == 0 ? this.a : this.b;
+        void incCount() => this.doubleBufCount = (this.doubleBufCount + 1) % 2;
 
         #region impl iFovDiff
         public(bool, float) prevLight(int x, int y) {
@@ -44,7 +44,7 @@ namespace Rot.Engine {
             ((iFovWrite) this.current()).onRefresh(radius, originX, originY);
         }
 
-        void iFovWrite.light(int x, int y) {
+        public void light(int x, int y) {
             ((iFovWrite) this.current()).light(x, y);
         }
         #endregion
