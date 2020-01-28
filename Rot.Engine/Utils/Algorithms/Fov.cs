@@ -127,7 +127,10 @@ namespace Rot.Engine.Fov {
             /// <summary> [from, to] </summary>
             public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
                 int from = Rule.colForSlope(startSlope, row);
-                int to = Rule.colForSlope(endSlope, row);
+                // use `maxCol` to make FoV fit in a circle
+                int slopeCol = Rule.colForSlope(endSlope, row);
+                int maxCol = (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
+                int to = Math.Min(slopeCol, maxCol);
                 return (from, to);
             }
 
