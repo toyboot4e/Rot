@@ -15,6 +15,7 @@ namespace Rot.Engine.Fov {
     // used to update fov data
     public interface iFovWrite {
         void onRefresh(int radius, int originX, int originY);
+        /// <summary> Only called for a point in a map </summary>
         void light(int x, int y);
     }
 
@@ -138,7 +139,7 @@ namespace Rot.Engine.Fov {
                 var col = slope * row;
                 // For example, 1.0f is the lowest slope to see (row=1, col=1).
                 // So we reduce -0.49f, where 0.01f ensures "0.05f" is rounded up
-                return (int) Math.Round(col - 0.49f);
+                return (int) Math.Round(col - 0.499999f);
             }
 
             /// <summary>
@@ -193,6 +194,7 @@ namespace Rot.Engine.Fov {
             bool scanRow(int row, ScanContext cx) {
                 var rowVec = this.rowUnit * row;
                 (int fromCol, int toCol) = Rule.colRangeForRow(row, cx.radius, this.startSlope, this.endSlope);
+                if (toCol - fromCol <= 0) return true; // the view is completely blocked; finish scaning
 
                 { // check map bounds
                     var initPos = cx.localToWorld(rowVec);
@@ -223,7 +225,9 @@ namespace Rot.Engine.Fov {
                 var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row);
                 if (permissiveCol > toCol) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
-                    if (cx.map.isOpaeue(pos.x, pos.y)) {
+                    if (!cx.map.contains(pos.x, pos.y)) {
+                        // we must not forget filtering points out of the map
+                    } else if (cx.map.isOpaeue(pos.x, pos.y)) {
                         // light it as an artifact
                         cx.fov.light(pos.x, pos.y);
                         // and update the range of the slopes
