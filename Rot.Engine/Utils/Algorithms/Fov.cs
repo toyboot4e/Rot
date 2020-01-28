@@ -194,7 +194,7 @@ namespace Rot.Engine.Fov {
             bool scanRow(int row, ScanContext cx) {
                 var rowVec = this.rowUnit * row;
                 (int fromCol, int toCol) = Rule.colRangeForRow(row, cx.radius, this.startSlope, this.endSlope);
-                if (toCol - fromCol <= 0) return true; // the view is completely blocked; finish scaning
+                if (toCol - fromCol < 0) return true; // the view is completely blocked; finish scanning
 
                 { // check map bounds
                     var initPos = cx.localToWorld(rowVec);
@@ -226,7 +226,7 @@ namespace Rot.Engine.Fov {
                 if (permissiveCol > toCol) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
                     if (!cx.map.contains(pos.x, pos.y)) {
-                        // we must not forget filtering points out of the map
+                        // we must not forget to filter points out of the map
                     } else if (cx.map.isOpaeue(pos.x, pos.y)) {
                         // light it as an artifact
                         cx.fov.light(pos.x, pos.y);
