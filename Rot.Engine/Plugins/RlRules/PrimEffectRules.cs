@@ -6,7 +6,7 @@ using RlEv = Rot.RlEv;
 namespace Rot.Sys {
     // NOTE: death event handling is delegated // (or: replace IList<Entity>
     // to IRlEntityList from RlGameContext and handle death event here)
-    public class PrimSystems : RlSystem {
+    public class PrimEffectRules : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.PosChange>(0f, this.handle);

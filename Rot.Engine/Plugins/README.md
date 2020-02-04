@@ -1,3 +1,3 @@
 # Rot.Engine.Plugins
 
-Implementations of `RlEvent`, `RlSystem` and `Component`.
+Implementations of `RlEvent`, `RlRule` and `Component`.

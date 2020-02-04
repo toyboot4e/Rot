@@ -5,7 +5,7 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 
 namespace Rot.Sys {
-    public class HitSystem : RlSystem {
+    public class HitRule : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Hit>(0f, this.handle);

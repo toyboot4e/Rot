@@ -30,7 +30,7 @@ namespace Rot.Game {
     /// <summary> Initializes and controls the roguelike game </summary>
     public class RlSceneComp : SceneComponent {
         public ControlContext ctrlCtx;
-        public RlSystemStorage systems;
+        public RlRuleStorage rules;
         public RlViewPlatform view;
         public TmxMap tiled;
         public PosUtil posUtil;
@@ -46,11 +46,11 @@ namespace Rot.Game {
             string initialStage = Content.Stages.@Static;
             this.loadTiledMap(initialStage);
 
-            this.systems = new RlSystemStorage(this.gameCtx);
+            this.rules = new RlRuleStorage(this.gameCtx);
             this.view = new RlViewPlatform(
                 new RlViewServices(this.ctrlCtx, this.gameCtx, this.posUtil)
             );
-            RlPluginSetter.initSystems(this.systems, this.ctrlCtx, this.posUtil);
+            RlPluginSetter.initRules(this.rules, this.ctrlCtx, this.posUtil);
             RlPluginSetter.initViews(this.view);
 
             { // create controls
@@ -122,7 +122,7 @@ namespace Rot.Game {
             }
 
             // update contexts
-            this.systems?.replCtx(this.gameCtx);
+            this.rules?.replCtx(this.gameCtx);
             this.view?.replCtx(this.gameCtx, this.posUtil);
 
             player = player ?? EntityFactory.genPlayer(base.Scene, this.gameCtx.stage as TiledRlStage, this.posUtil, this.tiled).entity;
@@ -137,29 +137,29 @@ namespace Rot.Game {
 
         void addDungeon() {
             var gen = base.Scene.add(new DungeonComp(this.tiled, this));
-            this.systems.add(new Sys.StairSystem(gen));
+            this.rules.add(new Sys.StairRule(gen));
         }
     }
 
     public class RlPluginSetter {
-        public static void initSystems(RlSystemStorage systems, ControlContext ctrlCtx, PosUtil posUtil) {
-            // primitive systems
-            systems.add(new Sys.PrimSystems());
-            systems.add(new Sys.GrimReaperSystem());
+        public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil) {
+            // primitive rules
+            rules.add(new Sys.PrimEffectRules());
+            rules.add(new Sys.GrimRule());
 
-            // action systems
-            systems.add(new Sys.BodySystems());
-            systems.add(new Sys.HitSystem());
+            // action rules
+            rules.add(new Sys.BodyRules());
+            rules.add(new Sys.HitRule());
 
-            // reactive systems
-            systems.add(new Sys.OnWalkSystem());
-            systems.add(new Sys.PlayerFovSystem());
+            // reactive rules
+            rules.add(new Sys.OnWalkRules());
+            rules.add(new Sys.PlayerFovRule());
 
-            // input systems
-            systems.add(new Sys.CtrlEntitySystem(ctrlCtx));
+            // input rules
+            rules.add(new Sys.CtrlEntityRule(ctrlCtx));
 
-            // view systems
-            systems.add(new Sys.InteractSystem(ctrlCtx, posUtil));
+            // view rules
+            rules.add(new Sys.InteractRule(ctrlCtx, posUtil));
         }
 
         public static void initViews(RlViewStorage views) {
@@ -189,7 +189,7 @@ namespace Rot.Game {
         }
 
         public void afterLoadingMap() {
-            // If it's a dungeon map, we create those systems
+            // If it's a dungeon map, we create those rules
             // gen.newFloor();
 
             // ##### TEST ######

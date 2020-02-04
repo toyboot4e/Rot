@@ -32,10 +32,10 @@ namespace Rot.Engine.Beh {
 
 namespace Rot.Sys {
     /// <summary> Lets user decide player actions controling the game state </summary>
-    public class CtrlEntitySystem : RlSystem {
+    public class CtrlEntityRule : RlRule {
         ControlContext ctx;
 
-        public CtrlEntitySystem(ControlContext ctrlCtx) {
+        public CtrlEntityRule(ControlContext ctrlCtx) {
             this.ctx = ctrlCtx;
         }
 

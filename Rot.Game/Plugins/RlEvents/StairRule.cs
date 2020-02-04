@@ -5,10 +5,10 @@ using RlEv = Rot.RlEv;
 using Rot.Game; // DungeonComp
 
 namespace Rot.Sys {
-    public class StairSystem : RlSystem {
+    public class StairRule : RlRule {
         DungeonComp gen;
 
-        public StairSystem(DungeonComp dunGen) {
+        public StairRule(DungeonComp dunGen) {
             this.gen = dunGen;
         }
 

@@ -5,7 +5,7 @@ using RlEv = Rot.RlEv;
 
 namespace Rot.Sys {
     /// <summary> Handles <c>Death</c> event </summary>
-    public class GrimReaperSystem : RlSystem {
+    public class GrimRule : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Death>(0f, this.handle);

@@ -30,11 +30,11 @@ namespace Rot.RlEv {
 
 namespace Rot.Sys {
     /// <summary> Lets user interact with objects controling the game state </summary>
-    public class InteractSystem : RlSystem {
+    public class InteractRule : RlRule {
         ControlContext ctrlCtx;
         PosUtil posUtil;
 
-        public InteractSystem(ControlContext ctrlCtx, PosUtil posUtil) {
+        public InteractRule(ControlContext ctrlCtx, PosUtil posUtil) {
             this.ctrlCtx = ctrlCtx;
             this.posUtil = posUtil;
         }

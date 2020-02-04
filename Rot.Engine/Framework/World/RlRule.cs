@@ -4,7 +4,7 @@ using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 using Nez;
 
 namespace Rot.Engine {
-    public class RlSystem {
+    public class RlRule {
         protected RlGameContext gameCtx;
 
         public void injectCtx(RlGameContext gameCtx) {
@@ -24,12 +24,12 @@ namespace Rot.Engine {
         public virtual void onDelete() { }
     }
 
-    public class RlSystemStorage {
-        List<RlSystem> systems;
+    public class RlRuleStorage {
+        List<RlRule> systems;
         RlGameContext gameCtx;
 
-        public RlSystemStorage(RlGameContext ctx) {
-            this.systems = new List<RlSystem>();
+        public RlRuleStorage(RlGameContext ctx) {
+            this.systems = new List<RlRule>();
             this.gameCtx = ctx;
         }
 
@@ -41,18 +41,18 @@ namespace Rot.Engine {
             }
         }
 
-        public void add(RlSystem sys) {
+        public void add(RlRule sys) {
             if (this.systems.AddIfNotPresent(sys)) {
                 sys.injectCtx(this.gameCtx);
                 sys.setup();
             }
         }
 
-        public void add<T>() where T : RlSystem, new() {
+        public void add<T>() where T : RlRule, new() {
             this.add(new T());
         }
 
-        public void rm(RlSystem sys) {
+        public void rm(RlRule sys) {
             sys.onDelete();
         }
 

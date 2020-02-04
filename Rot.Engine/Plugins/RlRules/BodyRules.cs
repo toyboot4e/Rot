@@ -5,7 +5,7 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 
 namespace Rot.Sys {
-    public class BodySystems : RlSystem {
+    public class BodyRules : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.Walk>(0f, this.handle);

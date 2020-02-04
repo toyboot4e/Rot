@@ -4,7 +4,7 @@ using Rot.Ui;
 
 namespace Rot.Sys {
     /// <summary> Updates FoV on walk </summary>
-    public class PlayerFovSystem : RlSystem {
+    public class PlayerFovRule : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;
             hub.subscribe<RlEv.PosChange>(0f, this.handle);
