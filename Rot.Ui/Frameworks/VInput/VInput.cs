@@ -5,6 +5,7 @@ using Nez; // VirtualButton
 using Rot.Engine; // Dir
 
 namespace Rot.Ui {
+    // TODO: extract it to users maybe using generics
     public enum VKey {
         AxisKey,
         Select,

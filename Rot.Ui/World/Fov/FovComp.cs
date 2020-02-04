@@ -23,7 +23,6 @@ namespace Rot.Ui {
         public override void OnAddedToEntity() {
             int radius = Preferences.fovRadius;
             this.fovFow = new FovFow<TiledRlStage>(radius, this.map.Width, this.map.Height);
-            // this.fovView = new FovView(this.Entity.Scene.CreateEntity("fov-view"));
             var e = this.Entity.Scene.CreateEntity("fov-renderer");
             this.fovRenderer = e.add(new Shadow(this.fovFow, this.fovFow.fow, this.stage, this.map));
             this.fovRenderer.zCtx(Layers.Stage, Depths.Fov);
