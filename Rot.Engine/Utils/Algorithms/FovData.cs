@@ -24,12 +24,12 @@ namespace Rot.Engine {
         public(bool, float) prevLight(int x, int y) {
             var fov = this.prev();
             if (!fov.canSee(x, y)) return (false, 0f);
-            return (true, (new Vec2(x, y) - (fov.origin)).lenF / fov.radius());
+            return (true, (new Vec2i(x, y) - (fov.origin)).lenF / fov.radius());
         }
         public(bool, float) currentLight(int x, int y) {
             var fov = this.current();
             if (!fov.canSee(x, y)) return (false, 0f);
-            return (true, (new Vec2(x, y) - (fov.origin)).lenF / fov.radius());
+            return (true, (new Vec2i(x, y) - (fov.origin)).lenF / fov.radius());
         }
         #endregion
 
@@ -55,7 +55,7 @@ namespace Rot.Engine {
             return this.current().canSee(x, y);
         }
 
-        public Vec2 origin() => this.current().origin;
+        public Vec2i origin() => this.current().origin;
 
         public int radius() => this.current().radius();
         #endregion
@@ -64,7 +64,7 @@ namespace Rot.Engine {
     /// <summary> Wrapper of <c>RelativeFovData</c> for Nez ECS </summary>
     public class EntityFov<T> : Fov.iFovWrite, Fov.iFovRead where T : iRlStage {
         RelativeFovData data;
-        public Vec2 origin { get; private set; }
+        public Vec2i origin { get; private set; }
 
         public ref RelativeFovData refData => ref this.data;
 
@@ -79,11 +79,11 @@ namespace Rot.Engine {
         #region impl iFovRead
         void iFovWrite.onRefresh(int radius, int originX, int originY) {
             this.data.onNewRadius(radius);
-            this.origin = new Vec2(originX, originY);
+            this.origin = new Vec2i(originX, originY);
         }
 
         void iFovWrite.light(int x, int y) {
-            var idx = RelativeFovData.worldToRelativeAbs(new Vec2(x, y), this.origin, this.data.lastRadius);
+            var idx = RelativeFovData.worldToRelativeAbs(new Vec2i(x, y), this.origin, this.data.lastRadius);
             this.data.lightRelativeAbs(idx.x, idx.y);
         }
         #endregion
@@ -92,14 +92,14 @@ namespace Rot.Engine {
         /// <summary> Use world corrdinate system </summary>
         public bool canSee(int x, int y) {
             var r = this.data.lastRadius;
-            var world = new Vec2(x, y);
+            var world = new Vec2i(x, y);
             var delta = world - this.origin;
             if (delta.lenKing > r) return false;
             var relativeAbs = RelativeFovData.worldToRelativeAbs(world, this.origin, r);
             return this.data.canSeeRelativeAbs(relativeAbs.x, relativeAbs.y);
         }
 
-        Vec2 iFovRead.origin() => this.origin;
+        Vec2i iFovRead.origin() => this.origin;
 
         public int radius() => this.data.lastRadius;
         #endregion
@@ -143,11 +143,11 @@ namespace Rot.Engine {
         }
 
         // x, y ∈ [0, radius * 2 + 1]
-        public static Vec2 worldToRelativeAbs(Vec2 world, Vec2 origin, int radius) {
+        public static Vec2i worldToRelativeAbs(Vec2i world, Vec2i origin, int radius) {
             return (world - origin).offset(radius, radius);
         }
 
-        public static Vec2 relativeAbsToWolrd(Vec2 relativeAbs, Vec2 origin, int radius) {
+        public static Vec2i relativeAbsToWolrd(Vec2i relativeAbs, Vec2i origin, int radius) {
             return relativeAbs.offset(-radius, -radius) + origin;
         }
 

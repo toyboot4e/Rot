@@ -12,16 +12,16 @@ namespace Rot.Engine {
     /// In other words, it dispatches handlers one by one to a <c>RlEvent</c> until one of them "handle" it,
     /// ordering handlers with their precedence.
     /// </summary>
-    public class GenericRlEvHub {
+    public class AnyRlEvHub {
         /// <summary> Concrete event handlers </summary>
         Dictionary<Type, IConcRlEvHub> concHubs;
 
-        public GenericRlEvHub() {
+        public AnyRlEvHub() {
             this.concHubs = new Dictionary<Type, IConcRlEvHub>();
         }
 
         /// <remark> Use a concrete event type when calling </remark>
-        public GenericRlEvHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
+        public AnyRlEvHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
             this.handlersOrNew<T>().add(new RlEvHandler<T>(precedence, f));
             return this;
         }

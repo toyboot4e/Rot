@@ -28,9 +28,9 @@ namespace Rot.Ui {
         public readonly Kind kind;
         public readonly VKey? key;
         public VKey asKey => (VKey) this.key;
-        public readonly EDir dir;
+        public readonly Dir9 dir;
 
-        VKeyResult(Kind kind, VKey? key, EDir dir) {
+        VKeyResult(Kind kind, VKey? key, Dir9 dir) {
             this.kind = kind;
             this.dir = dir;
             this.key = key;
@@ -41,15 +41,15 @@ namespace Rot.Ui {
         public bool isNone => this.kind == Kind.None;
 
         public static VKeyResult newKey(VKey key) {
-            return new VKeyResult(Kind.Key, key, EDir.Ground);
+            return new VKeyResult(Kind.Key, key, Dir9.Ground);
         }
 
-        public static VKeyResult newDir(EDir dir) {
+        public static VKeyResult newDir(Dir9 dir) {
             return new VKeyResult(Kind.Dir, null, dir);
         }
 
         public static VKeyResult none() {
-            return new VKeyResult(Kind.None, null, EDir.Ground);
+            return new VKeyResult(Kind.None, null, Dir9.Ground);
         }
     }
 
@@ -91,9 +91,9 @@ namespace Rot.Ui {
         }
 
         /// <summary> Returns the pressed EDir or EDir.None </summary>
-        public EDir consumeDirPressed() {
+        public Dir9 consumeDirPressed() {
             var dir = this.vDir.dirPressed;
-            if (dir != EDir.Ground) {
+            if (dir != Dir9.Ground) {
                 this.vDir.consumePulseBuffer();
             }
             return dir;
@@ -138,8 +138,8 @@ namespace Rot.Ui {
         public Vector2 mousePos => Input.MousePosition;
         public Vector2 dMousePos => Input.MousePositionDelta.ToVector2();
 
-        public EDir dirDown => base.vDir.dirDown;
-        public EDir dirPressed => base.vDir.dirPressed;
+        public Dir9 dirDown => base.vDir.dirDown;
+        public Dir9 dirPressed => base.vDir.dirPressed;
 
         /// <summary> Gets prior down key. </summary>
         public VKeyResult topDown() {

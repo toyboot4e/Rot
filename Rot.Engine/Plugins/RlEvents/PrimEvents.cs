@@ -4,11 +4,11 @@ using Rot.Engine;
 namespace Rot.RlEv {
     public class PosChange : RlEvent {
         public readonly Entity entity;
-        public readonly Vec2 from;
-        public readonly Vec2 to;
+        public readonly Vec2i from;
+        public readonly Vec2i to;
         public readonly Cause cause;
 
-        public PosChange(Entity entity, Vec2 from, Vec2 to, Cause cause) {
+        public PosChange(Entity entity, Vec2i from, Vec2i to, Cause cause) {
             this.entity = entity;
             this.from = from;
             this.to = to;
@@ -18,18 +18,18 @@ namespace Rot.RlEv {
 
     public class DirChange : RlEvent {
         public readonly Entity entity;
-        public readonly EDir from;
-        public readonly EDir to;
+        public readonly Dir9 from;
+        public readonly Dir9 to;
         public readonly bool isSmooth;
 
-        public DirChange(Entity entity, EDir from, EDir to, bool isSmooth) {
+        public DirChange(Entity entity, Dir9 from, Dir9 to, bool isSmooth) {
             this.entity = entity;
             this.from = from;
             this.to = to;
             this.isSmooth = isSmooth;
         }
 
-        public static DirChange turn(Entity entity, EDir to) {
+        public static DirChange turn(Entity entity, Dir9 to) {
             return new DirChange(entity, entity.get<Body>().facing, to, isSmooth : true);
         }
     }

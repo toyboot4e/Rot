@@ -115,7 +115,7 @@ namespace Rot.Game {
         }
 
         /// <summary> Maps directional input to events depending on mode </summary>
-        RlEvent handleDir(EDir dir) {
+        RlEvent handleDir(Dir9 dir) {
             if (this.diaMode.isOn && dir.isCardinal) {
                 return null; // filtered
             }

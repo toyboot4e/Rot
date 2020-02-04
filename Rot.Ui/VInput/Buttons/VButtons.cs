@@ -54,20 +54,20 @@ namespace Rot.Ui {
         }
     }
 
-    public class VEightDirButtonButton : VBufButtonTemplate, iValueButton<EDir> {
-        BufSelecterNode<ValueBufNode<EDir>> selecterNode = new BufSelecterNode<ValueBufNode<EDir>>();
-        public List<ValueBufNode<EDir>> nodes => this.selecterNode.nodes;
+    public class VEightDirButtonButton : VBufButtonTemplate, iValueButton<Dir9> {
+        BufSelecterNode<ValueBufNode<Dir9>> selecterNode = new BufSelecterNode<ValueBufNode<Dir9>>();
+        public List<ValueBufNode<Dir9>> nodes => this.selecterNode.nodes;
         public VEightDirButtonButton() {
-            EDir.all.forEach(dir => this.selecterNode.nodes.Add(new ValueBufNode<EDir>(dir)));
+            Dir9.all.forEach(dir => this.selecterNode.nodes.Add(new ValueBufNode<Dir9>(dir)));
         }
         protected override(bool, bool) onUpdate() {
             this.selecterNode.update();
             return (this.selecterNode.isDown, this.selecterNode.isPressedRaw);
         }
-        ValueBufNode<EDir> nodeDown => this.selecterNode.bufNodeDown;
-        ValueBufNode<EDir> nodePressed => this.isPressed ? this.nodeDown ?? null : null;
-        public EDir valueDown => this.nodeDown?.value ?? default(EDir);
-        public EDir valuePressed => this.nodePressed?.value ?? default(EDir);
+        ValueBufNode<Dir9> nodeDown => this.selecterNode.bufNodeDown;
+        ValueBufNode<Dir9> nodePressed => this.isPressed ? this.nodeDown ?? null : null;
+        public Dir9 valueDown => this.nodeDown?.value ?? default(Dir9);
+        public Dir9 valuePressed => this.nodePressed?.value ?? default(Dir9);
     }
 
     public class VIntAxisButton : VBufButtonTemplate, iValueButton<int> {
@@ -83,7 +83,7 @@ namespace Rot.Ui {
         public int valuePressed => this.isPressed ? this.valueDown : 0;
     }
 
-    public class VAxisDirButton : VBufButtonTemplate, iValueButton<EDir> {
+    public class VAxisDirButton : VBufButtonTemplate, iValueButton<Dir9> {
         public VIntAxisButton xAxis { get; private set; } = new VIntAxisButton();
         public VIntAxisButton yAxis { get; private set; } = new VIntAxisButton();
 
@@ -100,7 +100,7 @@ namespace Rot.Ui {
             return base.setRepeat(firstRepeatTime, multiRepeatTime);
         }
 
-        public EDir valueDown => EDir.fromXy(xAxis.valueDown, yAxis.valueDown);
-        public EDir valuePressed => EDir.fromXy(xAxis.valuePressed, yAxis.valuePressed);
+        public Dir9 valueDown => Dir9.fromXy(xAxis.valueDown, yAxis.valueDown);
+        public Dir9 valuePressed => Dir9.fromXy(xAxis.valuePressed, yAxis.valuePressed);
     }
 }

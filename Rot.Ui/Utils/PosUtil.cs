@@ -14,21 +14,21 @@ namespace Rot.Ui {
             this.camera = camera;
         }
 
-        public Vector2 gridToWorld(Vec2 pos) {
+        public Vector2 gridToWorld(Vec2i pos) {
             var x = tiled.TileToWorldPositionX(pos.x);
             var y = tiled.TileToWorldPositionY(pos.y);
             return new Vector2(x, y);
         }
 
-        public Vector2 gridToWorldCentered(Vec2 pos) => gridToWorld(pos) + tileSize / 2;
+        public Vector2 gridToWorldCentered(Vec2i pos) => gridToWorld(pos) + tileSize / 2;
 
-        public Vec2 worldToGrid(Vector2 pos) {
+        public Vec2i worldToGrid(Vector2 pos) {
             var x = tiled.WorldToTilePositionX(pos.X);
             var y = tiled.WorldToTilePositionY(pos.Y);
-            return new Vec2(x, y);
+            return new Vec2i(x, y);
         }
 
-        public Vec2 screenToGrid(Vector2 pos) => worldToGrid(camera.ScreenToWorldPoint(pos));
+        public Vec2i screenToGrid(Vector2 pos) => worldToGrid(camera.ScreenToWorldPoint(pos));
 
         // reminder of the position divided by the tile size
         Vector2 remOfDivByTile(Vector2 pos) {

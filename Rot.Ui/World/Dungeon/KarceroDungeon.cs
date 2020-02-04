@@ -84,18 +84,18 @@ namespace Rot.Ui {
             }
         }
 
-        public Vec2 randomPosInSomeRoom() {
+        public Vec2i randomPosInSomeRoom() {
             var room = this.map.Rooms.RandomItem();
             int x = Nez.Random.Range(room.Left, room.Right);
             int y = Nez.Random.Range(room.Top, room.Bottom);
-            return new Vec2(x, y);
+            return new Vec2i(x, y);
         }
 
-        public Vec2 randomPosInsideSomeRoom() {
+        public Vec2i randomPosInsideSomeRoom() {
             var room = this.map.Rooms.RandomItem();
             int x = Nez.Random.Range(room.Left + 1, room.Right - 1);
             int y = Nez.Random.Range(room.Top + 1, room.Bottom - 1);
-            return new Vec2(x, y);
+            return new Vec2i(x, y);
         }
     }
 }

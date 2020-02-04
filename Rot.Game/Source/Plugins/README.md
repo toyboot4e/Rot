@@ -1,2 +1,3 @@
 # Rot.Game.Plugins
-Plugins to `Rot.Engine.Core`: `RlEvent`s, `RlSystem`s and `Component`s.
+
+Game specfic implementations of `RlEvent`, `RlSystem` and `Component`.

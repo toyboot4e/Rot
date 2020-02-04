@@ -18,9 +18,9 @@ namespace Rot.Ui {
 
         static void setupDirButtons(VDirInput vDir) {
             var keyDirs = new [] {
-                EDir.NW, EDir.N, EDir.NE,
-                EDir.W, EDir.E,
-                EDir.SW, EDir.S, EDir.SE
+                Dir9.NW, Dir9.N, Dir9.NE,
+                Dir9.W, Dir9.E,
+                Dir9.SW, Dir9.S, Dir9.SE
             };
 
             var numpads = new [] {

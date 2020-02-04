@@ -3,11 +3,11 @@ using Nez.Tweens;
 using Rot.Engine;
 
 namespace Rot.Ui.Tweens {
-    public class Turn : Descrete<EDir> {
-        EDir[] dirMap;
+    public class Turn : Descrete<Dir9> {
+        Dir9[] dirMap;
         Entity entity;
 
-        static EDir[] createDirMap(EDir from, EDir to) {
+        static Dir9[] createDirMap(Dir9 from, Dir9 to) {
             int deg = (int) (to.vec.deg - from.vec.deg);
 
             // forces clockwise turning when the direction is opposite
@@ -28,9 +28,9 @@ namespace Rot.Ui.Tweens {
             }
 
             int len = System.Math.Abs(deltaStep);
-            EDir[] dirMap = new EDir[len];
+            Dir9[] dirMap = new Dir9[len];
 
-            EDir dir = from;
+            Dir9 dir = from;
             for (int i = 0; i < len; i++) {
                 if (deltaStep < 0) {
                     dir = dir.l45;
@@ -43,7 +43,7 @@ namespace Rot.Ui.Tweens {
             return dirMap;
         }
 
-        public Turn(Entity e, EDir to, EaseType easeType, float stepDuraion) {
+        public Turn(Entity e, Dir9 to, EaseType easeType, float stepDuraion) {
             this.entity = e;
             var body = e.get<Body>();
             this.dirMap = createDirMap(body.facing, to);

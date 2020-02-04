@@ -14,7 +14,7 @@ namespace Rot.Engine.Beh {
         }
 
         RlEvent iBehavior.make() {
-            var dir = EDir.random();
+            var dir = Dir9.random();
             return new RlEv.Walk(entity, dir);
         }
     }

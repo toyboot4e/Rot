@@ -13,60 +13,60 @@ namespace Rot.Engine {
     /// </summary>
     // TODO: maybe decouple inspector?
     [Nez.CustomInspector(typeof(EDirInspector))]
-    public struct EDir : IEquatable<EDir> {
+    public struct Dir9 : IEquatable<Dir9> {
         private const bool V = false;
-        readonly Vec2 mVec;
+        readonly Vec2i mVec;
 
-        public Vec2 vec => mVec;
-        public Vec2 xVec => mVec.xVec;
-        public Vec2 yVec => mVec.yVec;
+        public Vec2i vec => mVec;
+        public Vec2i xVec => mVec.xVec;
+        public Vec2i yVec => mVec.yVec;
         public Vector2 vector2 => mVec.vector2;
         public int x => mVec.x;
         public int y => mVec.y;
-        public EDir xSgn => new EDir(mVec.x, 0);
-        public EDir ySgn => new EDir(0, mVec.y);
+        public Dir9 xSgn => new Dir9(mVec.x, 0);
+        public Dir9 ySgn => new Dir9(0, mVec.y);
 
-        public static EDir fromVec(Vec2 v) => EDir.all.FirstOrDefault(d => v == d.vec);
-        public static EDir fromXy(int x, int y) => EDir.all.FirstOrDefault(d => x == d.x && y == d.y);
+        public static Dir9 fromVec(Vec2i v) => Dir9.all.FirstOrDefault(d => v == d.vec);
+        public static Dir9 fromXy(int x, int y) => Dir9.all.FirstOrDefault(d => x == d.x && y == d.y);
 
-        EDir(Vec2 offset) : this(offset.x, offset.y) { }
-        EDir(int x, int y) {
-            mVec = new Vec2(x.clamp(-1, 1), y.clamp(-1, 1));
+        Dir9(Vec2i offset) : this(offset.x, offset.y) { }
+        Dir9(int x, int y) {
+            mVec = new Vec2i(x.clamp(-1, 1), y.clamp(-1, 1));
         }
 
         // -> Self
-        public static EDir Ground => new EDir(new Vec2(0, 0));
-        public static EDir N => new EDir(new Vec2(0, -1));
-        public static EDir NE => new EDir(new Vec2(1, -1));
-        public static EDir E => new EDir(new Vec2(1, 0));
-        public static EDir SE => new EDir(new Vec2(1, 1));
-        public static EDir S => new EDir(new Vec2(0, 1));
-        public static EDir SW => new EDir(new Vec2(-1, 1));
-        public static EDir W => new EDir(new Vec2(-1, 0));
-        public static EDir NW => new EDir(new Vec2(-1, -1));
+        public static Dir9 Ground => new Dir9(new Vec2i(0, 0));
+        public static Dir9 N => new Dir9(new Vec2i(0, -1));
+        public static Dir9 NE => new Dir9(new Vec2i(1, -1));
+        public static Dir9 E => new Dir9(new Vec2i(1, 0));
+        public static Dir9 SE => new Dir9(new Vec2i(1, 1));
+        public static Dir9 S => new Dir9(new Vec2i(0, 1));
+        public static Dir9 SW => new Dir9(new Vec2i(-1, 1));
+        public static Dir9 W => new Dir9(new Vec2i(-1, 0));
+        public static Dir9 NW => new Dir9(new Vec2i(-1, -1));
 
-        public static EDir random() => EDir.fromInt(Nez.Random.Range(0, 7));
+        public static Dir9 random() => Dir9.fromInt(Nez.Random.Range(0, 7));
 
-        public static EDir fromInt(int n) {
+        public static Dir9 fromInt(int n) {
             switch (n) {
                 case 0:
-                    return EDir.N;
+                    return Dir9.N;
                 case 1:
-                    return EDir.NE;
+                    return Dir9.NE;
                 case 2:
-                    return EDir.E;
+                    return Dir9.E;
                 case 3:
-                    return EDir.SE;
+                    return Dir9.SE;
                 case 4:
-                    return EDir.S;
+                    return Dir9.S;
                 case 5:
-                    return EDir.SW;
+                    return Dir9.SW;
                 case 6:
-                    return EDir.W;
+                    return Dir9.W;
                 case 7:
-                    return EDir.NW;
+                    return Dir9.NW;
                 default:
-                    return EDir.Ground;
+                    return Dir9.Ground;
             }
         }
 
@@ -89,23 +89,25 @@ namespace Rot.Engine {
         /// <summary> Useful for string keys </smmary>
         public string asStr => this.ToString();
 
+        public byte asFlag => System.Convert.ToByte(1 << this.asInt);
+
         // -> [Self]1
-        public static EDir[] all => new [] { N, NE, E, SE, S, SW, W, NW };
+        public static Dir9[] all => new [] { N, NE, E, SE, S, SW, W, NW };
         // public static IList<EDir> clockwise => new List<EDir> { N, NE, E, SE, S, SW, W, NW };
-        public static EDir[] clockwise => new [] { N, NE, E, SE, S, SW, W, NW };
-        public static EDir[] Counterclockwise => new [] { N, NW, W, SW, S, SE, E, NE };
-        public static EDir[] cardinals => new [] { N, S, E, W };
-        public static EDir[] diagonals => new [] { NE, NW, SE, SW };
+        public static Dir9[] clockwise => new [] { N, NE, E, SE, S, SW, W, NW };
+        public static Dir9[] Counterclockwise => new [] { N, NW, W, SW, S, SE, E, NE };
+        public static Dir9[] cardinals => new [] { N, S, E, W };
+        public static Dir9[] diagonals => new [] { NE, NW, SE, SW };
 
         // &Self -> bool
-        public bool isCardinal => this.belongsTo(EDir.cardinals);
-        public bool isDiagonal => this.belongsTo(EDir.diagonals);
-        bool belongsTo(IEnumerable<EDir> set) {
+        public bool isCardinal => this.belongsTo(Dir9.cardinals);
+        public bool isDiagonal => this.belongsTo(Dir9.diagonals);
+        bool belongsTo(IEnumerable<Dir9> set) {
             var t = this;
             return set.Any(d => d == t);
         }
 
-        public EDir r45 {
+        public Dir9 r45 {
             get {
                 // can't switch(){}: no constants
                 if (this == N) return NE;
@@ -120,7 +122,7 @@ namespace Rot.Engine {
             }
         }
 
-        public EDir l45 {
+        public Dir9 l45 {
             get {
                 if (this == N) return NW;
                 else if (this == NE) return N;
@@ -133,21 +135,22 @@ namespace Rot.Engine {
                 else return Ground;
             }
         }
-        public EDir r90 => EDir.fromXy(-this.y, this.x);
-        public EDir l90 => EDir.fromXy(this.y, -this.x);
-        public EDir rev => EDir.fromXy(-this.x, -this.y);
+        public Dir9 r90 => Dir9.fromXy(-this.y, this.x);
+        public Dir9 l90 => Dir9.fromXy(this.y, -this.x);
+        public Dir9 rev => Dir9.fromXy(-this.x, -this.y);
+        public Dir9 opposite => rev;
 
         // for the compiler
-        public static Vec2 operator +(Vec2 v, EDir d) => v + d.mVec;
-        public static Vec2 operator +(EDir d, Vec2 v) => v + d.mVec;
-        public static bool operator ==(EDir left, EDir right) {
+        public static Vec2i operator +(Vec2i v, Dir9 d) => v + d.mVec;
+        public static Vec2i operator +(Dir9 d, Vec2i v) => v + d.mVec;
+        public static bool operator ==(Dir9 left, Dir9 right) {
             return left.Equals(right);
         }
-        public static bool operator !=(EDir left, EDir right) {
+        public static bool operator !=(Dir9 left, Dir9 right) {
             return !left.Equals(right);
         }
 
-        public bool Equals(EDir other) {
+        public bool Equals(Dir9 other) {
             // if EDir is a class:
             // if (other is null) return false;
             return mVec.Equals(other.mVec);
@@ -155,9 +158,9 @@ namespace Rot.Engine {
 
         public override bool Equals(object obj) {
             if (obj == null) return false;
-            if (!(obj is EDir)) return false;
+            if (!(obj is Dir9)) return false;
 
-            return Equals((EDir) obj);
+            return Equals((Dir9) obj);
         }
 
         public override int GetHashCode() {
@@ -182,10 +185,10 @@ namespace Rot.Engine {
     /// <summary> EDir inspector for Nez.ImGui </summary>
     class EDirInspector : AbstractTypeInspector {
         public override void DrawMutable() {
-            var dir = base.GetValue<EDir>();
+            var dir = base.GetValue<Dir9>();
             if (dir == null) {
                 if (ImGui.Button("Create Object")) {
-                    dir = EDir.fromXy(1, 0);
+                    dir = Dir9.fromXy(1, 0);
                     base.SetValue(dir);
                 }
             } else {

@@ -16,10 +16,10 @@ namespace Rot.Ui {
         }
 
         /// <summary> Walk animations are made before walking </summary>
-        public ITweenable walk(WalkAnimationConfig config, Entity entity, Vec2 to) {
+        public ITweenable walk(WalkAnimationConfig config, Entity entity, Vec2i to) {
             var body = entity.get<Body>();
             var from = body.pos;
-            var nextDir = (EDir) EDir.fromVec(to - from);
+            var nextDir = (Dir9) Dir9.fromVec(to - from);
             // FIXME: lazily change facing or outsource it
             this.changeDir(entity, nextDir);
 
@@ -29,23 +29,22 @@ namespace Rot.Ui {
         }
 
         /// <summary> Changes the direction of image of the entity </summary>
-        public void changeDir(Entity entity, EDir dir) {
+        public void changeDir(Entity entity, Dir9 dir) {
             var chip = entity.get<Charachip>();
             chip.setDir(dir);
         }
 
-        public ITweenable turn(Entity e, EDir to) {
+        public ITweenable turn(Entity e, Dir9 to) {
             var body = e.get<Body>();
             if (body.facing == to) {
                 return null;
             }
 
-            // FIXME: hard coding
-            var anim = new Tw.Turn(e, to, EaseType.Linear, 0.02f);
+            var anim = new Tw.Turn(e, to, EaseType.Linear, Preferences.turnDirDuration);
             return anim;
         }
 
-        public ITween<Vector2>[] swing(Entity entity, EDir to, float duration = 4f / 60f) {
+        public ITween<Vector2>[] swing(Entity entity, Dir9 to, float duration = 4f / 60f) {
             var body = entity.get<Body>();
             var chip = entity.get<Charachip>().anim;
 

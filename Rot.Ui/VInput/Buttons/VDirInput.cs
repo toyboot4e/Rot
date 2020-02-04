@@ -23,19 +23,19 @@ namespace Rot.Ui {
             return base.setRepeat(firstRepeatTime, multiRepeatTime);
         }
 
-        public EDir dirDown => this.btDown?.valueDown ?? default(EDir);
-        public EDir dirPressed => this.btPressed?.valueDown ?? default(EDir);
+        public Dir9 dirDown => this.btDown?.valueDown ?? default(Dir9);
+        public Dir9 dirPressed => this.btPressed?.valueDown ?? default(Dir9);
 
-        iValueButton<EDir> btDown {
+        iValueButton<Dir9> btDown {
             get {
                 int dBuf = (int) this.axisDir.buf - (int) this.eDir.buf;
-                return dBuf > 0 ? this.axisDir as iValueButton<EDir>
+                return dBuf > 0 ? this.axisDir as iValueButton<Dir9>
                     :
-                    dBuf < 0 ? this.eDir as iValueButton<EDir>
+                    dBuf < 0 ? this.eDir as iValueButton<Dir9>
                     :
                     null;
             }
         }
-        iValueButton<EDir> btPressed => this.isPressed ? this.btDown : null;
+        iValueButton<Dir9> btPressed => this.isPressed ? this.btDown : null;
     }
 }

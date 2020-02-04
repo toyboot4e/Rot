@@ -55,7 +55,7 @@ namespace Rot.Ui {
             };
 
             // foreach(var(keyEnum, patterns) in EnumDirUtil.enumerate().Zip(wodi8AnimPatterns, (key, i) => (key, i))) {
-            var keyEnums = EDir.clockwise;
+            var keyEnums = Dir9.clockwise;
             // var fps = System.TimeSpan.FromTicks((long) 10_000_000 / (long) 16);
             float fps = 60f / 16f;
             for (int i = 0; i < 8; i++) {
@@ -66,13 +66,13 @@ namespace Rot.Ui {
             return anim;
         }
 
-        public Charachip snapToGridPos(Vec2 gridPos) {
+        public Charachip snapToGridPos(Vec2i gridPos) {
             var worldPos = this.posUtil.gridToWorldCentered(gridPos);
             this.Entity.SetLocalPosition(worldPos);
             return this;
         }
 
-        public Charachip setDir(EDir dir) {
+        public Charachip setDir(Dir9 dir) {
             var key = dir.asStr;
             if (key != this.anim.CurrentAnimationName) {
                 this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);

@@ -20,9 +20,9 @@ namespace Rot.Game {
 namespace Rot.RlEv {
     public class Interact : RlEvent {
         public readonly Entity entity;
-        public readonly EDir dir;
+        public readonly Dir9 dir;
 
-        public Interact(Entity e, EDir d) {
+        public Interact(Entity e, Dir9 d) {
             (this.entity, this.dir) = (e, d);
         }
     }

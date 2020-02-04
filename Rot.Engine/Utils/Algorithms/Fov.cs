@@ -22,7 +22,7 @@ namespace Rot.Engine.Fov {
     // used to visualize fov data
     public interface iFovRead {
         bool canSee(int x, int y);
-        Vec2 origin();
+        Engine.Vec2i origin();
         int radius();
     }
 

@@ -28,7 +28,7 @@ namespace Rot.Game {
         public static EntityFactory genPlayer(Scene scene, TiledRlStage stage, PosUtil posUtil, TmxMap map) {
             var factory = EntityFactory.begin(scene, "player", posUtil);
             factory
-                .body(new Vec2(7, 7), EDir.S, true, false)
+                .body(new Vec2i(7, 7), Dir9.S, true, false)
                 .actor(new Engine.Beh.Player(factory.entity), 3)
                 // .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
                 .wodi8Chip(Content.Chips.Wodi8.Chicken)
@@ -44,7 +44,7 @@ namespace Rot.Game {
             return this;
         }
 
-        public EntityFactory body(Vec2 pos, EDir dir, bool isBlocker, bool isDiagonalBlocker) {
+        public EntityFactory body(Vec2i pos, Dir9 dir, bool isBlocker, bool isDiagonalBlocker) {
             this.entity.add(new Body(pos, dir, isBlocker, isDiagonalBlocker));
             return this;
         }

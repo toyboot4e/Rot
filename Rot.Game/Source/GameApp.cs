@@ -10,7 +10,7 @@ using Rot.Ui;
 namespace Rot.Game {
     public class RlScene : Scene {
         public override void Initialize() {
-            var policy = Scene.SceneResolutionPolicy.None;
+            var policy = Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
             base.SetDesignResolution(Screen.Width, Screen.Height, policy);
 
             base.AddRenderer(new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage));
@@ -33,23 +33,23 @@ namespace Rot.Game {
 
             Nez.Core.ExitOnEscapeKeypress = false;
             Nez.Console.DebugConsole.ConsoleKey = Keys.OemPeriod;
+
+            // avoid jitters
             base.IsFixedTimeStep = true;
+            // Graphics.Instance.Batcher.ShouldRoundDestinations = false;
             this.setFps(60);
 
 #if DEBUG
             // Enables VSCode debug console to see the debug log.
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
-#endif
-
-            Core.Scene = new RlScene();
-
-#if DEBUG
-            // TODO: change font
+            // TODO: change font of ImGUI
             var options = new ImGuiOptions().AddFont(Nez.Content.Fonts.Arial24, 24);
             var imGuiManager = new ImGuiManager(options);
             Core.RegisterGlobalManager(imGuiManager);
             ImGui.GetStyle().Alpha = 0.75f;
 #endif
+
+            Core.Scene = new RlScene();
         }
 
         protected override void Update(GameTime time) {

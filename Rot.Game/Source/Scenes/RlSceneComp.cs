@@ -25,6 +25,7 @@ namespace Rot.Game {
             this.ctrlCtx = new ControlContext(new Cradle(), new VInput());
             base.Scene.add(new ControlSceneComponent(this.ctrlCtx));
 
+            // string initialStage = Content.Stages.@Static;
             string initialStage = Content.Stages.@Static;
             this.loadTiledMap(initialStage);
 
@@ -185,7 +186,7 @@ namespace Rot.Game {
             var actorEntity = base.Scene.CreateEntity("script-test");
             var factory = EntityFactory
                 .begin(actorEntity, this.ctx.posUtil)
-                .body(pos, EDir.S, true, true)
+                .body(pos, Dir9.S, true, true)
                 .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .script(RlHooks.testScript(player, actorEntity, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
             this.ctx.gameCtx.entities.Add(actorEntity);

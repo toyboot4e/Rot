@@ -13,16 +13,16 @@ namespace Rot.Engine {
 
         #region Facing
         // TODO: make it static and separate
-        public EDir dirTo(Entity from, Entity to) {
+        public Dir9 dirTo(Entity from, Entity to) {
             var posFrom = from.get<Body>().pos;
             var posTo = to.get<Body>().pos;
-            return EDir.fromVec(posTo - posFrom);
+            return Dir9.fromVec(posTo - posFrom);
         }
         #endregion
 
         #region Walk
         // TODO: separate it in a static class
-        public bool canWalkIn(Entity e, EDir dir) {
+        public bool canWalkIn(Entity e, Dir9 dir) {
             var stage = this.ctx.stage;
             var body = e.get<Body>();
 
@@ -41,32 +41,32 @@ namespace Rot.Engine {
             if (dir.isCardinal) {
                 return true;
             } else {
-                return new Vec2[] { dir.xVec, dir.yVec }
+                return new Vec2i[] { dir.xVec, dir.yVec }
                     .Select(v => v.offset(from))
                     .All(p => this.isDiagonallyPassableAt(p));
             }
         }
 
         // TODO: faster collision system
-        public bool isPassableAt(Vec2 pos) {
+        public bool isPassableAt(Vec2i pos) {
             return this.ctx.stage.contains(pos) &&
                 this.ctx.stage.tilesAt(pos).arePassable() &&
                 this.ctx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
         }
 
-        public bool isBlockedAt(Vec2 pos) {
+        public bool isBlockedAt(Vec2i pos) {
             return !this.ctx.stage.contains(pos) ||
                 !this.ctx.stage.tilesAt(pos).arePassable() ||
                 this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
 
         // TODO: add diagonal blocking property to stage tiles
-        public bool isDiagonallyPassableAt(Vec2 pos) {
+        public bool isDiagonallyPassableAt(Vec2i pos) {
             var stage = this.ctx.stage;
             return stage.tilesAt(pos).arePassable();
         }
 
-        public bool isDiagonallyBlocedAt(Vec2 pos) {
+        public bool isDiagonallyBlocedAt(Vec2i pos) {
             var stage = this.ctx.stage;
             return !stage.tilesAt(pos).arePassable();
         }

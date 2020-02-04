@@ -11,10 +11,10 @@ namespace Rot.Ui {
         }
 
         #region impl iRlStage
-        public Rect bounds => new Rect(0, 0, tiled.Width, tiled.Height);
-        public RlTiles tilesAt(Vec2 pos) => new TiledRlTiles(pos, this);
-        public RlTiles tilesAt(int x, int y) => new TiledRlTiles(new Vec2(x, y), this);
-        public bool isBlocked(Vec2 pos) => this.isBlocked(pos.x, pos.y);
+        public Rect2Di bounds => new Rect2Di(0, 0, tiled.Width, tiled.Height);
+        public RlTiles tilesAt(Vec2i pos) => new TiledRlTiles(pos, this);
+        public RlTiles tilesAt(int x, int y) => new TiledRlTiles(new Vec2i(x, y), this);
+        public bool isBlocked(Vec2i pos) => this.isBlocked(pos.x, pos.y);
         public bool isBlocked(int x, int y) => !this.contains(x, y) || this.tiled.isBlocked(x, y);
         #endregion
 
@@ -30,11 +30,11 @@ namespace Rot.Ui {
     }
 
     public class TiledRlTiles : RlTiles {
-        public Vec2 pos { get; private set; }
+        public Vec2i pos { get; private set; }
         public TiledRlStage stage { get; private set; }
         iRlStage RlTiles.stage => this.stage;
 
-        public TiledRlTiles(Vec2 pos, TiledRlStage stage) {
+        public TiledRlTiles(Vec2i pos, TiledRlStage stage) {
             (this.pos, this.stage) = (pos, stage);
         }
 

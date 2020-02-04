@@ -53,7 +53,7 @@ namespace Rot.Game {
             for (int i = 0; i < N; i++) {
                 var enemyGen = EntityFactory.begin(base.Scene, $"actor_{i}", posUtil);
                 entities.Add(enemyGen
-                    .body(new Vec2(10 + 1, 5 + i), EDir.random(), true, false)
+                    .body(new Vec2i(10 + 1, 5 + i), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
                     .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
@@ -64,7 +64,7 @@ namespace Rot.Game {
 
             var stairGen = EntityFactory.begin(base.Scene, "stair", posUtil);
             entities.Add(stairGen
-                .body(new Vec2(5, 5), EDir.random(), false, false)
+                .body(new Vec2i(5, 5), Dir9.random(), false, false)
                 .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
