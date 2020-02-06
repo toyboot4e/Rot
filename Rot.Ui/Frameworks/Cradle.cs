@@ -29,12 +29,10 @@ namespace Rot.Ui {
         protected virtual void onContextInjected() { }
 
         public abstract ControlResult update();
-        /// <summary> Called when pushed to the stack in <c>Cradle<c> </summary>
-        public virtual void onPushed() { }
-        /// <summary> Called when poped from the stack in <c>Cradle<c> </summary>
-        public virtual void onPoped() { }
-        /// <summary> Called when removed from the <c>Cradle<c> </summary>
-        public virtual void onRemoved() { }
+        public virtual void onEnter() { }
+        public virtual void onExit() { }
+        public virtual void onPause() { }
+        public virtual void onResume() { }
     }
 
     public enum ControlResult {
@@ -81,14 +79,16 @@ namespace Rot.Ui {
 
         #region Stack
         public T push<T>(T c) where T : Control {
-            c.onPushed();
+            this.stack.Peek().onPause();
+            c.onEnter();
             this.stack.Push(c);
             return c;
         }
 
         public Control pop() {
             var c = this.stack.Pop();
-            c.onPoped();
+            c.onResume();
+            this.stack.Peek().onResume();
             return c;
         }
 
