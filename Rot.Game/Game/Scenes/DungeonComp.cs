@@ -7,34 +7,29 @@ using Rot.Ui;
 using Beh = Rot.Engine.Beh;
 
 namespace Rot.Game {
-    public class DungeonComp : Nez.SceneComponent {
-        TmxMap tiled;
-        RlSceneComp rlCtx;
+    public class DungeonComp {
         KarceroTiledGenerator gen;
 
-        public DungeonComp(TmxMap tiled, RlSceneComp rlCtx) {
-            this.tiled = tiled;
-            this.rlCtx = rlCtx;
-        }
+        public DungeonComp() { }
 
-        public void newFloor() {
-            this.clearEnemies();
-            this.genDungeon();
-            this.genEnemies();
+        public void newFloor(StaticGod god) {
+            DungeonComp.clearEnemies(god);
+            this.genDungeon(god);
+            DungeonComp.genEnemies(god);
             // FIXME: do not be dependent on RotEntityList or provide safe way
-            (rlCtx.gameCtx.entities as RotEntityList).setIndex(0);
+            (god.gameCtx.entities as RotEntityList).setIndex(0);
         }
 
-        public void genDungeon() {
+        public void genDungeon(StaticGod god) {
             this.gen = new KarceroTiledGenerator();
             // Karcero's coordinates begins with zero, so we have to consider about it
-            this.gen.generate(tiled.Width - 1, tiled.Height - 1);
-            this.gen.copyToTiled(tiled);
+            this.gen.generate(god.tiled.Width - 1, god.tiled.Height - 1);
+            this.gen.copyToTiled(god.tiled);
         }
 
         /// <summary> Delete entities without player tag </summary>
-        public void clearEnemies() {
-            var entities = this.rlCtx.gameCtx.entities;
+        public static void clearEnemies(StaticGod god) {
+            var entities = god.gameCtx.entities;
 
             for (int i = 0; i < entities.Count; i++) {
                 var entity = entities[i];
@@ -45,13 +40,13 @@ namespace Rot.Game {
             }
         }
 
-        public void genEnemies() {
-            var posUtil = this.rlCtx.posUtil;
-            var entities = this.rlCtx.gameCtx.entities;
+        public static void genEnemies(StaticGod god) {
+            var posUtil = god.posUtil;
+            var entities = god.gameCtx.entities;
 
             int N = Nez.Random.Range(3, 7);
             for (int i = 0; i < N; i++) {
-                var enemyGen = EntityFactory.begin(base.Scene, $"actor_{i}", posUtil);
+                var enemyGen = EntityFactory.begin(god.scene, $"actor_{i}", posUtil);
                 entities.Add(enemyGen
                     .body(new Vec2i(10 + 1, 5 + i), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
@@ -62,21 +57,13 @@ namespace Rot.Game {
                 continue;
             }
 
-            var stairGen = EntityFactory.begin(base.Scene, "stair", posUtil);
+            var stairGen = EntityFactory.begin(god.scene, "stair", posUtil);
             entities.Add(stairGen
                 .body(new Vec2i(5, 5), Dir9.random(), false, false)
                 .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );
-        }
-
-        public override void Update() {
-#if DEBUG
-            if (Nez.Input.IsKeyPressed(Keys.G)) {
-                this.newFloor();
-            }
-#endif
         }
     }
 }

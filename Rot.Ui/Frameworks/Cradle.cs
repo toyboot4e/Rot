@@ -4,13 +4,23 @@ using Rot.Engine;
 
 namespace Rot.Ui {
     /// <summary> Context automatically injected to <c>Control</c>s by <c>Cradle</c> </summary>
-    public struct ControlContext {
+    public class ControlContext {
         public Cradle cradle;
         public VInput input;
 
-        public ControlContext(Cradle cradle, VInput input) {
-            this.cradle = cradle;
+        internal ControlContext(VInput input) {
             this.input = input;
+            this.cradle = null;
+        }
+
+        internal void setCradle(Cradle cradle) {
+            this.cradle = cradle;
+        }
+
+        public static ControlContext create(VInput input) {
+            var self = new ControlContext(input);
+            self.setCradle(new Cradle(self));
+            return self;
         }
     }
 
@@ -44,28 +54,21 @@ namespace Rot.Ui {
     public class Cradle {
         public Dictionary<Type, Control> storage { get; private set; }
         public Stack<Control> stack;
-        ControlContext ctx;
+        public ControlContext ctx;
 
-        public Cradle() {
+        internal Cradle(ControlContext context) {
             this.storage = new Dictionary<Type, Control>();
             this.stack = new Stack<Control>();
-        }
-
-        public void setContext(ControlContext ctx) {
-            this.ctx = ctx;
+            this.ctx = context;
         }
 
         public void update() {
             while (true) {
                 var peek = this.stack.safePeek();
-                if (peek == null) {
-                    break;
-                    // throw new System.Exception("The cradle has no top control");
-                }
+                Force.nonNull(peek, "Cradle must updated with at least one object in the stack");
 
                 if (Nez.Console.DebugConsole.Instance.IsOpen) {
-                    // this may stop animations
-                    break;
+                    break; // NOTE: this may stop animations..
                 }
 
                 switch (peek.update()) {
@@ -79,7 +82,7 @@ namespace Rot.Ui {
 
         #region Stack
         public T push<T>(T c) where T : Control {
-            this.stack.Peek().onPause();
+            this.stack.safePeek()?.onPause();
             c.onEnter();
             this.stack.Push(c);
             return c;
@@ -88,7 +91,6 @@ namespace Rot.Ui {
         public Control pop() {
             var c = this.stack.Pop();
             c.onResume();
-            this.stack.Peek().onResume();
             return c;
         }
 
@@ -126,14 +128,13 @@ namespace Rot.Ui {
                 return null;
             }
         }
-
         #endregion
 
-        #region Extentions
+        #region Helpers
         public T push<T>() where T : Control {
             Control c;
             if (!this.storage.TryGetValue(typeof(T), out c)) {
-                throw new Exception();
+                throw new Exception("Cradle: tried to push non-existing type in storage");
             }
             return push(c as T);
         }

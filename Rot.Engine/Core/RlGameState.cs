@@ -15,7 +15,7 @@ namespace Rot.Engine {
         IEnumerator<RlTickReport> loop;
 
         public RlGameState(AnyRlEvHub evHub, iRlActorIterator scheduler) {
-            Nez.Insist.IsNotNull(scheduler, "Given null as a scheduler to the game state");
+            Force.nonNull(scheduler, "Given null as a scheduler to the game state");
             this.loop = RlGameState.gameFlow(scheduler, evHub).GetEnumerator();
         }
 

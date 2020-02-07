@@ -48,7 +48,7 @@ namespace Rot.Ui {
 
         /// <summary> The behavior of this control in time </summary>
         IEnumerable flow() {
-            Insist.IsNotNull(this.script);
+            Force.nonNull(this.script, "ScriptControl.flow");
             foreach(var cmd in this.script) {
                 Cmd.iCmdView view;
                 if (!this.views.TryGetValue(cmd.GetType(), out view)) {

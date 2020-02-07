@@ -49,8 +49,11 @@ namespace Rot.Sys {
 
             while (true) {
                 cradle
-                    .push<PlayerControl>()
+                    .get<PlayerControl>()
                     .setController(controller);
+
+                cradle
+                    .push<PlayerControl>();
 
                 // FIXME: hack for stopping
                 cradle

@@ -7,7 +7,7 @@ namespace Rot.Engine {
     public class RlRule {
         protected RlGameContext gameCtx;
 
-        public void injectCtx(RlGameContext gameCtx) {
+        internal void injectCtx(RlGameContext gameCtx) {
             this.gameCtx = gameCtx;
         }
 

@@ -23,7 +23,7 @@ namespace Rot.Sys {
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Stair stair) {
-            this.gen.newFloor();
+            // this.gen.newFloor();
             yield break;
         }
     }

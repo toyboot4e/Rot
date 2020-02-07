@@ -11,7 +11,7 @@ namespace Rot.Game {
         public RlEvent action { get; private set; }
 
         public EntityController(Entity entity) {
-            Insist.IsNotNull(entity);
+            Force.nonNull(entity, "EntityCntroller()");
             (this.actor, this.action) = (entity, null);
         }
 
@@ -69,6 +69,11 @@ namespace Rot.Game {
         /// <summary> To be called before entering it </summary>
         public void setController(EntityController ctrl) {
             this.controller = ctrl;
+        }
+
+        override public void onEnter() {
+            Force.nonNull(this.controller, "PlayerControl.onEnter() controller");
+            Force.nonNull(this.gameCtx, "PlayerControl.onEnter() gameCtx");
         }
 
         public override ControlResult update() {
