@@ -30,10 +30,10 @@ namespace Rot.Ui {
     }
 
     public static class TiledObjectExt {
-        public static Vec2 tilePos(this TmxObject self, TmxMap tiled) {
+        public static Vec2i tilePos(this TmxObject self, TmxMap tiled) {
             var x = tiled.WorldToTilePositionX(self.X);
             var y = tiled.WorldToTilePositionY(self.Y);
-            return new Vec2(x, y);
+            return new Vec2i(x, y);
         }
     }
 

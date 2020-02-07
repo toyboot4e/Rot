@@ -20,11 +20,11 @@ namespace Rot.Script.Cmd {
 
     public struct Talk : iCmd {
         public readonly Entity from;
-        public readonly EDir dir;
+        public readonly Dir9 dir;
         public readonly Entity to;
         public readonly string text;
 
-        public Talk(Entity from, Entity to, EDir dir, string text) {
+        public Talk(Entity from, Entity to, Dir9 dir, string text) {
             this.from = from;
             this.to = to;
             this.dir = dir;
@@ -47,7 +47,7 @@ namespace Rot.Script.Cmd {
 
         public class Cmd {
             public class Walk {
-                EDir[] dirs;
+                Dir9[] dirs;
             }
         }
 
@@ -56,11 +56,11 @@ namespace Rot.Script.Cmd {
             return this;
         }
 
-        public Move dir(EDir[] dirs, float duration) {
+        public Move dir(Dir9[] dirs, float duration) {
             return this;
         }
 
-        public Move walk(params EDir[] dirs) {
+        public Move walk(params Dir9[] dirs) {
             //
             return this;
         }

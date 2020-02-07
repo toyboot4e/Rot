@@ -4,9 +4,9 @@ using Rot.Engine;
 namespace Rot.RlEv {
     public class JustSwing : RlEvent {
         public readonly Entity entity;
-        public readonly EDir dir;
+        public readonly Dir9 dir;
 
-        public JustSwing(Entity entity, EDir? dir = null) {
+        public JustSwing(Entity entity, Dir9? dir = null) {
             this.entity = entity;
             this.dir = dir ?? entity.get<Body>().facing;
         }
@@ -15,9 +15,9 @@ namespace Rot.RlEv {
 
     public class MeleeAttack : RlEvent {
         public readonly Entity entity;
-        public readonly EDir dir;
+        public readonly Dir9 dir;
 
-        public MeleeAttack(Entity entity, EDir? dir = null) {
+        public MeleeAttack(Entity entity, Dir9? dir = null) {
             this.entity = entity;
             this.dir = dir ?? entity.get<Body>().facing;
         }

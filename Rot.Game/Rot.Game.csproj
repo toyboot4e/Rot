@@ -16,11 +16,11 @@
         <ProjectReference Include="../Nez/Nez.Portable/Nez.FNA.csproj" />
 		<ProjectReference Include="../Nez/Nez.Persistence/Nez.FNA.Persistence.csproj" />
         <ProjectReference Include="../Nez/Nez.ImGui/Nez.FNA.ImGui.csproj" />
+<!-- <ProjectReference Include="../Nez/Nez.FarseerPhysics/Nez.FNA.FarseerPhysics.csproj" /> -->
         <ProjectReference Include="../Rot.Engine/Rot.Engine.csproj" />
         <ProjectReference Include="../Rot.Ui/Rot.Ui.csproj" />
         <ProjectReference Include="..\Rot.Data\Rot.Data.csproj" />
         <ProjectReference Include="..\Rot.Script\Rot.Script.csproj" />
-<!-- <ProjectReference Include="../Nez/Nez.FarseerPhysics/Nez.FNA.FarseerPhysics.csproj" /> -->
     </ItemGroup>
 
     <!-- Includes Nez default effects and textures -->
