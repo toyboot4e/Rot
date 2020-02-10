@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Nez;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
+using NezEp.Prelude;
 
 namespace Rot.Sys {
     // NOTE: death event handling is delegated // (or: replace IList<Entity>

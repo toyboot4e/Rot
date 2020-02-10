@@ -6,6 +6,7 @@ using ImGuiNET;
 using Nez.ImGuiTools;
 using Nez.ImGuiTools.ObjectInspectors;
 using Nez.ImGuiTools.TypeInspectors;
+using NezEp.Prelude;
 
 namespace Rot.Engine {
     /// <summary>

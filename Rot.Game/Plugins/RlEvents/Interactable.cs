@@ -6,6 +6,7 @@ using Rot.Game;
 using Rot.Ui;
 using Scr = Rot.Script;
 using Cmd = Rot.Script.Cmd;
+using NezEp.Prelude;
 
 namespace Rot.Game {
     public class Interactable : Nez.Component {

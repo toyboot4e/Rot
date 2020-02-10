@@ -4,6 +4,7 @@ using Nez.Tiled;
 using Rot.Engine;
 using Rot.Ui;
 using Cmd = Rot.Script.Cmd;
+using NezEp.Prelude;
 
 namespace Rot.Game {
     /// <summary> Helper for entity generation. Note that it doesn't add the generated entity to any entity list </summary>

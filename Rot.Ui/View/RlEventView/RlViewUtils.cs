@@ -3,6 +3,7 @@ using Nez;
 using Nez.Tweens;
 using Rot.Engine;
 using Tw = Rot.Ui.Tweens;
+using NezEp.Prelude;
 
 namespace Rot.Ui {
     /// <summay> Internal utilities for visualizing <c>RlEvent</c>s </summary>

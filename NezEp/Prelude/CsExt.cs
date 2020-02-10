@@ -4,7 +4,7 @@ using System.Linq;
 
 // Note that you can't call extension methods via `base` keyword.
 
-namespace Rot.Engine {
+namespace NezEp.Prelude {
     public static class StringExt {
         /// <summary> Consider using $"{var}" or $@"{var}" instead </summary>
         public static string format(this string self, params object[] args) {

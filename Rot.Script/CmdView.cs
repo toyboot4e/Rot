@@ -6,6 +6,7 @@ using Nez.BitmapFonts;
 using Nez.Sprites;
 using Nez.Textures;
 using Nez.Tweens;
+using NezEp.Prelude;
 using Rot.Engine;
 using Rot.Ui;
 

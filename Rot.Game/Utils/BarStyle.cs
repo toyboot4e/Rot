@@ -7,6 +7,7 @@ using Nez;
 using Nez.Textures;
 using Rot.Ui;
 using static Rot.Ui.EntityBar;
+using NezEp.Prelude;
 
 namespace Rot.Game {
     // TODO: refactor

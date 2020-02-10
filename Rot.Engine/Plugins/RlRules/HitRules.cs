@@ -3,6 +3,7 @@ using System.Linq;
 using Nez;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
+using NezEp.Prelude;
 
 namespace Rot.Sys {
     public class HitRule : RlRule {

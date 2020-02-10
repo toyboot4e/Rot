@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
+using NezEp.Prelude;
 
 namespace Rot.Sys {
     /// <summary> Invokes events on walk </summary>

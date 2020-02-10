@@ -4,6 +4,7 @@ using Nez.Tweens;
 using Rot.Engine;
 using Rot.Ui;
 using RlEv = Rot.RlEv;
+using NezEp.Prelude;
 
 namespace Rot.Ui.View {
     public class HitView : RlView {

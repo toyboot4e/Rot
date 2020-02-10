@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 using Nez.Textures;
 using Nez.Tweens;
-using Nez.UI;
-using Rot.Engine;
 
-namespace Rot.Ui {
+namespace NezEp.Prelude {
     public static class Texture2DExt {
         public static NinePatchSprite toNineSprite(this Texture2D self) {
             int w = self.Width / 3;

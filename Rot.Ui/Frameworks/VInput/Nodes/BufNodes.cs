@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Input; // Keys
 using Nez;
 using Rot.Engine; // forEach
+using NezEp.Prelude;
 using Rot.Ui.PrimNodes;
 
 namespace Rot.Ui {

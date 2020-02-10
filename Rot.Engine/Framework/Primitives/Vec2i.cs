@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using NezEp.Prelude;
 using Rot.Engine;
 
 namespace Rot.Engine {
