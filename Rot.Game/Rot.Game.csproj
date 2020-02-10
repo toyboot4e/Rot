@@ -21,6 +21,7 @@
         <ProjectReference Include="../Rot.Ui/Rot.Ui.csproj" />
         <ProjectReference Include="..\Rot.Data\Rot.Data.csproj" />
         <ProjectReference Include="..\Rot.Script\Rot.Script.csproj" />
+        <ProjectReference Include="..\NezEp\NezEp.csproj" />
     </ItemGroup>
 
     <!-- Includes Nez default effects and textures -->
