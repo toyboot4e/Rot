@@ -33,7 +33,7 @@ namespace Rot.Ui {
         public void refresh() {
             var origin = this.Entity.get<Body>().pos;
             int radius = Preferences.fovRadius;
-            ShadowCasting<Fov, Stage>.refresh(this.fovFow, this.stage, origin.x, origin.y, radius);
+            Scanner<Fov, Stage>.refresh(this.fovFow, this.stage, origin.x, origin.y, radius);
             this.fovRenderer.onRefresh();
         }
 
