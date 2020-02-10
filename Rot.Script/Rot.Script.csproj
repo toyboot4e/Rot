@@ -18,6 +18,7 @@
         <ProjectReference Include="../Nez/Nez.ImGui/Nez.FNA.ImGui.csproj" />
         <ProjectReference Include="../Rot.Engine/Rot.Engine.csproj" />
         <ProjectReference Include="..\Rot.Ui\Rot.Ui.csproj" />
+        <ProjectReference Include="..\NezEp\NezEp.csproj" />
     </ItemGroup>
 
     <PropertyGroup>
