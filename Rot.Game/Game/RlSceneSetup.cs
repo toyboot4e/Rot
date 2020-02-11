@@ -8,6 +8,7 @@ using Rot.Ui;
 using View = Rot.Ui.View;
 using Scr = Rot.Script;
 using Cmd = Rot.Script.Cmd;
+using NezEp.Prelude;
 
 namespace Rot.Game {
     public static class RlSceneSetup {

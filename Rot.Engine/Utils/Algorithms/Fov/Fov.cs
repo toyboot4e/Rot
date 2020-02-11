@@ -83,8 +83,7 @@ namespace Rot.Engine.Fov {
     }
     #endregion
 
-    /// <summary> Refreshes a <c>Fov</c> </summary>
-    public static class ShadowCasting<Fov, Map> where Fov : iFovWrite where Map : iOpacityMap {
+    public static class Scanner<Fov, Map> where Fov : iFovWrite where Map : iOpacityMap {
         public static void refresh(Fov fov, Map map, int originX, int originY, int radius) {
             fov.onRefresh(radius, originX, originY);
 

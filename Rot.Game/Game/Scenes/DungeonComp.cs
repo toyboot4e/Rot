@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
 using Nez;
-using Nez.Tiled;
 using Rot.Engine;
 using Rot.Ui;
 using Beh = Rot.Engine.Beh;
+using NezEp.Prelude;
 
 namespace Rot.Game {
     public class DungeonComp {

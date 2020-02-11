@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NezEp.Prelude;
 
 namespace Rot.Engine {
     public interface iRlActor {

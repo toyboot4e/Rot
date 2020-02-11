@@ -2,6 +2,7 @@ using Nez;
 using Nez.Tweens;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
+using NezEp.Prelude;
 
 namespace Rot.Ui.View {
     public class BodyRlView : RlView {

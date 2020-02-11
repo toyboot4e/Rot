@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework; // Vector2
 using Nez; // VirtualButton
 using Rot.Engine; // Dir
+using NezEp.Prelude;
 
 namespace Rot.Ui {
     // TODO: extract it to users maybe using generics

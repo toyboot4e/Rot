@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Textures;
 using Nez.Tweens;
-using Rot.Engine;
+using NezEp.Prelude;
 
 namespace Rot.Ui {
 	public class EntityBarStyle {

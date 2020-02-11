@@ -8,6 +8,7 @@ using RlEv = Rot.RlEv;
 using Rot.Ui;
 using Scr = Rot.Script;
 using Cmd = Rot.Script.Cmd;
+using NezEp.Prelude;
 
 namespace Rot.Ui {
     /// <summary> Plays script (using an <c>IEnumerable</c>, internally) </summary>

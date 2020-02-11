@@ -1,6 +1,6 @@
 using D = System.Diagnostics.Debug;
 
-namespace Rot.Engine {
+namespace NezEp.Prelude {
     public static class Force {
         public static void nonNull<T>(T obj, string message = "") where T : class {
             if (obj == null) {

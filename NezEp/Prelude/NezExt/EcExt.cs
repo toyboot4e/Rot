@@ -1,25 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nez;
-using Rot.Engine;
+using Nez.Sprites;
+using Nez.Textures;
+using Nez.Tiled;
+using Nez.Tweens;
 
-namespace Rot.Engine {
-    public static class VirtualButtonExtention {
-        public static VirtualButton addKbKeys(this VirtualButton self, params Keys[] keys) {
-            foreach(var key in keys) {
-                self.AddKeyboardKey(key);
-            }
-            return self;
-        }
-
-        public static VirtualButton addKbKeys(this VirtualButton self, IEnumerable<Keys> keys) {
-            foreach(var key in keys) {
-                self.AddKeyboardKey(key);
-            }
-            return self;
-        }
-    }
-
+namespace NezEp.Prelude {
     public static class SceneExt {
         public static void rmEntity(this Scene self, Entity entity) {
             self.Entities.Remove(entity);
@@ -47,8 +36,10 @@ namespace Rot.Engine {
             return self.get<T>() ?? self.add<T>();
         }
 
-        public static void addAll(this Entity self, params Component[] cs) {
-            cs.forEach(c => self.AddComponent(c));
+        public static void addMany(this Entity self, params Component[] cs) {
+            for (int i = 0; i < cs.Length; i++) {
+                self.AddComponent(cs[i]);
+            }
         }
 
         public static bool rm<T>(this Entity self) where T : Component => self.RemoveComponent<T>();
@@ -68,7 +59,8 @@ namespace Rot.Engine {
 
     public static class ComponentExt {
         public static void rmFromEntity(this Component self) {
-            self.Entity?.RemoveComponent(self);
+            // dies when Entity if null
+            self.Entity.RemoveComponent(self);
         }
     }
 }

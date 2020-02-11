@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Nez;
+using NezEp.Prelude;
 
 namespace Rot.Engine {
     /// <summary> Implements <c>ActorScheduler</c>; for ease of prototyping</summary>
