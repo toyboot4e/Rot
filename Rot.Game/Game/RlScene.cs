@@ -1,4 +1,5 @@
 using Nez;
+using Rot.Game.Debug;
 using Rot.Ui;
 
 namespace Rot.Game {
@@ -22,6 +23,10 @@ namespace Rot.Game {
             this.god = new StaticGod();
             god.scene = this;
             RlSceneSetup.init(god);
+
+#if DEBUG
+            RlInspectorSpawn.spawn(god.ctrlCtx.cradle, god.ctrlCtx.input);
+#endif
         }
 
         public override void Update() {

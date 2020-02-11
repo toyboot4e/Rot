@@ -37,10 +37,6 @@ namespace Rot.Game {
                 var scripter = cradle.add(new ScriptControl());
                 RlPluginSetter.initScriptViews(scripter, god.ctrlCtx, god.posUtil);
             }
-
-#if DEBUG
-            RlInspector.create(god.scene, god.ctrlCtx.cradle, god.ctrlCtx.input);
-#endif
         }
 
         /// <summary> Loads a tiled map and updates contexts dependent on it </summary>
