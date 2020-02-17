@@ -48,6 +48,8 @@ namespace Rot.Engine.Fov {
         public static Vec2i operator *(Vec2i v, int c) => new Vec2i(v.x * c, v.y * c);
         public static Vec2i operator +(Vec2i v1, Vec2i v2) => new Vec2i(v1.x + v2.x, v1.y + v2.y);
         public static Vec2i operator -(Vec2i v1, Vec2i v2) => new Vec2i(v1.x - v2.x, v1.y - v2.y);
+
+        public override string ToString() => $"({x}, {y})";
     }
 
     // Clockwise from zero oclock
@@ -96,7 +98,6 @@ namespace Rot.Engine.Fov {
 
             fov.light(originX, originY);
             for (int i = 0; i < 8; i++) {
-                // Console.WriteLine($"[{(Octant)i}]");
                 new OctantScanner((Octant) i).scanOctant(cx);
             }
         }
@@ -113,6 +114,7 @@ namespace Rot.Engine.Fov {
             }
         }
 
+        // TODO: make it an object so that it can be replaced
         static class Rule {
             /// <summary> Range of columns in a row to scan through; [from, to] </summary>
             public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
@@ -123,22 +125,25 @@ namespace Rot.Engine.Fov {
                 return (from, to);
             }
 
-            // rectangle block model
-            /// <summary> Called after scanning opaque cells </summary>
-            public static float updateStartSlope(int col, int row) => (float) (col + 0.5f) / (row - 0.5f);
-            /// <summary> Called when splitting a scan </summary>
-            public static float updateEndSlope(int col, int row) => (float) (col - 0.5f) / (row + 0.5f);
+            // [rectangle block model]
+            // /// <summary> Called after scanning opaque cells </summary>
+            // /// <remark> Minimum to 1f is required to consider positions such as (1, 1) </remark>
+            // public static float updateStartSlope(int col, int row) => Math.Min(1f, (col + 0.5f) / (row - 0.5f));
+            // /// <summary> Called when splitting a scan </summary>
+            // public static float updateEndSlope(int col, int row) => (col - 0.5f) / (row + 0.5f);
 
-            // diagnal block model
-            // public static float startSlope(int col, int row) => (float) (col + 0.5f) / row;
-            // public static float endSlope(int col, int row) => (float) (col - 0.5f) / row;
+            // [diagnonal block model]
+            /// <summary> Called after scanning opaque cells </summary>
+            public static float updateStartSlope(int col, int row) => (col - 0.5f) / row;
+            /// <summary> Called when splitting a scan </summary>
+            public static float updateEndSlope(int col, int row) => (col - 0.5f) / row;
 
             /// <summary>
-            /// Used to detect a cell whose center it not in the range but one of whose vertex is
+            /// Used to detect a cell whose center it not in the range but one of whose vertex may hide following cells
             /// </summary>
             public static int colForSlopePermissive(float slope, int row) {
                 return (int) Math.Ceiling(slope * (row + 0.5) - 0.500001f);
-                // We reduced (0.5f + small_amount) not to include a vertex on an `endSlope` e.g. (row, col) = (1, 2),
+                // We reduced (0.5f + small_amount) not to include a vertex on an `endSlope` e.g. (row, col) = (1, 1),
             }
         }
 
@@ -194,15 +199,20 @@ namespace Rot.Engine.Fov {
                     if (!cx.map.contains(initPos.x, initPos.y)) return true;
                 }
 
-                // scanning through the row
+                // scan through the row
                 var state = RowScanState.Initial;
                 for (int col = fromCol; col <= toCol; col++) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * col);
 
-                    // go to next row if the point is out of the map
+                    // skip points out of the map
                     if (!cx.map.contains(pos.x, pos.y)) return false;
 
                     // scan the cell
+                    // state \ found  | opaque cell  | transparent cell
+                    //
+                    // Initial        | (none)       | (none)
+                    // WasTransparent | splitScan    | (none)
+                    // WasOpaque      | (none)       | updateStartSlope
                     if (cx.map.isOpaeue(pos.x, pos.y)) {
                         if (state == RowScanState.WasTransparent) {
                             this.splitScan(Rule.updateEndSlope(col, row)).scanOctant(cx, row + 1);
@@ -217,7 +227,7 @@ namespace Rot.Engine.Fov {
                     cx.fov.light(pos.x, pos.y);
                 }
 
-                // scan an opaque cell that was not scanned, whose vertex may hide cells behind of it
+                // scan an opaque cell that was not scanned, but whose vertex may hide cells behind of it
                 var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row);
                 // TODO: consider if this may go beyond FoV circle
                 if (permissiveCol > toCol) {
@@ -225,7 +235,7 @@ namespace Rot.Engine.Fov {
                     if (!cx.map.contains(pos.x, pos.y)) {
                         // here, we filtered points out of the map
                     } else if (cx.map.isOpaeue(pos.x, pos.y)) {
-                        // light it as an artifact
+                        // light the opaque cell as an artifact
                         cx.fov.light(pos.x, pos.y);
                         // and update the range of the slopes
                         this.endSlope = Rule.updateEndSlope(permissiveCol, row);
