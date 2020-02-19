@@ -127,9 +127,11 @@ namespace Rot.Game {
             }
 
             var body = this.controller.actor.get<Body>();
-            return dirMode.isOn ?
-                (RlEvent) RlEv.DirChange.turn(this.controller.actor, dir) :
-                (RlEvent) new RlEv.Walk(this.controller.actor, dir);
+            if (!diaMode.isOn && new RlLogic(this.gameCtx).canWalkIn(this.controller.actor, dir)) {
+                return new RlEv.Walk(this.controller.actor, dir);
+            } else {
+                return RlEv.DirChange.turn(this.controller.actor, dir).noConsumeTurn();
+            }
         }
 
         /// <summary> Maps key input to events </summary>

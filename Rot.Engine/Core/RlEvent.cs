@@ -7,6 +7,13 @@ namespace Rot.Engine {
         /// <summary> Hack to return handling result </summary>
         public bool consumesTurn = true;
     }
+
+    public static class RlEventExt {
+        public static T noConsumeTurn<T>(this T self) where T : RlEvent {
+            self.consumesTurn = false;
+            return self;
+        }
+    }
 }
 
 namespace Rot.RlEv {
