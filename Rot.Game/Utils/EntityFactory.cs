@@ -32,7 +32,7 @@ namespace Rot.Game {
                 .body(new Vec2i(7, 7), Dir9.S, true, false)
                 .actor(new Engine.Beh.Player(factory.entity), 3)
                 // .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
-                .wodi8Chip(Content.Chips.Wodi8.Chicken)
+                .viewWodi8(Content.Chips.Wodi8.Chicken)
                 .performance(50, 10, 5)
                 .add(new FovComp(stage, map))
                 .add(new Player());
@@ -55,17 +55,16 @@ namespace Rot.Game {
             return this;
         }
 
-        public EntityFactory wodi8Chip(string imgPath, float? depth = null) {
-            float d = depth == null ? Depths.Charachip : (float) depth;
+        public EntityFactory viewWodi8(string imgPath) {
             var body = this.entity.get<Body>();
-            var chip = Charachip.wodi8(this.entity, this.posUtil, imgPath, this.content);
-            chip.setDir(body.facing).snapToGridPos(body.pos);
+            CharaView.wodi8(this.entity, this.posUtil, this.content.LoadTexture(imgPath), body.pos, body.facing);
             return this;
         }
 
+        /// <summary> Must be called after setting an image to the <c>Entity</c> </summary>
         public EntityFactory performance(int hp, int atk, int def) {
             this.entity.add(new Performance(hp, atk, def));
-            this.entity.add(new HpBar(this.posUtil, EntityBarStyleDef.hp()));
+            this.entity.get<CharaView>().addHpBar(this.posUtil, EntityBarStyleDef.hp());
             return this;
         }
 

@@ -50,7 +50,7 @@ namespace Rot.Game {
                 entities.Add(enemyGen
                     .body(pos, Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_black)
+                    .viewWodi8(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
                     .entity
                 );
@@ -66,7 +66,7 @@ namespace Rot.Game {
             var pos = this.gen.randomPos();
             entities.Add(stairGen
                 .body(pos, Dir9.random(), false, false)
-                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
+                .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );

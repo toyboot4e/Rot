@@ -35,7 +35,7 @@ namespace Rot.Ui.View {
                     var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
-                    posChange.entity.get<Charachip>().forceUpdatePos();
+                    posChange.entity.get<CharaView>().forceUpdatePos();
                     return null;
             }
         }
@@ -47,7 +47,7 @@ namespace Rot.Ui.View {
                     return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                 }
             }
-            dirChange.entity.get<Charachip>().setDir(dirChange.to);
+            dirChange.entity.get<CharaView>().setDir(dirChange.to);
             return null;
         }
     }

@@ -31,8 +31,7 @@ namespace Rot.Ui {
 
         /// <summary> Changes the direction of image of the entity </summary>
         public void changeDir(Entity entity, Dir9 dir) {
-            var chip = entity.get<Charachip>();
-            chip.setDir(dir);
+            entity.get<CharaView>().setDir(dir);
         }
 
         public ITweenable turn(Entity e, Dir9 to) {
@@ -47,7 +46,7 @@ namespace Rot.Ui {
 
         public ITween<Vector2>[] swing(Entity entity, Dir9 to, float duration = 4f / 60f) {
             var body = entity.get<Body>();
-            var chip = entity.get<Charachip>().anim;
+            var chip = entity.get<CharaView>().chipAnim;
 
             var offset = new Vector2(0, 0);
             var deltaPos = body.facing.vector2 * posUtil.tileSize / 2;

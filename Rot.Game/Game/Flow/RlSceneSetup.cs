@@ -25,7 +25,7 @@ namespace Rot.Game {
             god.view = new RlViewPlatform(
                 new RlViewServices(god.ctrlCtx, god.gameCtx, god.posUtil)
             );
-            RlPluginSetter.initRules(god.rules, god.ctrlCtx, god.posUtil);
+            RlPluginSetter.initRules(god.rules, god.ctrlCtx, god.posUtil, god.scene);
             RlPluginSetter.initViews(god.view);
 
             { // create controls
@@ -108,7 +108,7 @@ namespace Rot.Game {
     }
 
     public class RlPluginSetter {
-        public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil) {
+        public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil, Scene scene) {
             // primitive rules
             rules.add(new Rules.PrimRules());
             rules.add(new Rules.GrimRule());
@@ -119,7 +119,7 @@ namespace Rot.Game {
 
             // reactive rules
             rules.add(new Rules.OnWalkRules());
-            rules.add(new Rules.PlayerFovRule());
+            rules.add(new Rules.PlayerFovRule(scene));
 
             // input rules
             rules.add(new Rules.CtrlEntityRule(ctrlCtx));

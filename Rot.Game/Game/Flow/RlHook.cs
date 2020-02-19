@@ -23,7 +23,7 @@ namespace Rot.Game {
             var factory = EntityFactory
                 .begin(actorEntity, god.posUtil)
                 .body(pos, Dir9.S, true, true)
-                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
+                .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .script(RlHooks.testScript(player, actorEntity, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
             god.gameCtx.entities.Add(actorEntity);
         }
