@@ -5,7 +5,7 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 using NezEp.Prelude;
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     public class BodyRules : RlRule {
         public override void setup() {
             var hub = base.gameCtx.evHub;

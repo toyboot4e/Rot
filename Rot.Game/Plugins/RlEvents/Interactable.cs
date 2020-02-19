@@ -29,7 +29,7 @@ namespace Rot.RlEv {
     }
 }
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     /// <summary> Lets user interact with objects controling the game state </summary>
     public class InteractRule : RlRule {
         ControlContext ctrlCtx;

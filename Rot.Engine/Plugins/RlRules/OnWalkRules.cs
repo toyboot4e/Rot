@@ -4,7 +4,7 @@ using Rot.Engine;
 using RlEv = Rot.RlEv;
 using NezEp.Prelude;
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     /// <summary> Invokes events on walk </summary>
     public class OnWalkRules : RlRule {
         public override void setup() {
