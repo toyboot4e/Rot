@@ -119,10 +119,14 @@ namespace Rot.Engine.Fov {
             /// <summary> Range of columns in a row to scan through; [from, to] </summary>
             public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
                 int from = (int) Math.Ceiling(startSlope * row);
-                int to = (int) Math.Floor(endSlope * row);
-                // consider the shape of FoV: circle
-                to = Math.Min(to, (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row));
+                int to = Math.Min(
+                    (int) Math.Floor(endSlope * row),
+                    Rule.maxColForRow(row, radius));
                 return (from, to);
+            }
+
+            public static int maxColForRow(int row, int radius) {
+                return (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
             }
 
             // [rectangle block model]
@@ -141,8 +145,10 @@ namespace Rot.Engine.Fov {
             /// <summary>
             /// Used to detect a cell whose center it not in the range but one of whose vertex may hide following cells
             /// </summary>
-            public static int colForSlopePermissive(float slope, int row) {
-                return (int) Math.Ceiling(slope * (row + 0.5) - 0.500001f);
+            public static int colForSlopePermissive(float slope, int row, int radius) {
+                return Math.Min(
+                    Rule.maxColForRow(row, radius),
+                    (int) Math.Ceiling(slope * (row + 0.5) - 0.500001f));
                 // We reduced (0.5f + small_amount) not to include a vertex on an `endSlope` e.g. (row, col) = (1, 1),
             }
         }
@@ -228,7 +234,7 @@ namespace Rot.Engine.Fov {
                 }
 
                 // scan an opaque cell that was not scanned, but whose vertex may hide cells behind of it
-                var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row);
+                var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row, cx.radius);
                 if (permissiveCol > toCol && state != RowScanState.WasOpaque) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
                     if (!cx.map.contains(pos.x, pos.y)) {
@@ -238,7 +244,7 @@ namespace Rot.Engine.Fov {
                         cx.fov.light(pos.x, pos.y);
                         // and update the range of the slopes
                         this.endSlope = Rule.updateEndSlope(permissiveCol, row);
-                        state = RowScanState.WasOpaque;
+                        // we do not update `state` here
                     } else {
                         // transparent cells are ignored
                     }
