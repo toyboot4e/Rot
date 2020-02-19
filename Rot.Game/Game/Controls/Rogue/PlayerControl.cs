@@ -96,14 +96,15 @@ namespace Rot.Game {
             this.diaMode.update(input);
 
             var result = this.dirMode.update(input);
-            if (result == KeyMode.Switch.TurnOn &&
-                this.findOnlyNeighbor(this.controller.actor) is Entity neighbor) {
+            if (result != KeyMode.Switch.TurnOn) {
+                return null;
+            } else if (this.findOnlyNeighbor(this.controller.actor) is Entity neighbor) {
                 var entity = this.controller.actor;
                 var dir = this.gameCtx.logic.dirTo(entity, neighbor);
-                return RlEv.DirChange.turn(entity, dir);
+                return RlEv.DirChange.turn(entity, dir).noConsumeTurn();
+            } else {
+                return null;
             }
-
-            return null;
         }
 
         /// <summary> Maybe dispatches a sub routine to the input </summary>
