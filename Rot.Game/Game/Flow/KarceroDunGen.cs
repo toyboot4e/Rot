@@ -5,16 +5,17 @@ using Beh = Rot.Engine.Beh;
 using NezEp.Prelude;
 
 namespace Rot.Game {
-    public class DungeonComp {
+    public class KarceroDunGen {
         KarceroTiledGenerator gen;
 
-        public DungeonComp() { }
+        public KarceroDunGen() { }
 
         public void newFloor(StaticGod god) {
-            DungeonComp.clearEnemies(god);
+            KarceroDunGen.clearEnemies(god);
             this.genDungeon(god);
-            DungeonComp.genEnemies(god);
-            // FIXME: do not be dependent on RotEntityList or provide safe way
+            this.genEnemies(god);
+            this.genStair(god);
+            // FIXME: do not be dependent on RotEntityList or provide a safe way
             (god.gameCtx.entities as RotEntityList).setIndex(0);
         }
 
@@ -38,15 +39,16 @@ namespace Rot.Game {
             }
         }
 
-        public static void genEnemies(StaticGod god) {
+        public void genEnemies(StaticGod god) {
             var posUtil = god.posUtil;
             var entities = god.gameCtx.entities;
 
             int N = Nez.Random.Range(3, 7);
             for (int i = 0; i < N; i++) {
                 var enemyGen = EntityFactory.begin(god.scene, $"actor_{i}", posUtil);
+                var pos = this.gen.randomPos();
                 entities.Add(enemyGen
-                    .body(new Vec2i(10 + 1, 5 + i), Dir9.random(), true, false)
+                    .body(pos, Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
                     .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
@@ -54,10 +56,16 @@ namespace Rot.Game {
                 );
                 continue;
             }
+        }
+
+        public void genStair(StaticGod god) {
+            var posUtil = god.posUtil;
+            var entities = god.gameCtx.entities;
 
             var stairGen = EntityFactory.begin(god.scene, "stair", posUtil);
+            var pos = this.gen.randomPos();
             entities.Add(stairGen
-                .body(new Vec2i(5, 5), Dir9.random(), false, false)
+                .body(pos, Dir9.random(), false, false)
                 .wodi8Chip(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
