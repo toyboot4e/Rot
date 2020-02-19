@@ -70,9 +70,10 @@ namespace Rot.Ui {
         public override void Render(Batcher batcher, Camera camera) {
             var cellSize = new Point(map.TileWidth, map.TileHeight);
 
+            // settings
             var rect = new SpriteData(Graphics.Instance.PixelTexture, cellSize, cellSize);
             var grid = new SpriteData(Graphics.Instance.PixelTexture, cellSize - new Point(4, 4), cellSize);
-            var gridColor = Color.WhiteSmoke * 0.5f;
+            var gridColor = Color.WhiteSmoke * 0.25f;
 
             // copied from TiledRendering class
             var bounds = camera.Bounds;
@@ -98,8 +99,8 @@ namespace Rot.Ui {
                         continue;
                     }
 
-                    if (!this.stage.isBlocked(x, y)) {
-                        // draw grid
+                    // draw grid to visible & walkable cells
+                    if (this.fov.canSee(x, y) && !this.stage.isBlocked(x, y)) {
                         var destRect = new Rectangle(pos.X + grid.offset.X, pos.Y + grid.offset.Y, grid.size.X, grid.size.Y);
                         batcher.DrawHollowRect(destRect, gridColor);
                     }

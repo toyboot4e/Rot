@@ -36,7 +36,7 @@ namespace Rot.Game {
             var e = god.scene.CreateEntity("GenReset");
             e.add(new GenReseter() { gen = gen, god = god });
 
-            EpUiTestScene.testEpUi(god.scene);
+            // EpUiTestScene.testEpUi(god.scene);
         }
 
         public class GenReseter : Component, IUpdatable {
