@@ -229,8 +229,7 @@ namespace Rot.Engine.Fov {
 
                 // scan an opaque cell that was not scanned, but whose vertex may hide cells behind of it
                 var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row);
-                // TODO: consider if this may go beyond FoV circle
-                if (permissiveCol > toCol) {
+                if (permissiveCol > toCol && state != RowScanState.WasOpaque) {
                     var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
                     if (!cx.map.contains(pos.x, pos.y)) {
                         // here, we filtered points out of the map
@@ -239,13 +238,14 @@ namespace Rot.Engine.Fov {
                         cx.fov.light(pos.x, pos.y);
                         // and update the range of the slopes
                         this.endSlope = Rule.updateEndSlope(permissiveCol, row);
+                        state = RowScanState.WasOpaque;
                     } else {
                         // transparent cells are ignored
                     }
                 }
 
                 // finish the scan if we ended with an opaque cell
-                return state == RowScanState.WasOpaque;
+                return state != RowScanState.WasTransparent;
             }
         }
     }

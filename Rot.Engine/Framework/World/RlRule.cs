@@ -25,31 +25,40 @@ namespace Rot.Engine {
     }
 
     public class RlRuleStorage {
-        List<RlRule> systems;
+        List<RlRule> rules;
         RlGameContext gameCtx;
 
         public RlRuleStorage(RlGameContext ctx) {
-            this.systems = new List<RlRule>();
+            this.rules = new List<RlRule>();
             this.gameCtx = ctx;
         }
 
         public void replCtx(RlGameContext ctx) {
             this.gameCtx = ctx;
-            for (int i = 0; i > this.systems.Count; i++) {
-                var sys = this.systems[i];
+            for (int i = 0; i > this.rules.Count; i++) {
+                var sys = this.rules[i];
                 sys.injectCtx(ctx);
             }
         }
 
-        public void add(RlRule sys) {
-            if (this.systems.AddIfNotPresent(sys)) {
-                sys.injectCtx(this.gameCtx);
-                sys.setup();
+        public void add(RlRule rule) {
+            if (this.rules.AddIfNotPresent(rule)) {
+                rule.injectCtx(this.gameCtx);
+                rule.setup();
             }
         }
 
         public void add<T>() where T : RlRule, new() {
             this.add(new T());
+        }
+
+        public T get<T>() where T : RlRule {
+            foreach(var rule in this.rules) {
+                if (rule is T t) {
+                    return t;
+                }
+            }
+            return null;
         }
 
         public void rm(RlRule sys) {

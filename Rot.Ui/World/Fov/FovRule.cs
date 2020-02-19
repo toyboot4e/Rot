@@ -3,7 +3,7 @@ using NezEp.Prelude;
 using Rot.Engine;
 using Rot.Ui;
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     /// <summary> Updates FoV on walk </summary>
     public class PlayerFovRule : RlRule {
         public override void setup() {

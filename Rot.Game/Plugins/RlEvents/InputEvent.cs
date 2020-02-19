@@ -30,7 +30,7 @@ namespace Rot.Engine.Beh {
     }
 }
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     /// <summary> Lets user decide player actions controling the game state </summary>
     public class CtrlEntityRule : RlRule {
         ControlContext ctx;

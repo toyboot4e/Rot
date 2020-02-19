@@ -3,7 +3,7 @@ using Nez;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
 
-namespace Rot.Sys {
+namespace Rot.Rules {
     /// <summary> Handles <c>Death</c> event </summary>
     public class GrimRule : RlRule {
         public override void setup() {

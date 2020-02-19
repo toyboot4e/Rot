@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Tiled;
 using Rot.Engine;
-using Rot.Game.Debug;
 using Rot.Ui;
 using View = Rot.Ui.View;
 using Scr = Rot.Script;
@@ -11,6 +8,7 @@ using Cmd = Rot.Script.Cmd;
 using NezEp.Prelude;
 
 namespace Rot.Game {
+    /// <summary> Sets up basics; anything else is deligated to <c>RlHook</c> </summary>
     public static class RlSceneSetup {
         public static void init(StaticGod god) {
             god.ctrlCtx = ControlContext.create(new VInput());
@@ -18,6 +16,11 @@ namespace Rot.Game {
             string initialStage = Content.Stages.@Static;
             RlSceneSetup.loadTiledMap(god, initialStage);
 
+            setup(god);
+            RlHooks.afterInit(god);
+        }
+
+        static void setup(StaticGod god) {
             god.rules = new RlRuleStorage(god.gameCtx);
             god.view = new RlViewPlatform(
                 new RlViewServices(god.ctrlCtx, god.gameCtx, god.posUtil)
@@ -102,32 +105,27 @@ namespace Rot.Game {
 
             RlHooks.afterLoadingMap(god);
         }
-
-        static void addDungeon(StaticGod god) {
-            var gen = new DungeonComp();
-            god.rules.add(new Sys.StairRule(gen));
-        }
     }
 
     public class RlPluginSetter {
         public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil) {
             // primitive rules
-            rules.add(new Sys.PrimEffectRules());
-            rules.add(new Sys.GrimRule());
+            rules.add(new Rules.PrimRules());
+            rules.add(new Rules.GrimRule());
 
             // action rules
-            rules.add(new Sys.BodyRules());
-            rules.add(new Sys.HitRule());
+            rules.add(new Rules.BodyRules());
+            rules.add(new Rules.HitRule());
 
             // reactive rules
-            rules.add(new Sys.OnWalkRules());
-            rules.add(new Sys.PlayerFovRule());
+            rules.add(new Rules.OnWalkRules());
+            rules.add(new Rules.PlayerFovRule());
 
             // input rules
-            rules.add(new Sys.CtrlEntityRule(ctrlCtx));
+            rules.add(new Rules.CtrlEntityRule(ctrlCtx));
 
             // view rules
-            rules.add(new Sys.InteractRule(ctrlCtx, posUtil));
+            rules.add(new Rules.InteractRule(ctrlCtx, posUtil));
         }
 
         public static void initViews(RlViewStorage views) {
@@ -145,36 +143,6 @@ namespace Rot.Game {
             );
             talkView.injectUtils(posUtil, ctrlCtx);
             ctrl.addView<Cmd.Talk>(talkView);
-        }
-    }
-
-    /// <summary> Event methods for the roguelike game </summary>
-    public class RlHooks : Nez.SceneComponent {
-        public static void afterLoadingMap(StaticGod god) {
-            // If it's a dungeon map, we create those rules
-            // gen.newFloor();
-
-            // ##### TEST ######
-            var player = god.scene.FindEntity("player");
-            var tiled = god.tiled;
-            var actors = tiled.GetObjectGroup("actors");
-            if (actors == null) return;
-
-            var actor = actors.Objects[0];
-            var pos = actor.tilePos(tiled);
-            var actorEntity = god.scene.CreateEntity("script-test");
-            var factory = EntityFactory
-                .begin(actorEntity, god.posUtil)
-                .body(pos, Dir9.S, true, true)
-                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
-                .script(RlHooks.testScript(player, actorEntity, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
-            god.gameCtx.entities.Add(actorEntity);
-        }
-
-        static IEnumerable<Cmd.iCmd> testScript(Entity from, Entity to, string text) {
-            yield return new Script.Cmd.Talk(from, to, from.get<Body>().facing, text);
-            yield return new Script.Cmd.Talk(from, to, from.get<Body>().facing, text);
-            yield return new Script.Cmd.Talk(from, to, from.get<Body>().facing, text);
         }
     }
 }

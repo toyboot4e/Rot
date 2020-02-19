@@ -12,12 +12,18 @@ using NezEp.Prelude;
 using Rot.Engine;
 
 namespace Rot.Ui {
+    /// <summary> Converts Karcero dungeon into tiled </summary>
     public class KarceroTiledGenerator {
         DungeonGenerator<KCell> gen;
         KMap map;
 
         public KarceroTiledGenerator() {
             this.gen = new DungeonGenerator<KCell>();
+        }
+
+        public Vec2i randomPos() {
+            var room = this.map.Rooms[Nez.Random.Choose(0, this.map.Rooms.Count - 1)];
+            return new Vec2i(Nez.Random.Choose(room.Left, room.Right), Nez.Random.Choose(room.Top, room.Bottom));
         }
 
         public void copyToTiled(TmxMap map) {

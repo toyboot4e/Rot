@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 namespace Rot.Ui {
     /// <summary> Temporary class to detect hard-coded values </summary>
     public static class Preferences {
-        public static float fovUpdateDuration = 10 / 60f;
+        public static float fovUpdateDuration = 12 / 60f;
         public static float turnDirDuration => 0.02f;
         public static int fovRadius => 6;
     }
@@ -13,6 +13,7 @@ namespace Rot.Ui {
         public static int Stage => 1000;
         public static int Screen => 0;
         public static int DebugScreen => -1000;
+
         /// <summary> Small value to make one layer prior to another </summary>
         public static float _inc => 0.0001f;
     }
@@ -27,7 +28,9 @@ namespace Rot.Ui {
         public static float Menu => 0.25f;
         public static float Hud => 0.2f;
         public static float Talk => 0.15f;
+        public static float TitleScreen => 0.12f;
         public static float Debug => 0.1f;
+
         /// <summary> Small value to make one sprite prior to another </summary>
         public static float _inc => 0.0001f;
     }
