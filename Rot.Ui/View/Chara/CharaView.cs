@@ -8,7 +8,7 @@ namespace Rot.Ui {
     /// <summary> View of a character including hp bars, icons, and anything </summary>
     public class CharaView : RenderableComponent, IUpdatable {
         Charachip chip;
-        HpBar bar;
+        public HpBar bar { get; private set; }
         public SpriteAnimator chipAnim => this.chip.anim;
 
         public CharaView(Charachip chip) {
@@ -16,7 +16,7 @@ namespace Rot.Ui {
             this.zCtx(Layers.Stage, Depths.Charachip);
         }
 
-        #region impl base
+        #region impl RenderableComponent
         public override RectangleF Bounds => this.chip.anim.Bounds;
         public void Update() {
             this.chip.update();
@@ -30,7 +30,7 @@ namespace Rot.Ui {
         #endregion
 
         public void addHpBar(PosUtil posUtil, EntityBarStyle style) {
-            this.Entity.add(new HpBar(posUtil, style));
+            this.bar = this.Entity.add(new HpBar(posUtil, style));
         }
 
         public static CharaView wodi8(Entity entity, PosUtil posUtil, Texture2D texture, Vec2i pos, Dir9 dir) {
