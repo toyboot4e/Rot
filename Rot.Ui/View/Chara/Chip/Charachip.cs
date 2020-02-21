@@ -52,13 +52,10 @@ namespace Rot.Ui {
                 new [] { 15, 16, 17 },
             };
 
-            // foreach(var(keyEnum, patterns) in EnumDirUtil.enumerate().Zip(wodi8AnimPatterns, (key, i) => (key, i))) {
-            var keyEnums = Dir9.clockwise;
-            // var fps = System.TimeSpan.FromTicks((long) 10_000_000 / (long) 16);
-            float fps = 60f / 16f;
+            var dirs = Dir9.clockwise;
             for (int i = 0; i < 8; i++) {
-                var(keyEnum, patterns) = (keyEnums[i], wodi8AnimPatterns[i]);
-                anim.AddAnimation(keyEnum.asStr, fps, patterns.Select(p => sprites[p]).ToArray());
+                var(dir, patterns) = (dirs[i], wodi8AnimPatterns[i]);
+                anim.AddAnimation(dir.ToString(), Preferences.walkFps, patterns.Select(p => sprites[p]).ToArray());
             }
 
             return anim;
@@ -71,7 +68,7 @@ namespace Rot.Ui {
         }
 
         public Charachip setDir(Dir9 dir) {
-            var key = dir.asStr;
+            var key = dir.ToString();
             if (key != this.anim.CurrentAnimationName) {
                 this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);
             }

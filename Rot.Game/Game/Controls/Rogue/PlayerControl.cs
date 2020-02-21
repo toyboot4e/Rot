@@ -96,11 +96,11 @@ namespace Rot.Game {
             this.diaMode.update(input);
 
             var result = this.dirMode.update(input);
-            if (result != KeyMode.Switch.TurnOn) {
-                return null;
-            } else if (this.findOnlyNeighbor(this.controller.actor) is Entity neighbor) {
+            if (result != KeyMode.Switch.TurnOn) return null;
+
+            if (PlayerControl.findOnlyNeighbor(this.controller.actor, this.gameCtx) is Entity neighbor) {
                 var entity = this.controller.actor;
-                var dir = this.gameCtx.logic.dirTo(entity, neighbor);
+                var dir = Dir9.fromVec2i(neighbor.get<Body>().pos - entity.get<Body>().pos);
                 return RlEv.DirChange.turn(entity, dir).noConsumeTurn();
             } else {
                 return null;
@@ -128,7 +128,8 @@ namespace Rot.Game {
             }
 
             var body = this.controller.actor.get<Body>();
-            if (!diaMode.isOn && new RlLogic(this.gameCtx).canWalkIn(this.controller.actor, dir)) {
+
+            if (!this.dirMode.isOn && new RlLogic(this.gameCtx).canWalkIn(this.controller.actor, dir)) {
                 return new RlEv.Walk(this.controller.actor, dir);
             } else {
                 return RlEv.DirChange.turn(this.controller.actor, dir).noConsumeTurn();
@@ -162,12 +163,12 @@ namespace Rot.Game {
         }
 
         /// <summary> Returns the only adjacent, interactive entity or null </summary>
-        Entity findOnlyNeighbor(Entity entity) {
+        static Entity findOnlyNeighbor(Entity entity, RlGameContext cx) {
             var body = entity.get<Body>();
             var pos = body.pos;
 
             var es = pos.neighbors
-                .Select(v => this.gameCtx.entitiesAt(v))
+                .Select(v => cx.entitiesAt(v))
                 // FIXME: detecting interactable/attackable entities
                 .filterT(e => e.has<Body>());
 
@@ -201,12 +202,14 @@ namespace Rot.Game {
             if (isDown && this.isOff) {
                 this.isOn = true;
                 return Switch.TurnOn;
-            } else if (!isDown && this.isOn) {
+            }
+
+            if (!isDown && this.isOn) {
                 this.isOn = false;
                 return Switch.TurnOff;
-            } else {
-                return Switch.NoChange;
             }
+
+            return Switch.NoChange;
         }
     }
 }

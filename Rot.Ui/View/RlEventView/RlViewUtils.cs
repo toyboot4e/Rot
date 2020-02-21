@@ -20,7 +20,7 @@ namespace Rot.Ui {
         public ITweenable walk(WalkAnimationConfig config, Entity entity, Vec2i to) {
             var body = entity.get<Body>();
             var from = body.pos;
-            var nextDir = (Dir9) Dir9.fromVec(to - from);
+            var nextDir = (Dir9) Dir9.fromVec2i(to - from);
             // FIXME: lazily change facing or outsource it
             this.changeDir(entity, nextDir);
 

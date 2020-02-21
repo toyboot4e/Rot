@@ -55,17 +55,21 @@ namespace Rot.Ui {
         }
     }
 
-    public class VEightDirButtonButton : VBufButtonTemplate, iValueButton<Dir9> {
-        BufSelecterNode<ValueBufNode<Dir9>> selecterNode = new BufSelecterNode<ValueBufNode<Dir9>>();
-        public List<ValueBufNode<Dir9>> nodes => this.selecterNode.nodes;
-        public VEightDirButtonButton() {
-            Dir9.all.forEach(dir => this.selecterNode.nodes.Add(new ValueBufNode<Dir9>(dir)));
+    public class VEightDirButtonBatch : VBufButtonTemplate, iValueButton<Dir9> {
+        BufSelecterNode<ValueBufNode<Dir9>> selecters = new BufSelecterNode<ValueBufNode<Dir9>>();
+        public List<ValueBufNode<Dir9>> dirNodes => this.selecters.nodes;
+
+        // use clockwise `Dir9`s
+        public ValueBufNode<Dir9> dirNode(Dir9 dir) => this.selecters.nodes[dir.indexClockwise];
+        public VEightDirButtonBatch() {
+            Dir9.clockwise.forEach(dir => this.selecters.nodes.Add(new ValueBufNode<Dir9>(dir)));
         }
+
         protected override(bool, bool) onUpdate() {
-            this.selecterNode.update();
-            return (this.selecterNode.isDown, this.selecterNode.isPressedRaw);
+            this.selecters.update();
+            return (this.selecters.isDown, this.selecters.isPressedRaw);
         }
-        ValueBufNode<Dir9> nodeDown => this.selecterNode.bufNodeDown;
+        ValueBufNode<Dir9> nodeDown => this.selecters.bufNodeDown;
         ValueBufNode<Dir9> nodePressed => this.isPressed ? this.nodeDown ?? null : null;
         public Dir9 valueDown => this.nodeDown?.value ?? default(Dir9);
         public Dir9 valuePressed => this.nodePressed?.value ?? default(Dir9);
