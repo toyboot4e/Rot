@@ -17,7 +17,7 @@ namespace Rot.Ui {
         }
 
         /// <summary> Walk animations are made before walking </summary>
-        public ITweenable walk(WalkAnimationConfig config, Entity entity, Vec2i to) {
+        public ITweenable walk(Entity entity, Vec2i to) {
             var body = entity.get<Body>();
             var from = body.pos;
             var nextDir = (Dir9) Dir9.fromVec2i(to - from);
@@ -25,7 +25,7 @@ namespace Rot.Ui {
             this.changeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);
-            var tween = new Tw.Walk(entity.Transform, config.duration, nextPosWorld);
+            var tween = new Tw.Walk(entity.Transform, ViewPreferences.walkDuration, nextPosWorld, ViewPreferences.walkEase);
             return tween;
         }
 
@@ -40,7 +40,7 @@ namespace Rot.Ui {
                 return null;
             }
 
-            var anim = new Tw.Turn(e, to, EaseType.Linear, Preferences.turnDirDuration);
+            var anim = new Tw.Turn(e, to, EaseType.Linear, ViewPreferences.turnDirDuration);
             return anim;
         }
 
@@ -55,28 +55,6 @@ namespace Rot.Ui {
             var second = chip.tweenLocalOffset(offset, duration, EaseType.CircIn);
 
             return new ITween<Vector2>[] { first, second };
-        }
-    }
-
-    public class WalkAnimationConfig {
-        VInput input;
-        public EaseType easeType;
-        float _duration;
-
-        public float duration {
-            get {
-                if (this.input.isKeyDown(VKey.SpeedUp)) {
-                    return _duration / 2f;
-                } else {
-                    return _duration;
-                }
-            }
-        }
-
-        public WalkAnimationConfig(VInput input, EaseType easeType = EaseType.Linear, float duration = 0.128f) {
-            this.input = input;
-            this.easeType = easeType;
-            this._duration = duration;
         }
     }
 }

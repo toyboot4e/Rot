@@ -135,13 +135,13 @@ namespace Rot.Ui {
             var(isInView, currentLight) = this.fov.currentLight(x, y);
             var alphaCurrent = isInView ? maxDimAlpha * alphaEasing(currentLight, 1f) : unseenDimAlpha;
 
-            if (this.sinceRefresh > Preferences.fovUpdateDuration) return alphaCurrent;
+            if (this.sinceRefresh > ViewPreferences.fovUpdateDuration) return alphaCurrent;
 
             var(wasInView, prevLight) = this.fov.prevLight(x, y);
             var alphaPrev = wasInView ? maxDimAlpha * alphaEasing(prevLight, 1f) : unseenDimAlpha;
 
             // linear easing
-            var timeRatio = this.sinceRefresh / Preferences.fovUpdateDuration;
+            var timeRatio = this.sinceRefresh / ViewPreferences.fovUpdateDuration;
             return alphaPrev + (alphaCurrent - alphaPrev) * 1 * timeRatio;
         }
 

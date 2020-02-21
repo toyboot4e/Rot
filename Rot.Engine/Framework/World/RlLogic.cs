@@ -3,7 +3,7 @@ using Nez;
 using NezEp.Prelude;
 
 namespace Rot.Engine {
-    public static class RlLogicPreferemce {
+    public static class RlLogicPreferences {
         public static bool enableCornerAttack => false;
         public static bool enableCornerWalk => false;
     }
@@ -20,12 +20,12 @@ namespace Rot.Engine {
         #region Corner
         // TODO: separate it in a static class
         public bool canWalkIn(Entity e, Dir9 dir) {
-            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferemce.enableCornerWalk);
+            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferences.enableCornerWalk);
         }
 
         /// <summary> Considers diagonal attack </summary>
         public bool canAttackIn(Entity e, Dir9 dir) {
-            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferemce.enableCornerAttack);
+            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferences.enableCornerAttack);
         }
 
         bool diagonalCheck(Vec2i pos, Dir9 dir, bool enableDiagonal) {

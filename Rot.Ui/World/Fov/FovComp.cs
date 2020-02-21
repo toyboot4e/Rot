@@ -19,7 +19,7 @@ namespace Rot.Ui {
         public FovComp(Stage stage, TmxMap map) {
             this.stage = stage;
             this.map = map;
-            int radius = Preferences.fovRadius;
+            int radius = ViewPreferences.fovRadius;
             this.fovFow = new FovFow<TiledRlStage>(radius, this.map.Width, this.map.Height);
         }
 
@@ -36,7 +36,7 @@ namespace Rot.Ui {
             Force.nonNull(this.fovFow, this.stage, "FovComp.refresh");
 
             var origin = this.Entity.get<Body>().pos;
-            int radius = Preferences.fovRadius;
+            int radius = ViewPreferences.fovRadius;
             Scanner<Fov, Stage>.refresh(this.fovFow, this.stage, origin.x, origin.y, radius);
 
             // FoV may be updated before we have the renderer

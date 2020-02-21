@@ -5,23 +5,54 @@ using Nez;
 using Nez.ImGuiTools;
 
 namespace Rot.Game {
+    /// <summary> Static, hard-coded settings to the <c>Core</c> </summary>
+    public static class CoreSettings {
+        // #if DEBUG
+        //         public static int w => 1440;
+        //         public static int h => 810;
+        // #else
+        //         public static int w => 1280;
+        //         public static int h => 720;
+        // #endif
+        public static int w => 1280;
+        public static int h => 720;
+        public static int debugW => 1280;
+        public static int debugH => 720;
+        public static float zoom = 2;
+        // public static int debugW => 1440;
+        // public static int debugH => 810;
+
+        public static string title => "rogue";
+        public static Scene.SceneResolutionPolicy policy => Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
+
+        // FIXME: avoid jitters with variable time step
+        public static bool isFixedTimeStep => true;
+        public static int fps => 60;
+        public static bool vsync => false;
+    }
+
     class GameApp : Nez.Core {
-        public GameApp() : base() { }
+        public GameApp() : base(CoreSettings.w, CoreSettings.h, windowTitle : CoreSettings.title) { }
 
         override protected void Initialize() {
             base.Initialize();
+
             configure();
             onDebug();
+
             Core.Scene = new RlScene();
+            Core.Scene.SetDesignResolution(CoreSettings.debugW, CoreSettings.debugH, CoreSettings.policy);
+            Core.Scene.Camera.ZoomIn(CoreSettings.zoom);
+
+            // inner functions
 
             void configure() {
                 Nez.Core.ExitOnEscapeKeypress = false;
-                Nez.Console.DebugConsole.ConsoleKey = Keys.OemPeriod;
+                Nez.Console.DebugConsole.ConsoleKey = Keys.OemSemicolon;
 
-                // avoid jitters
-                base.IsFixedTimeStep = true;
-                // Graphics.Instance.Batcher.ShouldRoundDestinations = false;
-                this.setFps(60);
+                base.IsFixedTimeStep = CoreSettings.isFixedTimeStep;
+                this.setFps(CoreSettings.fps);
+                this.setEnableVSync(CoreSettings.vsync);
             }
 
 #if DEBUG
@@ -35,12 +66,6 @@ namespace Rot.Game {
                 ImGui.GetStyle().Alpha = 0.75f;
             }
 #endif
-        }
-
-        override protected void Update(GameTime time) {
-            // Nez.Analysis.TimeRuler.instance.beginMark("Uodate", Color.Blue);
-            base.Update(time);
-            // Nez.Analysis.TimeRuler.instance.endMark("Uodate");
         }
 
         public void setFps(int fps) {

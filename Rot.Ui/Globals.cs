@@ -1,11 +1,20 @@
 using Microsoft.Xna.Framework;
+using Nez.Tweens;
 
 namespace Rot.Ui {
+    // TODO: remove it or make it data-driven
     /// <summary> Temporary class to detect hard-coded values </summary>
-    public static class Preferences {
-        public static float fovUpdateDuration = 12 / 60f;
+    public static class ViewPreferences {
+        public static float fovUpdateDuration => 12 / 60f;
         public static float turnDirDuration => 0.02f;
         public static int fovRadius => 6;
+
+        public static float walkDuration = 1 / 6f;
+        public static EaseType walkEase => EaseType.Linear;
+        public static float walkAnimFps => 60f / 16f;
+
+        public static float vAxisRepeatFirst => 0.1f;
+        public static float vAxisRepeatMulti => 0.1f;
     }
 
     /// <summary> The higher, the deeper </summary>

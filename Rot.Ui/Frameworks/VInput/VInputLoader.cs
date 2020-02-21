@@ -13,7 +13,7 @@ namespace Rot.Ui {
             VInputLoader.setupBasicKeys(buttons);
             VInputLoader.setupAxisKeys(vDir.axisDir.xAxis.nodes, vDir.axisDir.yAxis.nodes);
             VInputLoader.setupDirButtons(vDir.eDir);
-            vDir.setRepeat(Preferences.vAxisRepeatFirst, Preferences.vAxisRepeatMulti);
+            vDir.setRepeat(ViewPreferences.vAxisRepeatFirst, ViewPreferences.vAxisRepeatMulti);
         }
 
         static void setupDirButtons(VEightDirButtonBatch bts) {
