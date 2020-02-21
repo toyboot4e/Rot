@@ -3,8 +3,8 @@ namespace Rot.Engine {
         void uncover(int x, int y);
         void cover(int x, int y);
         bool isCovered(int x, int y);
-        Adjacency adjacency(int x, int y);
-        Adjacency countAdjacency(int x, int y);
+        Adjacency8 adjacency(int x, int y);
+        Adjacency8 countAdjacency(int x, int y);
     }
 
     /// <summary> Fog of war; explored/unexplored </summary>
@@ -12,19 +12,20 @@ namespace Rot.Engine {
     public class Fow : iFow {
         /// <summary> True if it's explored </summary>
         Array2D<bool> fog;
-        Array2D<Adjacency> adjacencies;
+        /// <remark> This is not perfectly efficient, but it's ok </remark>
+        Array2D<Adjacency8> adjacencies;
         Rect2Di mapBounds;
 
         public struct FogData {
             public bool isExploerd;
             /// <summary> Cache for calculation </summary>
-            public Adjacency adjacency;
+            public Adjacency8 adjacency;
         }
 
         public Fow(int mapWidth, int mapHeight) {
             this.mapBounds = new Rect2Di(0, 0, mapWidth, mapHeight);
             this.fog = new Array2D<bool>(mapWidth, mapHeight);
-            this.adjacencies = new Array2D<Adjacency>(mapWidth, mapHeight);
+            this.adjacencies = new Array2D<Adjacency8>(mapWidth, mapHeight);
         }
 
         public void onResize(int w, int h) {
@@ -62,12 +63,12 @@ namespace Rot.Engine {
             return this.fog[x, y] == false;
         }
 
-        public Adjacency adjacency(int x, int y) {
+        public Adjacency8 adjacency(int x, int y) {
             return this.adjacencies[x, y];
         }
 
-        public Adjacency countAdjacency(int x, int y) {
-            var adjacency = new Adjacency();
+        public Adjacency8 countAdjacency(int x, int y) {
+            var adjacency = new Adjacency8();
             var origin = new Vec2i(x, y);
             foreach(var dir in clockwise) {
                 var pos = origin + dir.vec;
