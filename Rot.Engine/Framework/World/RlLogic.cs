@@ -12,15 +12,6 @@ namespace Rot.Engine {
             this.ctx = ctx;
         }
 
-        #region Facing
-        // TODO: make it static and separate
-        public Dir9 dirTo(Entity from, Entity to) {
-            var posFrom = from.get<Body>().pos;
-            var posTo = to.get<Body>().pos;
-            return Dir9.fromVec(posTo - posFrom);
-        }
-        #endregion
-
         #region Walk
         // TODO: separate it in a static class
         public bool canWalkIn(Entity e, Dir9 dir) {
