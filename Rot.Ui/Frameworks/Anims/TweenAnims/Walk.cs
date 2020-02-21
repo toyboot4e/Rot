@@ -8,7 +8,7 @@ namespace Rot.Ui.Tweens {
     public class Walk : Tween<Vector2>, ITweenTarget<Vector2> {
         Transform transform;
 
-        public Walk(Transform transfrom, float duration, Vector2 to, EaseType easeType = EaseType.Linear) {
+        public Walk(Transform transfrom, float duration, Vector2 to, EaseType easeType) {
             this.transform = transfrom;
             _duration = duration;
             _target = this;

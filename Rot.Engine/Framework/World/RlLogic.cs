@@ -3,6 +3,11 @@ using Nez;
 using NezEp.Prelude;
 
 namespace Rot.Engine {
+    public static class RlLogicPreferemce {
+        public static bool enableCornerAttack => false;
+        public static bool enableCornerWalk => false;
+    }
+
     // TODO: overridable queries
     // FIXME: to combine blocking logic from TmxMapExt
     public class RlLogic {
@@ -12,33 +17,35 @@ namespace Rot.Engine {
             this.ctx = ctx;
         }
 
-        #region Walk
+        #region Corner
         // TODO: separate it in a static class
         public bool canWalkIn(Entity e, Dir9 dir) {
-            var stage = this.ctx.stage;
-            var body = e.get<Body>();
+            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferemce.enableCornerWalk);
+        }
 
-            var from = body.pos;
-            var to = from + dir.vec;
+        /// <summary> Considers diagonal attack </summary>
+        public bool canAttackIn(Entity e, Dir9 dir) {
+            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferemce.enableCornerAttack);
+        }
 
-            // TODO: not walk if the character is in a blocking cell
-            // if (stage.isBlockedAt(from)) {
-            // return false;
-            // }
+        bool diagonalCheck(Vec2i pos, Dir9 dir, bool enableDiagonal) {
+            var to = pos + dir.vec;
 
             if (this.isBlockedAt(to)) {
                 return false;
             }
 
-            if (dir.isCardinal) {
+            if (!enableDiagonal || dir.isCardinal) {
                 return true;
-            } else {
-                return new Vec2i[] { dir.xVec, dir.yVec }
-                    .Select(v => v.offset(from))
-                    .All(p => this.isDiagonallyPassableAt(p));
             }
-        }
 
+            return new Vec2i[] { dir.xVec, dir.yVec }
+                .Select(v => v.offset(pos))
+                .All(p => this.ctx.stage.tilesAt(p).arePassable());
+        }
+        #endregion
+
+        #region Cells
         // TODO: faster collision system
         public bool isPassableAt(Vec2i pos) {
             return this.ctx.stage.contains(pos) &&
@@ -50,17 +57,6 @@ namespace Rot.Engine {
             return !this.ctx.stage.contains(pos) ||
                 !this.ctx.stage.tilesAt(pos).arePassable() ||
                 this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
-        }
-
-        // TODO: add diagonal blocking property to stage tiles
-        public bool isDiagonallyPassableAt(Vec2i pos) {
-            var stage = this.ctx.stage;
-            return stage.tilesAt(pos).arePassable();
-        }
-
-        public bool isDiagonallyBlocedAt(Vec2i pos) {
-            var stage = this.ctx.stage;
-            return !stage.tilesAt(pos).arePassable();
         }
     }
     #endregion
