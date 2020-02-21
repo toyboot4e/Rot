@@ -7,6 +7,7 @@ using NezEp.Prelude;
 namespace Rot.Game {
     public class KarceroDunGen {
         KarceroTiledGenerator gen;
+        // public Entity downStair;
 
         public KarceroDunGen() { }
 
@@ -15,8 +16,30 @@ namespace Rot.Game {
             this.genDungeon(god);
             this.genEnemies(god);
             this.genStair(god);
+            this.placePlayer(god);
+
+            // reset scheduler
             // FIXME: do not be dependent on RotEntityList or provide a safe way
             (god.gameCtx.entities as RotEntityList).setIndex(0);
+        }
+
+        // FIXME: the hacks
+        void placePlayer(StaticGod god) {
+            // HACK: tag
+            var player = god.scene.FindEntity("player");
+            var pos = gen.randomPosInsideRoom();
+            // HACK: or invoke event
+            player.get<Body>().setPos(pos);
+            player.get<CharaView>().forceUpdatePos();
+            var playerFov = player.get<FovComp>();
+            playerFov.refresh();
+            Rules.PlayerFovRule.updateEntityVisiblities(god.scene, playerFov.fovFow);
+            // HACK to update camera
+            // TODO: move camera at once
+            var camera = god.scene.FindEntity("camera")?.get<FollowCamera>();
+            if (camera != null) {
+                (camera.setEntity(player) as IUpdatable).Update();
+            }
         }
 
         public void genDungeon(StaticGod god) {
@@ -46,9 +69,8 @@ namespace Rot.Game {
             int N = Nez.Random.Range(3, 7);
             for (int i = 0; i < N; i++) {
                 var enemyGen = EntityFactory.begin(god.scene, $"actor_{i}", posUtil);
-                var pos = this.gen.randomPos();
                 entities.Add(enemyGen
-                    .body(pos, Dir9.random(), true, false)
+                    .body(gen.randomPosInRoom(), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
                     .viewWodi8(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
@@ -63,9 +85,8 @@ namespace Rot.Game {
             var entities = god.gameCtx.entities;
 
             var stairGen = EntityFactory.begin(god.scene, "stair", posUtil);
-            var pos = this.gen.randomPos();
             entities.Add(stairGen
-                .body(pos, Dir9.random(), false, false)
+                .body(gen.randomPosInRoom(), Dir9.random(), false, false)
                 .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity

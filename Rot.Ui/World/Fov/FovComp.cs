@@ -19,11 +19,12 @@ namespace Rot.Ui {
         public FovComp(Stage stage, TmxMap map) {
             this.stage = stage;
             this.map = map;
-        }
-
-        public override void OnAddedToEntity() {
             int radius = Preferences.fovRadius;
             this.fovFow = new FovFow<TiledRlStage>(radius, this.map.Width, this.map.Height);
+        }
+
+        // TO use `Scene`, we have to use the lifecycle method
+        public override void OnAddedToEntity() {
             var e = this.Entity.Scene.CreateEntity("fov-renderer");
             this.fovRenderer = e.add(new Shadow(this.fovFow, this.fovFow.fow, this.stage, this.map));
             this.fovRenderer.zCtx(Layers.Stage, Depths.Fov);
@@ -32,10 +33,14 @@ namespace Rot.Ui {
         }
 
         public void refresh() {
+            Force.nonNull(this.fovFow, this.stage, "FovComp.refresh");
+
             var origin = this.Entity.get<Body>().pos;
             int radius = Preferences.fovRadius;
             Scanner<Fov, Stage>.refresh(this.fovFow, this.stage, origin.x, origin.y, radius);
-            this.fovRenderer.onRefresh();
+
+            // FoV may be updated before we have the renderer
+            this.fovRenderer?.onRefresh();
         }
 
         public void debugPrint() {
