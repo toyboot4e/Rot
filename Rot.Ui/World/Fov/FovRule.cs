@@ -29,7 +29,7 @@ namespace Rot.Rules {
         public IEnumerable<RlEvent> handle(RlEv.PosChange posChange) {
             if (this.player == null) {
                 // FIXME: the hack to find player
-                this.player = this.scene.FindEntity("player");
+                this.player = this.scene.FindEntity(EntityNames.player);
                 this.playerFov = this.player.get<FovComp>();
             }
 

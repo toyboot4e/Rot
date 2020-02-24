@@ -25,7 +25,7 @@ namespace Rot.Ui {
 
         // TO use `Scene`, we have to use the lifecycle method
         public override void OnAddedToEntity() {
-            var e = this.Entity.Scene.CreateEntity("fov-renderer");
+            var e = this.Entity.Scene.CreateEntity(EntityNames.fovRenedrer);
             this.fovRenderer = e.add(new Shadow(this.fovFow, this.fovFow.fow, this.stage, this.map));
             this.fovRenderer.zCtx(Layers.Stage, Depths.Fov);
 

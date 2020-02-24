@@ -12,7 +12,7 @@ namespace Rot.Game {
         public static void afterLoadingMap(StaticGod god) {
 
             // ##### TEST ######
-            var player = god.scene.FindEntity("player");
+            var player = god.scene.FindEntity(EntityNames.player);
             var tiled = god.tiled;
             var actors = tiled.GetObjectGroup("actors");
             if (actors == null) return;
@@ -31,15 +31,17 @@ namespace Rot.Game {
         public static void afterInit(StaticGod god) {
             var gen = new KarceroDunGen();
             god.rules.add(new Rules.StairRule(gen, god));
+
+            // This should be called after actors are set up so that components work
             gen.newFloor(god);
 
-            var e = god.scene.CreateEntity("GenReset");
-            e.add(new GenReseter() { gen = gen, god = god });
+            var e = god.scene.CreateEntity(EntityNames.debugDungeon);
+            e.add(new DebugDungeonComp() { gen = gen, god = god });
 
             // EpUiTestScene.testEpUi(god.scene);
         }
 
-        public class GenReseter : Component, IUpdatable {
+        public class DebugDungeonComp : Component, IUpdatable {
             public KarceroDunGen gen;
             public StaticGod god;
 

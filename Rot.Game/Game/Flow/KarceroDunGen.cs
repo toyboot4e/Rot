@@ -8,7 +8,7 @@ namespace Rot.Game {
     public class KarceroDunGen {
         KarceroTiledGenerator gen;
         // public Entity downStair;
-        Entity getPlayer(StaticGod god) => god.scene.FindEntity("player");
+        Entity getPlayer(StaticGod god) => god.scene.FindEntity(EntityNames.player);
 
         public KarceroDunGen() { }
 
@@ -40,7 +40,7 @@ namespace Rot.Game {
             Rules.PlayerFovRule.updateEntityVisiblitiesAll(god.scene, playerFov.fovFow);
             // HACK to update camera
             // TODO: move camera at once
-            var camera = god.scene.FindEntity("camera")?.get<FollowCamera>();
+            var camera = god.scene.FindEntity(EntityNames.camera)?.get<FollowCamera>();
             if (camera != null) {
                 (camera.setEntity(player) as IUpdatable).Update();
             }
@@ -88,7 +88,7 @@ namespace Rot.Game {
             var posUtil = god.posUtil;
             var entities = god.gameCtx.entities;
 
-            var stairGen = EntityFactory.begin(god.scene, "stair", posUtil);
+            var stairGen = EntityFactory.begin(god.scene, EntityNames.stair, posUtil);
             entities.Add(stairGen
                 .body(gen.randomPosInRoom(), Dir9.random(), false, false)
                 .viewWodi8(Content.Chips.Wodi8.Cook_a)

@@ -42,9 +42,9 @@ namespace Rot.Game {
             }
 
             // dispose the previous tiled map if there is one
-            var tiledEntity = god.scene.FindEntity("tiled");
+            var tiledEntity = god.scene.FindEntity(EntityNames.tiled);
             if (tiledEntity == null) {
-                tiledEntity = god.scene.CreateEntity("tiled");
+                tiledEntity = god.scene.CreateEntity(EntityNames.tiled);
             } else {
                 tiledEntity.rm<TiledMapRenderer>();
             }
@@ -125,6 +125,9 @@ namespace Rot.Game {
 
             // view rules
             rules.add(new Rules.InteractRule(ctrlCtx, posUtil));
+
+            // meta rules
+            rules.add(new Rules.Log());
         }
 
         public static void initViews(RlViewStorage views) {
