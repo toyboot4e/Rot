@@ -28,14 +28,14 @@ namespace Rot.Engine {
             return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferences.enableCornerAttack);
         }
 
-        bool diagonalCheck(Vec2i pos, Dir9 dir, bool enableDiagonal) {
+        bool diagonalCheck(Vec2i pos, Dir9 dir, bool isDiaEnabled) {
             var to = pos + dir.vec;
 
             if (this.isBlockedAt(to)) {
                 return false;
             }
 
-            if (!enableDiagonal || dir.isCardinal) {
+            if (isDiaEnabled || dir.isCardinal) {
                 return true;
             }
 
