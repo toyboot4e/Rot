@@ -16,6 +16,13 @@ namespace Rot.Engine {
         Array2D<Adjacency8> adjacencies;
         Rect2Di mapBounds;
 
+        public void clear() {
+            for (int i = 0; i < this.mapBounds.area; i++) {
+                this.adjacencies[i] = 0;
+                this.fog[i] = false;
+            }
+        }
+
         public struct FogData {
             public bool isExploerd;
             /// <summary> Cache for calculation </summary>

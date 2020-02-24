@@ -11,7 +11,7 @@ using Shadow = Rot.Ui.ShadowRenderer<Rot.Engine.FovFow<Rot.Ui.TiledRlStage>, Rot
 namespace Rot.Ui {
     /// <summary> Field of view for an entity specific for <c>TiledRlStage</c> </summary>
     public class FovComp : Nez.Component {
-        public FovFow<Stage> fovFow;
+        public FovFow<TiledRlStage> fovFow;
         Stage stage;
         TmxMap map;
         Shadow fovRenderer;
@@ -45,7 +45,7 @@ namespace Rot.Ui {
 
         public void debugPrint() {
             var origin = this.fovFow.origin();
-            this.fovFow.current().debugPrint(this.stage, origin.x, origin.y);
+            this.fovFow.debugPrintFov(this.stage, origin.x, origin.y);
         }
     }
 }

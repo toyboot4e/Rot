@@ -8,11 +8,15 @@ namespace Rot.Game {
     public class KarceroDunGen {
         KarceroTiledGenerator gen;
         // public Entity downStair;
+        Entity getPlayer(StaticGod god) => god.scene.FindEntity("player");
 
         public KarceroDunGen() { }
 
         public void newFloor(StaticGod god) {
             KarceroDunGen.clearEnemies(god);
+            var fovFow = getPlayer(god).get<FovComp>().fovFow;
+            fovFow.clearAll();
+
             this.genDungeon(god);
             this.genEnemies(god);
             this.genStair(god);
@@ -26,14 +30,14 @@ namespace Rot.Game {
         // FIXME: the hacks
         void placePlayer(StaticGod god) {
             // HACK: tag
-            var player = god.scene.FindEntity("player");
+            var player = getPlayer(god);
             var pos = gen.randomPosInsideRoom();
             // HACK: or invoke event
             player.get<Body>().setPos(pos);
             player.get<CharaView>().forceUpdatePos();
             var playerFov = player.get<FovComp>();
             playerFov.refresh();
-            Rules.PlayerFovRule.updateEntityVisiblities(god.scene, playerFov.fovFow);
+            Rules.PlayerFovRule.updateEntityVisiblitiesAll(god.scene, playerFov.fovFow);
             // HACK to update camera
             // TODO: move camera at once
             var camera = god.scene.FindEntity("camera")?.get<FollowCamera>();

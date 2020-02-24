@@ -109,7 +109,7 @@ namespace Rot.Engine.Fov {
             public Vec2i origin;
             public int radius;
 
-            public Vec2i localToWorld(Vec2i local) {
+            public Vec2i l2w(Vec2i local) {
                 return local + this.origin;
             }
         }
@@ -201,14 +201,14 @@ namespace Rot.Engine.Fov {
                 if (toCol - fromCol < 0) return true;
 
                 { // finish the scan if the row is out of the map
-                    var initPos = cx.localToWorld(rowVec);
+                    var initPos = cx.l2w(rowVec);
                     if (!cx.map.contains(initPos.x, initPos.y)) return true;
                 }
 
                 // scan through the row
                 var state = RowScanState.Initial;
                 for (int col = fromCol; col <= toCol; col++) {
-                    var pos = cx.localToWorld(rowVec + this.colUnit * col);
+                    var pos = cx.l2w(rowVec + this.colUnit * col);
 
                     // skip points out of the map
                     if (!cx.map.contains(pos.x, pos.y)) return false;
@@ -236,7 +236,7 @@ namespace Rot.Engine.Fov {
                 // scan an opaque cell that was not scanned, but whose vertex may hide cells behind of it
                 var permissiveCol = Rule.colForSlopePermissive(this.endSlope, row, cx.radius);
                 if (permissiveCol > toCol && state != RowScanState.WasOpaque) {
-                    var pos = cx.localToWorld(rowVec + this.colUnit * permissiveCol);
+                    var pos = cx.l2w(rowVec + this.colUnit * permissiveCol);
                     if (!cx.map.contains(pos.x, pos.y)) {
                         // here, we filtered points out of the map
                     } else if (cx.map.isOpaeue(pos.x, pos.y)) {

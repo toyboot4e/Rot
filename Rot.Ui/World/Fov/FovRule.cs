@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using Nez;
 using NezEp.Prelude;
 using Rot.Engine;
+using Rot.Engine.Fov;
 using Rot.Ui;
-using Fov = Rot.Engine.DoubleBufferedEntityFov<Rot.Ui.TiledRlStage>;
 
 namespace Rot.Rules {
     /// <summary> Updates FoV on walk of player </summary>
@@ -35,21 +35,21 @@ namespace Rot.Rules {
 
             if (posChange.entity != this.player) {
                 updateEntityVisibility(posChange.entity, this.playerFov.fovFow);
-                yield break;
+            } else {
+                this.playerFov.refresh();
+                updateEntityVisiblitiesAll(this.scene, this.playerFov.fovFow);
             }
 
-            this.playerFov.refresh();
-            updateEntityVisiblities(this.scene, this.playerFov.fovFow);
             yield break;
         }
 
-        public static void updateEntityVisiblities(Scene scene, Fov fov) {
+        public static void updateEntityVisiblitiesAll<TFov>(Scene scene, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
             foreach(var v in scene.FindComponentsOfType<CharaView>()) {
                 updateEntityVisibility(v.Entity, v, fov);
             }
         }
 
-        public static void updateEntityVisibility(Entity entity, CharaView view, Fov fov) {
+        public static void updateEntityVisibility<TFov>(Entity entity, CharaView view, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
             if (view == null) return;
             var pos = entity.get<Body>().pos;
             if (fov.canSee(pos.x, pos.y)) {
@@ -61,7 +61,7 @@ namespace Rot.Rules {
             }
         }
 
-        public static void updateEntityVisibility(Entity entity, Fov fov) {
+        public static void updateEntityVisibility<TFov>(Entity entity, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
             updateEntityVisibility(entity, entity.get<CharaView>(), fov);
         }
     }

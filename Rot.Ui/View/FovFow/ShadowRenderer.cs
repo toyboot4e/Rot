@@ -36,13 +36,13 @@ namespace Rot.Ui {
     }
 
     /// <summary> Visualizes FoV and FoW </summary>
-    public class ShadowRenderer<Fov, Fow, Stage> : RenderableComponent, IUpdatable where Fov : iFovRead, iFovDiff where Fow : iFow where Stage : iRlStage {
-        Fov fov;
-        Fow fow;
-        Stage stage;
+    public class ShadowRenderer<TFov, TFow, TStage> : RenderableComponent, IUpdatable where TFov : iFovRead, iFovDiff where TFow : iFow where TStage : iRlStage {
+        TFov fov;
+        TFow fow;
+        TStage stage;
         TmxMap map;
 
-        public ShadowRenderer(Fov fov, Fow fow, Stage stage, TmxMap map) {
+        public ShadowRenderer(TFov fov, TFow fow, TStage stage, TmxMap map) {
             this.fov = fov;
             this.fow = fow;
             this.stage = stage;
