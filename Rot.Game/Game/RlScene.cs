@@ -24,7 +24,7 @@ namespace Rot.Game {
             RlSceneSetup.init(god);
 
 #if DEBUG
-            RlInspectorSpawn.spawn(god.ctrlCtx.cradle, god.ctrlCtx.input);
+            RlInspectorSpawn.spawn(god);
 #endif
         }
 

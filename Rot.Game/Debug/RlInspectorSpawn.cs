@@ -3,30 +3,37 @@ using System.Text;
 using ImGuiNET;
 using Nez;
 using NezEp.Debug;
+using NezEp.Prelude;
 using Rot.Ui;
 
 namespace Rot.Game.Debug {
     /// <summary> Visualizes internal game states via Nez.ImGuiTools </summary>
     public class RlInspectorSpawn : Spawn {
-        Cradle cradle;
-        VInput input;
-
+        StaticGod god;
         protected override string baseId() => "Roguelike";
 
-        public RlInspectorSpawn(Cradle cradle, VInput input) {
-            this.cradle = cradle;
-            this.input = input;
+        public RlInspectorSpawn(StaticGod god) {
+            this.god = god;
         }
 
-        public static RlInspectorSpawn spawn(Cradle cradle, VInput input) {
-            return new RlInspectorSpawn(cradle, input).spawnSelf();
+        public static RlInspectorSpawn spawn(StaticGod god) {
+            return new RlInspectorSpawn(god).spawnSelf();
         }
 
         protected override void imGuiDrawImpl() {
+            var cradle = this.god.ctrlCtx.cradle;
+            var input = this.god.ctrlCtx.input;
+            var tiled = this.god.tiled;
+            var camera = god.scene.FindEntity(EntityNames.camera).get<Camera>();
+            var cellPos = tiled.WorldToTilePosition(camera.ScreenToWorldPoint(input.mousePos));
+            var stage = god.gameCtx.stage;
+            string blockChar = stage.isBlocked(cellPos.X, cellPos.Y) ? "X" : "_";
+
             var s = new StringBuilder();
-            s.AppendLine("cradle: " + string.Join(" < ", cradle.stack.Select(c => c.GetType().Name)));
-            s.AppendLine("camera: " + Core.Scene.Camera.Position);
-            s.AppendLine("mouse_screen: " + this.input.mousePos);
+            s.AppendLine($"cradle: {string.Join(" < ", cradle.stack.Select(c => c.GetType().Name))}");
+            s.AppendLine($"camera: {camera.Position}");
+            s.AppendLine($"mouse_screen: {input.mousePos}");
+            s.AppendLine($"cell: {cellPos} {blockChar}");
 
             ImGui.Text(s.ToString());
         }
