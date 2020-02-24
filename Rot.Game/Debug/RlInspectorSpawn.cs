@@ -4,6 +4,7 @@ using ImGuiNET;
 using Nez;
 using NezEp.Debug;
 using NezEp.Prelude;
+using Rot.Engine;
 using Rot.Ui;
 
 namespace Rot.Game.Debug {
@@ -28,12 +29,20 @@ namespace Rot.Game.Debug {
             var cellPos = tiled.WorldToTilePosition(camera.ScreenToWorldPoint(input.mousePos));
             var stage = god.gameCtx.stage;
             string blockChar = stage.isBlocked(cellPos.X, cellPos.Y) ? "X" : "_";
+            var logic = god.gameCtx.logic;
 
             var s = new StringBuilder();
             s.AppendLine($"cradle: {string.Join(" < ", cradle.stack.Select(c => c.GetType().Name))}");
             s.AppendLine($"camera: {camera.Position}");
             s.AppendLine($"mouse_screen: {input.mousePos}");
             s.AppendLine($"cell: {cellPos} {blockChar}");
+            var xs = Dir9.clockwise.Select(d =>
+                $"{d}: " + (logic.isDiagonallyPassingForEntity(
+                    new Vec2i(cellPos.X, cellPos.Y),
+                    d,
+                    RlLogicPreferences.doEnableCornerWalk) ? "_" : "X")
+            );
+            s.AppendLine($"connection: {string.Join(", ", xs)}");
 
             ImGui.Text(s.ToString());
         }

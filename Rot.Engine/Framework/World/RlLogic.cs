@@ -11,52 +11,48 @@ namespace Rot.Engine {
     // TODO: overridable queries
     // FIXME: to combine blocking logic from TmxMapExt
     public class RlLogic {
-        RlGameContext ctx;
+        RlGameContext cx;
 
-        public RlLogic(RlGameContext ctx) {
-            this.ctx = ctx;
+        public RlLogic(RlGameContext cx) {
+            this.cx = cx;
         }
 
         #region Corner logic
         // TODO: separate it in a static class
         public bool canWalkIn(Entity e, Dir9 dir) {
-            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerWalk);
+            // we don't consider if it's in a blocking cell
+            return isDiagonallyPassingForEntity(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerWalk);
         }
 
         /// <summary> Considers diagonal attack </summary>
         public bool canAttackIn(Entity e, Dir9 dir) {
-            return diagonalCheck(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerAttack);
+            return isDiagonallyPassingForEntity(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerAttack);
         }
 
-        bool diagonalCheck(Vec2i pos, Dir9 dir, bool isDiaEnabled) {
-            var to = pos + dir.vec;
-
-            if (!this.ctx.stage.tilesAt(pos).arePassable()) {
-                return false;
-            }
-
-            if (isDiaEnabled || dir.isCardinal) {
-                return true;
-            }
-
-            return new Vec2i[] { dir.xVec, dir.yVec }
-                .Select(v => v.offset(pos))
-                .All(p => this.ctx.stage.tilesAt(p).arePassable());
+        // TODO: consider both entities and tiles
+        public bool isDiagonallyPassingForEntity(Vec2i from, Dir9 dir, bool isDiaPassed) {
+            if (this.isBlockingForEntities(from + dir.vec)) return false;
+            return isDiaPassed || dir.isCardinal || new [] { dir.xVec, dir.yVec }
+                .Select(v => v.offset(from))
+                .All(p => !this.cx.stage.isBlocked(p));
         }
         #endregion
 
         #region Cell-based collision
         // TODO: faster collision system
-        public bool isPassableCell(Vec2i pos) {
-            return this.ctx.stage.contains(pos) &&
-                this.ctx.stage.tilesAt(pos).arePassable() &&
-                this.ctx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
+        // TODO: consider more game-specific rules
+        public bool isPassableForEntities(Vec2i pos) {
+            return this.cx.stage.contains(pos) &&
+                !this.cx.stage.isBlocked(pos) &&
+                // FIXME: this is very heavy (O(N*N) in theory)
+                this.cx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
         }
 
-        public bool isBlockingCell(Vec2i pos) {
-            return !this.ctx.stage.contains(pos) ||
-                !this.ctx.stage.tilesAt(pos).arePassable() ||
-                this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
+        public bool isBlockingForEntities(Vec2i pos) {
+            return !this.cx.stage.contains(pos) ||
+                this.cx.stage.isBlocked(pos) ||
+                // FIXME: this is very heavy (O(N*N) in theory)
+                this.cx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
     }
     #endregion
