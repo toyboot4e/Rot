@@ -20,8 +20,9 @@ namespace Rot.Engine {
         #region Corner logic
         // TODO: separate it in a static class
         public bool canWalkIn(Entity e, Dir9 dir) {
-            // we don't consider if it's in a blocking cell
-            return isDiagonallyPassingForEntity(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerWalk);
+            var body = e.get<Body>();
+            if (this.isBlockingForEntities(body.pos + dir.vec)) return false;
+            return isDiagonallyPassingForEntity(body.pos, dir, RlLogicPreferences.doEnableCornerWalk);
         }
 
         /// <summary> Considers diagonal attack </summary>
@@ -31,7 +32,6 @@ namespace Rot.Engine {
 
         // TODO: consider both entities and tiles
         public bool isDiagonallyPassingForEntity(Vec2i from, Dir9 dir, bool isDiaPassed) {
-            if (this.isBlockingForEntities(from + dir.vec)) return false;
             return isDiaPassed || dir.isCardinal || new [] { dir.xVec, dir.yVec }
                 .Select(v => v.offset(from))
                 .All(p => !this.cx.stage.isBlocked(p));
