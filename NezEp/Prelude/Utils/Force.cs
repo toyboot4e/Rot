@@ -71,5 +71,11 @@ namespace NezEp.Prelude {
             }
             throw new System.Exception("Force.nonNull: " + _s.ToString());
         }
+
+        public static void between(float value, float min, float max, string message = "") {
+            if (value < min || value > max) {
+                throw new System.Exception($"Force.raneg: {value} is not in {min} to {max}. {message}");
+            }
+        }
     }
 }
