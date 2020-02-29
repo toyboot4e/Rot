@@ -58,8 +58,7 @@ namespace Rot.Ui.Tweens {
 
         protected override void onFrameUpdate(int frame) {
             var dir = this.dirMap[frame];
-            var chip = this.entity.get<Charachip>();
-            chip.setDir(dir);
+            this.entity.get<CharaView>().setDir(dir);
         }
     }
 }

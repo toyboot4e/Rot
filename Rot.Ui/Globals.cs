@@ -1,11 +1,55 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Nez;
+using Nez.Tweens;
 
 namespace Rot.Ui {
+    // TODO: remove it or make it data-driven
     /// <summary> Temporary class to detect hard-coded values </summary>
-    public static class Preferences {
-        public static float fovUpdateDuration = 12 / 60f;
-        public static float turnDirDuration => 0.02f;
+    public static class ViewPreferences {
+        // FoV animations
+        public static float fovUpdateDuration => 12 / 60f;
         public static int fovRadius => 6;
+
+        // input
+        public static float vAxisRepeatFirst => 0.1f;
+        public static float vAxisRepeatMulti => 0.1f;
+
+        // body animation configuration
+        public static EaseType walkEase => EaseType.Linear;
+
+        // body animation durations
+        public static float walkDuration => isQuick ? quickWalkDuration : _walkDuration;
+        public static float walkAnimFps => isQuick ? quickWalkFps : _walkAnimFps; // ?
+        public static float turnDirDuration => isQuick ? _turnDirDuration : quickTurnDirDuration;
+        public static float swingDuration = isQuick ? _swingDuration : quickSwingDirDuration;
+
+        // FIXME: the hack to enable quick mode
+        static bool isQuick => Input.IsKeyDown(Keys.LeftControl) || Input.IsKeyDown(Keys.RightControl);
+        static float _walkDuration => 8f / 60f;
+        static float _walkAnimFps => 60f / 16f;
+        static float _turnDirDuration => 0.02f;
+        static float _swingDuration = 4f / 60f;
+
+        static float quickWalkDuration = 4f / 60f;
+        static float quickWalkFps => 60f / 32f;
+        static float quickTurnDirDuration => 0.01f;
+        static float quickSwingDirDuration => 2f / 60f;
+    }
+
+    public static class FixedSize {
+        public static int nMaxLog => 100;
+    }
+
+    public static class EntityNames {
+        public static string player => "player";
+        public static string gameLog => "game-log";
+        public static string fovRenedrer => "fov-renderer";
+        public static string debugDungeon => "debug-dungeon";
+        public static string tiled => "tiled";
+        public static string camera => "camera";
+        public static string stair => "stair";
+        // public static string
     }
 
     /// <summary> The higher, the deeper </summary>

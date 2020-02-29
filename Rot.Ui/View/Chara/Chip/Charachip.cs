@@ -1,39 +1,36 @@
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
-using Nez.Systems;
 using NezEp.Prelude;
 using Rot.Engine;
 
 namespace Rot.Ui {
-    // TODO: disposable
-    /// <summary>
-    /// Image for entities with direction
-    /// </summary>
-    public class Charachip : Component {
+    /// <summary> Image for entities with direction </summary>
+    public class Charachip {
         PosUtil posUtil;
         public SpriteAnimator anim { get; private set; }
+        Entity entity;
 
-        Charachip(PosUtil posUtil) {
+        Charachip(Entity entity, PosUtil posUtil) {
             this.posUtil = posUtil;
+            this.entity = entity;
         }
 
-        public static Charachip wodi8(Entity entity, PosUtil posUtil, string path, NezContentManager content) {
-            var chip = entity.AddComponent(new Charachip(posUtil));
-            chip.addWodi8(path, content);
+        public void update() {
+            (this.anim as IUpdatable).Update();
+        }
+
+        internal static Charachip wodi8(Entity entity, PosUtil posUtil, Texture2D texture) {
+            var chip = new Charachip(entity, posUtil);
+            chip.anim = animForWodi8(texture).zCtx(Layers.Stage, Depths.Charachip).setEntity(entity);
             return chip;
         }
 
-        public void addWodi8(string path, NezContentManager content) {
-            var anim = this.Entity.add(animForWodi8(path, content));
-            this.anim = anim;
-        }
-
-        static SpriteAnimator animForWodi8(string path, NezContentManager content) {
+        static SpriteAnimator animForWodi8(Texture2D texture) {
             // var texture = this.Entity.Scene.Content.LoadTexture(path);
-            var texture = content.LoadTexture(path);
             var sprites = texture.splitIntoSprites(6, 4);
-            var anim = new SpriteAnimator().zCtx(Layers.Stage, Depths.Charachip);
+            var anim = new SpriteAnimator();
 
             // TODO: make it static
             var wodi8AnimPatterns = new [] {
@@ -55,13 +52,10 @@ namespace Rot.Ui {
                 new [] { 15, 16, 17 },
             };
 
-            // foreach(var(keyEnum, patterns) in EnumDirUtil.enumerate().Zip(wodi8AnimPatterns, (key, i) => (key, i))) {
-            var keyEnums = Dir9.clockwise;
-            // var fps = System.TimeSpan.FromTicks((long) 10_000_000 / (long) 16);
-            float fps = 60f / 16f;
+            var dirs = Dir9.clockwise;
             for (int i = 0; i < 8; i++) {
-                var(keyEnum, patterns) = (keyEnums[i], wodi8AnimPatterns[i]);
-                anim.AddAnimation(keyEnum.asStr, fps, patterns.Select(p => sprites[p]).ToArray());
+                var(dir, patterns) = (dirs[i], wodi8AnimPatterns[i]);
+                anim.AddAnimation(dir.ToString(), ViewPreferences.walkAnimFps, patterns.Select(p => sprites[p]).ToArray());
             }
 
             return anim;
@@ -69,12 +63,12 @@ namespace Rot.Ui {
 
         public Charachip snapToGridPos(Vec2i gridPos) {
             var worldPos = this.posUtil.gridToWorldCentered(gridPos);
-            this.Entity.SetLocalPosition(worldPos);
+            this.entity.SetLocalPosition(worldPos);
             return this;
         }
 
         public Charachip setDir(Dir9 dir) {
-            var key = dir.asStr;
+            var key = dir.ToString();
             if (key != this.anim.CurrentAnimationName) {
                 this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);
             }
@@ -82,7 +76,7 @@ namespace Rot.Ui {
         }
 
         public Charachip forceUpdatePos() {
-            var pos = this.Entity.get<Body>().pos;
+            var pos = this.entity.get<Body>().pos;
             return this.snapToGridPos(pos);
         }
     }

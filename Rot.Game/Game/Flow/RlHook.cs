@@ -12,7 +12,7 @@ namespace Rot.Game {
         public static void afterLoadingMap(StaticGod god) {
 
             // ##### TEST ######
-            var player = god.scene.FindEntity("player");
+            var player = god.scene.FindEntity(EntityNames.player);
             var tiled = god.tiled;
             var actors = tiled.GetObjectGroup("actors");
             if (actors == null) return;
@@ -23,7 +23,7 @@ namespace Rot.Game {
             var factory = EntityFactory
                 .begin(actorEntity, god.posUtil)
                 .body(pos, Dir9.S, true, true)
-                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
+                .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .script(RlHooks.testScript(player, actorEntity, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
             god.gameCtx.entities.Add(actorEntity);
         }
@@ -31,15 +31,17 @@ namespace Rot.Game {
         public static void afterInit(StaticGod god) {
             var gen = new KarceroDunGen();
             god.rules.add(new Rules.StairRule(gen, god));
+
+            // This should be called after actors are set up so that components work
             gen.newFloor(god);
 
-            var e = god.scene.CreateEntity("GenReset");
-            e.add(new GenReseter() { gen = gen, god = god });
+            var e = god.scene.CreateEntity(EntityNames.debugDungeon);
+            e.add(new DebugDungeonComp() { gen = gen, god = god });
 
             // EpUiTestScene.testEpUi(god.scene);
         }
 
-        public class GenReseter : Component, IUpdatable {
+        public class DebugDungeonComp : Component, IUpdatable {
             public KarceroDunGen gen;
             public StaticGod god;
 

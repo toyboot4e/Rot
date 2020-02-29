@@ -6,22 +6,27 @@ using Nez.ImGuiTools;
 
 namespace Rot.Game {
     class GameApp : Nez.Core {
-        public GameApp() : base() { }
+        public GameApp() : base(CoreSettings.w, CoreSettings.h, windowTitle : CoreSettings.title) { }
 
         override protected void Initialize() {
             base.Initialize();
+
             configure();
             onDebug();
+
             Core.Scene = new RlScene();
+            Core.Scene.SetDesignResolution(CoreSettings.debugW, CoreSettings.debugH, CoreSettings.policy);
+            Core.Scene.Camera.RawZoom = CoreSettings.resolutionScale;
+
+            // inner functions
 
             void configure() {
                 Nez.Core.ExitOnEscapeKeypress = false;
-                Nez.Console.DebugConsole.ConsoleKey = Keys.OemPeriod;
+                Nez.Console.DebugConsole.ConsoleKey = Keys.OemSemicolon;
 
-                // avoid jitters
-                base.IsFixedTimeStep = true;
-                // Graphics.Instance.Batcher.ShouldRoundDestinations = false;
-                this.setFps(60);
+                base.IsFixedTimeStep = CoreSettings.isFixedTimeStep;
+                this.setFps(CoreSettings.fps);
+                this.setEnableVSync(CoreSettings.vsync);
             }
 
 #if DEBUG
@@ -35,12 +40,6 @@ namespace Rot.Game {
                 ImGui.GetStyle().Alpha = 0.75f;
             }
 #endif
-        }
-
-        override protected void Update(GameTime time) {
-            // Nez.Analysis.TimeRuler.instance.beginMark("Uodate", Color.Blue);
-            base.Update(time);
-            // Nez.Analysis.TimeRuler.instance.endMark("Uodate");
         }
 
         public void setFps(int fps) {

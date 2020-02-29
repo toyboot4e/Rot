@@ -17,22 +17,21 @@ namespace Rot.Ui {
         }
 
         /// <summary> Walk animations are made before walking </summary>
-        public ITweenable walk(WalkAnimationConfig config, Entity entity, Vec2i to) {
+        public ITweenable walk(Entity entity, Vec2i to) {
             var body = entity.get<Body>();
             var from = body.pos;
-            var nextDir = (Dir9) Dir9.fromVec(to - from);
+            var nextDir = (Dir9) Dir9.fromVec2i(to - from);
             // FIXME: lazily change facing or outsource it
             this.changeDir(entity, nextDir);
 
             var nextPosWorld = posUtil.gridToWorldCentered(to);
-            var tween = new Tw.Walk(entity.Transform, config.duration, nextPosWorld);
+            var tween = new Tw.Walk(entity.Transform, ViewPreferences.walkDuration, nextPosWorld, ViewPreferences.walkEase);
             return tween;
         }
 
         /// <summary> Changes the direction of image of the entity </summary>
         public void changeDir(Entity entity, Dir9 dir) {
-            var chip = entity.get<Charachip>();
-            chip.setDir(dir);
+            entity.get<CharaView>().setDir(dir);
         }
 
         public ITweenable turn(Entity e, Dir9 to) {
@@ -41,13 +40,13 @@ namespace Rot.Ui {
                 return null;
             }
 
-            var anim = new Tw.Turn(e, to, EaseType.Linear, Preferences.turnDirDuration);
+            var anim = new Tw.Turn(e, to, EaseType.Linear, ViewPreferences.turnDirDuration);
             return anim;
         }
 
         public ITween<Vector2>[] swing(Entity entity, Dir9 to, float duration = 4f / 60f) {
             var body = entity.get<Body>();
-            var chip = entity.get<Charachip>().anim;
+            var chip = entity.get<CharaView>().chipAnim;
 
             var offset = new Vector2(0, 0);
             var deltaPos = body.facing.vector2 * posUtil.tileSize / 2;
@@ -56,28 +55,6 @@ namespace Rot.Ui {
             var second = chip.tweenLocalOffset(offset, duration, EaseType.CircIn);
 
             return new ITween<Vector2>[] { first, second };
-        }
-    }
-
-    public class WalkAnimationConfig {
-        VInput input;
-        public EaseType easeType;
-        float _duration;
-
-        public float duration {
-            get {
-                if (this.input.isKeyDown(VKey.SpeedUp)) {
-                    return _duration / 2f;
-                } else {
-                    return _duration;
-                }
-            }
-        }
-
-        public WalkAnimationConfig(VInput input, EaseType easeType = EaseType.Linear, float duration = 0.128f) {
-            this.input = input;
-            this.easeType = easeType;
-            this._duration = duration;
         }
     }
 }

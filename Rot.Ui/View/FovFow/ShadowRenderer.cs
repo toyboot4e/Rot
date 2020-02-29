@@ -36,13 +36,13 @@ namespace Rot.Ui {
     }
 
     /// <summary> Visualizes FoV and FoW </summary>
-    public class ShadowRenderer<Fov, Fow, Stage> : RenderableComponent, IUpdatable where Fov : iFovRead, iFovDiff where Fow : iFow where Stage : iRlStage {
-        Fov fov;
-        Fow fow;
-        Stage stage;
+    public class ShadowRenderer<TFov, TFow, TStage> : RenderableComponent, IUpdatable where TFov : iFovRead, iFovDiff where TFow : iFow where TStage : iRlStage {
+        TFov fov;
+        TFow fow;
+        TStage stage;
         TmxMap map;
 
-        public ShadowRenderer(Fov fov, Fow fow, Stage stage, TmxMap map) {
+        public ShadowRenderer(TFov fov, TFow fow, TStage stage, TmxMap map) {
             this.fov = fov;
             this.fow = fow;
             this.stage = stage;
@@ -135,13 +135,13 @@ namespace Rot.Ui {
             var(isInView, currentLight) = this.fov.currentLight(x, y);
             var alphaCurrent = isInView ? maxDimAlpha * alphaEasing(currentLight, 1f) : unseenDimAlpha;
 
-            if (this.sinceRefresh > Preferences.fovUpdateDuration) return alphaCurrent;
+            if (this.sinceRefresh > ViewPreferences.fovUpdateDuration) return alphaCurrent;
 
             var(wasInView, prevLight) = this.fov.prevLight(x, y);
             var alphaPrev = wasInView ? maxDimAlpha * alphaEasing(prevLight, 1f) : unseenDimAlpha;
 
             // linear easing
-            var timeRatio = this.sinceRefresh / Preferences.fovUpdateDuration;
+            var timeRatio = this.sinceRefresh / ViewPreferences.fovUpdateDuration;
             return alphaPrev + (alphaCurrent - alphaPrev) * 1 * timeRatio;
         }
 

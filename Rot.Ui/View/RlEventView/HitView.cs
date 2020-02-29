@@ -55,19 +55,19 @@ namespace Rot.Ui.View {
         }
 
         Animation visualize(RlEv.Dodge dodge) {
+            Debug.Log("TODO: impl dodge animation");
             return null;
         }
 
         Animation visualize(RlEv.JustSwing swing) {
-            Nez.Debug.Log("on swing view");
-            float duration = 4f / 60f;
+            float duration = ViewPreferences.swingDuration;
             var tweens = _s.viewUtil.swing(swing.entity, swing.dir, duration);
             tweens[0].SetNextTween(tweens[1]);
             return new Anim.Tween(tweens[0]);
         }
 
         Animation visualize(RlEv.MeleeAttack melee) {
-            float duration = 4f / 60f;
+            float duration = ViewPreferences.swingDuration;
             var swing = _s.viewUtil.swing(melee.entity, melee.dir, duration);
             swing[0].SetNextTween(swing[1]);
             return new Anim.Tween(swing[0]);

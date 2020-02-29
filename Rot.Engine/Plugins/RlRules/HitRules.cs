@@ -27,6 +27,11 @@ namespace Rot.Rules {
                 yield return RlEv.DirChange.turn(entity, dir);
             }
 
+            if (!this.gameCtx.logic.canAttackIn(melee.entity, melee.dir)) {
+                yield return new RlEv.JustSwing(melee.entity, melee.dir);
+                yield break;
+            }
+
             var pos = melee.entity.get<Body>().pos;
             var cause = RlEv.Cause.ev(melee);
 

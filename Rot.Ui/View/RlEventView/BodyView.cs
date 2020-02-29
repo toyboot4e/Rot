@@ -6,12 +6,6 @@ using NezEp.Prelude;
 
 namespace Rot.Ui.View {
     public class BodyRlView : RlView {
-        WalkAnimationConfig walkAnimConfig;
-
-        public override void setup() {
-            this.walkAnimConfig = new WalkAnimationConfig(_s.input);
-        }
-
         public override Animation visualize(RlEvent ev) {
             switch (ev) {
                 case RlEv.PosChange posChange:
@@ -31,11 +25,11 @@ namespace Rot.Ui.View {
                     var body = walk.entity.get<Body>();
                     var next = body.pos + walk.dir.vec;
 
-                    var tween = _s.viewUtil.walk(this.walkAnimConfig, walk.entity, next);
+                    var tween = _s.viewUtil.walk(walk.entity, next);
                     var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
-                    posChange.entity.get<Charachip>().forceUpdatePos();
+                    posChange.entity.get<CharaView>().forceUpdatePos();
                     return null;
             }
         }
@@ -47,7 +41,7 @@ namespace Rot.Ui.View {
                     return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
                 }
             }
-            dirChange.entity.get<Charachip>().setDir(dirChange.to);
+            dirChange.entity.get<CharaView>().setDir(dirChange.to);
             return null;
         }
     }

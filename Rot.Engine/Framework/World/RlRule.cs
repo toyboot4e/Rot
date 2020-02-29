@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Evs = System.Collections.Generic.IEnumerable<Rot.Engine.RlEvent>;
 using Nez;
 
 namespace Rot.Engine {
@@ -36,8 +34,8 @@ namespace Rot.Engine {
         public void replCtx(RlGameContext ctx) {
             this.gameCtx = ctx;
             for (int i = 0; i > this.rules.Count; i++) {
-                var sys = this.rules[i];
-                sys.injectCtx(ctx);
+                var rule = this.rules[i];
+                rule.injectCtx(ctx);
             }
         }
 
@@ -61,8 +59,8 @@ namespace Rot.Engine {
             return null;
         }
 
-        public void rm(RlRule sys) {
-            sys.onDelete();
+        public void rm(RlRule rule) {
+            rule.onDelete();
         }
 
         // disposable?

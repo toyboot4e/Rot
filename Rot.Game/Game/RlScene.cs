@@ -7,8 +7,7 @@ namespace Rot.Game {
         public StaticGod god;
 
         public override void Initialize() {
-            var policy = Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
-            base.SetDesignResolution(Screen.Width, Screen.Height, policy);
+            // see GameApp.cs for core setttings
 
             base.AddRenderer(new RenderLayerRenderer(renderOrder: 200, renderLayers: Layers.Stage));
             base.AddRenderer(new ScreenSpaceRenderer(renderOrder: 500, renderLayers: Layers.Screen));
@@ -25,7 +24,7 @@ namespace Rot.Game {
             RlSceneSetup.init(god);
 
 #if DEBUG
-            RlInspectorSpawn.spawn(god.ctrlCtx.cradle, god.ctrlCtx.input);
+            RlInspectorSpawn.spawn(god);
 #endif
         }
 

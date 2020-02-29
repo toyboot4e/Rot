@@ -21,11 +21,6 @@ namespace Rot.Ui {
             this.gen = new DungeonGenerator<KCell>();
         }
 
-        public Vec2i randomPos() {
-            var room = this.map.Rooms[Nez.Random.Choose(0, this.map.Rooms.Count - 1)];
-            return new Vec2i(Nez.Random.Choose(room.Left, room.Right), Nez.Random.Choose(room.Top, room.Bottom));
-        }
-
         public void copyToTiled(TmxMap map) {
             var layers = map.tileLayers();
 
@@ -91,14 +86,14 @@ namespace Rot.Ui {
             }
         }
 
-        public Vec2i randomPosInSomeRoom() {
+        public Vec2i randomPosInRoom() {
             var room = this.map.Rooms.RandomItem();
             int x = Nez.Random.Range(room.Left, room.Right);
             int y = Nez.Random.Range(room.Top, room.Bottom);
             return new Vec2i(x, y);
         }
 
-        public Vec2i randomPosInsideSomeRoom() {
+        public Vec2i randomPosInsideRoom() {
             var room = this.map.Rooms.RandomItem();
             int x = Nez.Random.Range(room.Left + 1, room.Right - 1);
             int y = Nez.Random.Range(room.Top + 1, room.Bottom - 1);

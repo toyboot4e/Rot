@@ -28,16 +28,13 @@ namespace Rot.Game {
 
         public static EntityFactory genPlayer(Scene scene, TiledRlStage stage, PosUtil posUtil, TmxMap map) {
             var factory = EntityFactory.begin(scene, "player", posUtil);
-            factory
+            return factory
                 .body(new Vec2i(7, 7), Dir9.S, true, false)
                 .actor(new Engine.Beh.Player(factory.entity), 3)
-                // .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_blue)
-                .wodi8Chip(Content.Chips.Wodi8.Chicken)
-                .performance(50, 10, 5)
+                .viewWodi8(Content.Chips.Wodi8.Chicken)
                 .add(new FovComp(stage, map))
+                .performance(50, 10, 5)
                 .add(new Player());
-            // .add(new Nez.Shadows.PolyLight(32 * 6) { Power = 0.8f }.zCtx(Layers.Stage, 0.1f));
-            return factory;
         }
 
         public EntityFactory add(Component any) {
@@ -55,17 +52,16 @@ namespace Rot.Game {
             return this;
         }
 
-        public EntityFactory wodi8Chip(string imgPath, float? depth = null) {
-            float d = depth == null ? Depths.Charachip : (float) depth;
+        public EntityFactory viewWodi8(string imgPath) {
             var body = this.entity.get<Body>();
-            var chip = Charachip.wodi8(this.entity, this.posUtil, imgPath, this.content);
-            chip.setDir(body.facing).snapToGridPos(body.pos);
+            CharaView.wodi8(this.entity, this.posUtil, this.content.LoadTexture(imgPath), body.pos, body.facing);
             return this;
         }
 
+        /// <summary> Must be called after adding <c>CharaView</c> so that hp bar can be added </summary>
         public EntityFactory performance(int hp, int atk, int def) {
             this.entity.add(new Performance(hp, atk, def));
-            this.entity.add(new HpBar(this.posUtil, EntityBarStyleDef.hp()));
+            this.entity.get<CharaView>().addHpBar(this.posUtil, EntityBarStyleDef.hp());
             return this;
         }
 

@@ -17,7 +17,7 @@ namespace Rot.Ui {
 	}
 
 	// TODO: put bar in UI
-	public class EntityBar : Component {
+	public class EntityBar : RenderableComponent {
 		public enum BarLayer {
 			Background = 0,
 			Effect = 1,
@@ -26,38 +26,57 @@ namespace Rot.Ui {
 		}
 
 		EntityBarStyle style;
-		Dictionary<BarLayer, NineSliceSpriteRenderer> bars = new Dictionary<BarLayer, NineSliceSpriteRenderer>();
-		public IEnumerable<RenderableComponent> sprites => this.bars.Values;
-		public readonly int renderLayer = Layers.Stage;
-		// public float depthBase => ZOrders.CharaGage;
-		float depth(BarLayer layer) => Depths.CharaGage - (int) layer * 0.001f;
-
+		NineSliceSpriteRenderer[] bars;
+		NineSliceSpriteRenderer bar(BarLayer layer) => this.bars[(int) layer];
 		protected PosUtil posUtil;
-		public Vector2 size { get; private set; }
-		public Vector2 offset { get; private set; }
+
+		// preferences (hard coded for now)
+		Vector2 size;
+		Vector2 offset;
 
 		public EntityBar(PosUtil posUtil, EntityBarStyle style, Vector2 offset = default(Vector2)) {
 			this.posUtil = posUtil;
+			this.style = style;
+
 			this.offset = offset;
 			this.size = new Vector2(posUtil.tileWidth - 2, 5);
-			this.style = style;
 		}
 
 		public override void OnAddedToEntity() {
-			var content = this.Entity.Scene.Content;
+			this.setupBars();
+			this.zCtx(Layers.Stage, Depths.CharaGage);
+		}
+
+		void setupBars() {
+			this.bars = new NineSliceSpriteRenderer[4] { null, null, null, null };
+
 			foreach(var(layer, def) in this.style.defs) {
 				var(ninepatch, color) = def;
-				var img = new NineSliceSpriteRenderer(ninepatch);
+				var barImg = new NineSliceSpriteRenderer(ninepatch);
 
-				img.zCtx(layer: this.renderLayer, depth: this.depth(layer));
-				img.SetColor(color);
-				img.setSize(this.size);
-				img.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
+				barImg.zCtx(Layers.Stage, Depths.CharaGage).setEntity(this.Entity);
+				barImg.setSize(this.size).SetColor(color);
+				barImg.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
 
-				this.Entity.AddComponent(img);
-				this.bars.Add(layer, img);
+				this.bars[(int) layer] = barImg;
 			}
 		}
+
+		#region impl RenderableComponent
+		public override RectangleF Bounds => this.bars[0].Bounds;
+		// public override RectangleF Bounds => this.bars?[0]?.Bounds ?? new RectangleF(0, 0, 0, 0);
+		// public override RectangleF Bounds => new RectangleF(0, 0, 5000, 5000);
+		public override void Render(Batcher batcher, Camera camera) {
+			foreach(var bar in this.bars) {
+				bar?.Render(batcher, camera);
+			}
+		}
+		public override void OnEntityTransformChanged(Transform.Component comp) {
+			foreach(var bar in this.bars) {
+				bar?.OnEntityTransformChanged(comp);
+			}
+		}
+		#endregion
 
 		public void animate(float preRatio, float newRatio) {
 			float currentAnimDuration = 0.2f;
@@ -72,14 +91,14 @@ namespace Rot.Ui {
 				Colors.Gage.damage :
 				Colors.Gage.recover;
 
-			var curBar = this.bars[BarLayer.Current];
+			var curBar = this.bar(BarLayer.Current);
 			curBar.Width = preWidth;
 			// curBar.tweenWidth(newWidth, e : easeType, d : currentAnimDuration)
 			curBar.Tween("Width", newWidth, currentAnimDuration)
 				.SetEaseType(easeType)
 				.Start();
 
-			var effectBar = this.bars[BarLayer.Effect];
+			var effectBar = this.bar(BarLayer.Effect);
 			effectBar.Width = preWidth;
 			effectBar.SetColor(effectColor);
 			// effectBar.tweenWidth(newWidth, e : easeType, d : effectDuration)
@@ -87,7 +106,7 @@ namespace Rot.Ui {
 				.SetDelay(effectDelay)
 				.SetEaseType(easeType)
 				.SetCompletionHandler(_ => {
-					this.bars[BarLayer.Effect].SetColor(Colors.Gage.opaque);
+					this.bar(BarLayer.Effect).SetColor(Colors.Gage.opaque);
 				})
 				.Start();
 		}

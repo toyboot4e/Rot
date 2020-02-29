@@ -5,41 +5,20 @@ using Rot.Ui;
 using View = Rot.Ui.View;
 using Scr = Rot.Script;
 using Cmd = Rot.Script.Cmd;
+using Nez.Tiled;
 using NezEp.Prelude;
 
 namespace Rot.Game {
     /// <summary> Sets up basics; anything else is deligated to <c>RlHook</c> </summary>
     public static class RlSceneSetup {
         public static void init(StaticGod god) {
-            god.ctrlCtx = ControlContext.create(new VInput());
-
             string initialStage = Content.Stages.@Static;
+
+            god.ctrlCtx = ControlContext.create(new VInput());
             RlSceneSetup.loadTiledMap(god, initialStage);
-
             setup(god);
+
             RlHooks.afterInit(god);
-        }
-
-        static void setup(StaticGod god) {
-            god.rules = new RlRuleStorage(god.gameCtx);
-            god.view = new RlViewPlatform(
-                new RlViewServices(god.ctrlCtx, god.gameCtx, god.posUtil)
-            );
-            RlPluginSetter.initRules(god.rules, god.ctrlCtx, god.posUtil);
-            RlPluginSetter.initViews(god.view);
-
-            { // create controls
-                var cradle = god.ctrlCtx.cradle;
-                cradle.addAndPush(new TickControl(god.gameState, god.gameCtx, god.view));
-                cradle.add(new AnimationControl());
-                cradle.add(new PlayerControl(god.gameCtx));
-            }
-
-            { // script control
-                var cradle = god.ctrlCtx.cradle;
-                var scripter = cradle.add(new ScriptControl());
-                RlPluginSetter.initScriptViews(scripter, god.ctrlCtx, god.posUtil);
-            }
         }
 
         /// <summary> Loads a tiled map and updates contexts dependent on it </summary>
@@ -63,14 +42,14 @@ namespace Rot.Game {
             }
 
             // dispose the previous tiled map if there is one
-            var tiledEntity = god.scene.FindEntity("tiled");
+            var tiledEntity = god.scene.FindEntity(EntityNames.tiled);
             if (tiledEntity == null) {
-                tiledEntity = god.scene.CreateEntity("tiled");
+                tiledEntity = god.scene.CreateEntity(EntityNames.tiled);
             } else {
                 tiledEntity.rm<TiledMapRenderer>();
             }
 
-            { // load tiled mau
+            { // load tiled map & update contexts
                 god.tiled = god.scene.Content.LoadTiledMap(path);
 
                 var tiledComp = tiledEntity
@@ -78,37 +57,57 @@ namespace Rot.Game {
                     .add(new TiledMapRenderer(god.tiled))
                     .zCtx(layer: Layers.Stage, depth: Depths.Stage);
 
-                // add camera bounds
-                // var topLeft = new Vector2(tiled.TileWidth, tiled.TileWidth);
-                // var bottomRight = new Vector2(tiled.TileWidth * (tiled.Width - 1), tiled.TileWidth * (tiled.Height - 1));
-                // var topLeft = new Vector2(0, 0);
-                // var bottomRight = new Vector2(tiled.TileWidth * tiled.Width, tiled.TileWidth * tiled.Height);
-                // tiledEntity.add(new CameraBounds(topLeft, bottomRight));
-
                 // restore all contexts
                 god.posUtil = new PosUtil(god.tiled, god.scene.Camera);
                 god.gameCtx = new RlGameContext(new TiledRlStage(god.tiled), new RotEntityList());
                 god.gameState = new RlGameState(god.gameCtx.evHub, god.gameCtx.entities as iRlActorIterator);
+                god.rules?.replCtx(god.gameCtx);
+                god.view?.replCtx(god.gameCtx, god.posUtil);
             }
 
-            // update contexts
-            god.rules?.replCtx(god.gameCtx);
-            god.view?.replCtx(god.gameCtx, god.posUtil);
-
-            Entity player = null; // derive!!
-            player = EntityFactory.genPlayer(god.scene, god.gameCtx.stage as TiledRlStage, god.posUtil, god.tiled).entity;
+            // FIXME: player is always created when loading a map
+            var player = EntityFactory.genPlayer(god.scene, god.gameCtx.stage as TiledRlStage, god.posUtil, god.tiled).entity;
             god.gameCtx.entities.Add(player);
-            // have the camera follow the player
-            var camera = god.scene.Camera.Entity.get<FollowCamera>() ?? god.scene.Camera.Entity.add(new FollowCamera(player));
-            camera.MapSize = new Vector2(god.tiled.WorldWidth, god.tiled.WorldHeight);
-            camera.MapLockEnabled = true;
+            setupFollowCamera(god.scene, player, god.tiled);
 
             RlHooks.afterLoadingMap(god);
+        }
+
+        public static void setupFollowCamera(Scene scene, Entity followee, TmxMap tiled) {
+            var camera = scene.Camera.Entity.get<FollowCamera>();
+            if (camera == null) {
+                var cam = scene.Camera; //
+                camera = scene.Camera.Entity.add(new FollowCamera(followee, cam));
+            }
+            camera.MapSize = new Vector2(tiled.WorldWidth, tiled.WorldHeight);
+            camera.MapLockEnabled = true;
+        }
+
+        static void setup(StaticGod god) {
+            god.rules = new RlRuleStorage(god.gameCtx);
+            god.view = new RlViewPlatform(
+                new RlViewServices(god.ctrlCtx, god.gameCtx, god.posUtil)
+            );
+            RlPluginSetter.initRules(god.rules, god.ctrlCtx, god.posUtil, god.scene);
+            RlPluginSetter.initViews(god.view);
+
+            { // create controls
+                var cradle = god.ctrlCtx.cradle;
+                cradle.addAndPush(new TickControl(god.gameState, god.gameCtx, god.view));
+                cradle.add(new AnimationControl());
+                cradle.add(new PlayerControl(god.gameCtx));
+            }
+
+            { // script control
+                var cradle = god.ctrlCtx.cradle;
+                var scripter = cradle.add(new ScriptControl());
+                RlPluginSetter.initScriptViews(scripter, god.ctrlCtx, god.posUtil);
+            }
         }
     }
 
     public class RlPluginSetter {
-        public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil) {
+        public static void initRules(RlRuleStorage rules, ControlContext ctrlCtx, PosUtil posUtil, Scene scene) {
             // primitive rules
             rules.add(new Rules.PrimRules());
             rules.add(new Rules.GrimRule());
@@ -119,13 +118,16 @@ namespace Rot.Game {
 
             // reactive rules
             rules.add(new Rules.OnWalkRules());
-            rules.add(new Rules.PlayerFovRule());
+            rules.add(new Rules.PlayerFovRule(scene));
 
             // input rules
             rules.add(new Rules.CtrlEntityRule(ctrlCtx));
 
             // view rules
             rules.add(new Rules.InteractRule(ctrlCtx, posUtil));
+
+            // meta rules
+            rules.add(new Rules.Log());
         }
 
         public static void initViews(RlViewStorage views) {

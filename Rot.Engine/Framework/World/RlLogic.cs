@@ -3,73 +3,56 @@ using Nez;
 using NezEp.Prelude;
 
 namespace Rot.Engine {
+    public static class RlLogicPreferences {
+        public static bool doEnableCornerAttack => false;
+        public static bool doEnableCornerWalk => false;
+    }
+
     // TODO: overridable queries
     // FIXME: to combine blocking logic from TmxMapExt
     public class RlLogic {
-        RlGameContext ctx;
+        RlGameContext cx;
 
-        public RlLogic(RlGameContext ctx) {
-            this.ctx = ctx;
+        public RlLogic(RlGameContext cx) {
+            this.cx = cx;
         }
 
-        #region Facing
-        // TODO: make it static and separate
-        public Dir9 dirTo(Entity from, Entity to) {
-            var posFrom = from.get<Body>().pos;
-            var posTo = to.get<Body>().pos;
-            return Dir9.fromVec(posTo - posFrom);
+        #region Corner logic
+        // TODO: separate it in a static class
+        public bool canWalkIn(Entity e, Dir9 dir) {
+            var body = e.get<Body>();
+            if (this.isBlockingForEntities(body.pos + dir.vec)) return false;
+            return isDiagonallyPassingForEntity(body.pos, dir, RlLogicPreferences.doEnableCornerWalk);
+        }
+
+        /// <summary> Considers diagonal attack </summary>
+        public bool canAttackIn(Entity e, Dir9 dir) {
+            return isDiagonallyPassingForEntity(e.get<Body>().pos, dir, RlLogicPreferences.doEnableCornerAttack);
+        }
+
+        // TODO: consider both entities and tiles
+        public bool isDiagonallyPassingForEntity(Vec2i from, Dir9 dir, bool isDiaPassed) {
+            return isDiaPassed || dir.isCardinal || new [] { dir.xVec, dir.yVec }
+                .Select(v => v.offset(from))
+                .All(p => !this.cx.stage.isBlocked(p));
         }
         #endregion
 
-        #region Walk
-        // TODO: separate it in a static class
-        public bool canWalkIn(Entity e, Dir9 dir) {
-            var stage = this.ctx.stage;
-            var body = e.get<Body>();
-
-            var from = body.pos;
-            var to = from + dir.vec;
-
-            // TODO: not walk if the character is in a blocking cell
-            // if (stage.isBlockedAt(from)) {
-            // return false;
-            // }
-
-            if (this.isBlockedAt(to)) {
-                return false;
-            }
-
-            if (dir.isCardinal) {
-                return true;
-            } else {
-                return new Vec2i[] { dir.xVec, dir.yVec }
-                    .Select(v => v.offset(from))
-                    .All(p => this.isDiagonallyPassableAt(p));
-            }
-        }
-
+        #region Cell-based collision
         // TODO: faster collision system
-        public bool isPassableAt(Vec2i pos) {
-            return this.ctx.stage.contains(pos) &&
-                this.ctx.stage.tilesAt(pos).arePassable() &&
-                this.ctx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
+        // TODO: consider more game-specific rules
+        public bool isPassableForEntities(Vec2i pos) {
+            return this.cx.stage.contains(pos) &&
+                !this.cx.stage.isBlocked(pos) &&
+                // FIXME: this is very heavy (O(N*N) in theory)
+                this.cx.entitiesAt(pos).All(e => !e.get<Body>().isBlocker);
         }
 
-        public bool isBlockedAt(Vec2i pos) {
-            return !this.ctx.stage.contains(pos) ||
-                !this.ctx.stage.tilesAt(pos).arePassable() ||
-                this.ctx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
-        }
-
-        // TODO: add diagonal blocking property to stage tiles
-        public bool isDiagonallyPassableAt(Vec2i pos) {
-            var stage = this.ctx.stage;
-            return stage.tilesAt(pos).arePassable();
-        }
-
-        public bool isDiagonallyBlocedAt(Vec2i pos) {
-            var stage = this.ctx.stage;
-            return !stage.tilesAt(pos).arePassable();
+        public bool isBlockingForEntities(Vec2i pos) {
+            return !this.cx.stage.contains(pos) ||
+                this.cx.stage.isBlocked(pos) ||
+                // FIXME: this is very heavy (O(N*N) in theory)
+                this.cx.entitiesAt(pos).Any(e => e.get<Body>().isBlocker);
         }
     }
     #endregion

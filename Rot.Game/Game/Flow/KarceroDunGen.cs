@@ -7,16 +7,43 @@ using NezEp.Prelude;
 namespace Rot.Game {
     public class KarceroDunGen {
         KarceroTiledGenerator gen;
+        // public Entity downStair;
+        Entity getPlayer(StaticGod god) => god.scene.FindEntity(EntityNames.player);
 
         public KarceroDunGen() { }
 
         public void newFloor(StaticGod god) {
             KarceroDunGen.clearEnemies(god);
+            var fovFow = getPlayer(god).get<FovComp>().fovFow;
+            fovFow.clearAll();
+
             this.genDungeon(god);
             this.genEnemies(god);
             this.genStair(god);
+            this.placePlayer(god);
+
+            // reset scheduler
             // FIXME: do not be dependent on RotEntityList or provide a safe way
             (god.gameCtx.entities as RotEntityList).setIndex(0);
+        }
+
+        // FIXME: the hacks
+        void placePlayer(StaticGod god) {
+            // HACK: tag
+            var player = getPlayer(god);
+            var pos = gen.randomPosInsideRoom();
+            // HACK: or invoke event
+            player.get<Body>().setPos(pos);
+            player.get<CharaView>().forceUpdatePos();
+            var playerFov = player.get<FovComp>();
+            playerFov.refresh();
+            Rules.PlayerFovRule.updateEntityVisiblitiesAll(god.scene, playerFov.fovFow);
+            // HACK to update camera
+            // TODO: move camera at once
+            var camera = god.scene.FindEntity(EntityNames.camera)?.get<FollowCamera>();
+            if (camera != null) {
+                (camera.setEntity(player) as IUpdatable).Update();
+            }
         }
 
         public void genDungeon(StaticGod god) {
@@ -46,11 +73,10 @@ namespace Rot.Game {
             int N = Nez.Random.Range(3, 7);
             for (int i = 0; i < N; i++) {
                 var enemyGen = EntityFactory.begin(god.scene, $"actor_{i}", posUtil);
-                var pos = this.gen.randomPos();
                 entities.Add(enemyGen
-                    .body(pos, Dir9.random(), true, false)
+                    .body(gen.randomPosInRoom(), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .wodi8Chip(Content.Chips.Wodi8.Patched.Gremlin_black)
+                    .viewWodi8(Content.Chips.Wodi8.Patched.Gremlin_black)
                     .performance(50, 10, 5)
                     .entity
                 );
@@ -62,11 +88,10 @@ namespace Rot.Game {
             var posUtil = god.posUtil;
             var entities = god.gameCtx.entities;
 
-            var stairGen = EntityFactory.begin(god.scene, "stair", posUtil);
-            var pos = this.gen.randomPos();
+            var stairGen = EntityFactory.begin(god.scene, EntityNames.stair, posUtil);
             entities.Add(stairGen
-                .body(pos, Dir9.random(), false, false)
-                .wodi8Chip(Content.Chips.Wodi8.Cook_a)
+                .body(gen.randomPosInRoom(), Dir9.random(), false, false)
+                .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .add(new Stair(Stair.Kind.Downstair))
                 .entity
             );
