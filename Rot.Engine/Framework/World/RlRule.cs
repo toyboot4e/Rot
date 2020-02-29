@@ -22,6 +22,17 @@ namespace Rot.Engine {
         public virtual void onDelete() { }
     }
 
+    // public abstract class RlRuleT<T> : RlRule where T : RlEvent {
+    //     protected abstract float priority { get; }
+
+    //     public override void setup() {
+    //         var hub = base.gameCtx.evHub;
+    //         hub.subscribe<RlEv.Log>(this.priority, this.handle);
+    //     }
+
+    //     protected abstract IEnumerable<RlEvent> handle(T ev);
+    // }
+
     public class RlRuleStorage {
         List<RlRule> rules;
         RlGameContext gameCtx;

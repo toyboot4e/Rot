@@ -78,7 +78,7 @@ namespace Rot.Ui {
 		}
 		#endregion
 
-		public void animate(float preRatio, float newRatio) {
+		public ITween<float> barAnimTween(float preRatio, float newRatio) {
 			float currentAnimDuration = 0.2f;
 			float effectDelay = 0.1f;
 			float effectDuration = 0.5f;
@@ -102,13 +102,12 @@ namespace Rot.Ui {
 			effectBar.Width = preWidth;
 			effectBar.SetColor(effectColor);
 			// effectBar.tweenWidth(newWidth, e : easeType, d : effectDuration)
-			effectBar.Tween("Width", newWidth, effectDuration)
+			return effectBar.Tween("Width", newWidth, effectDuration)
 				.SetDelay(effectDelay)
 				.SetEaseType(easeType)
 				.SetCompletionHandler(_ => {
 					this.bar(BarLayer.Effect).SetColor(Colors.Gage.opaque);
-				})
-				.Start();
+				});
 		}
 	}
 }

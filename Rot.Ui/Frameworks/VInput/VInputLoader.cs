@@ -12,18 +12,15 @@ namespace Rot.Ui {
         public static void setUp(VDirInput vDir, Buttons buttons) {
             VInputLoader.setupBasicKeys(buttons);
             VInputLoader.setupAxisKeys(vDir.axisDir.xAxis.nodes, vDir.axisDir.yAxis.nodes);
-            VInputLoader.setupDirButtons(vDir.eDir);
+            VInputLoader.setupCommonDirButtons(vDir.eDir);
+
+            // TODO: detect keyboard type
+            VInputLoader.setupQwertyDirButtons(vDir.eDir);
+
             vDir.setRepeat(ViewPreferences.vAxisRepeatFirst, ViewPreferences.vAxisRepeatMulti);
         }
 
-        static void setupDirButtons(VEightDirButtonBatch bts) {
-            // use numpad-based order of directions
-            var dirs = new [] {
-                Dir9.NW, Dir9.N, Dir9.NE,
-                Dir9.W, Dir9.E,
-                Dir9.SW, Dir9.S, Dir9.SE,
-            };
-
+        static void setupCommonDirButtons(VEightDirButtonBatch bts) {
             // keys to be zipped
             var numpads = new [] {
                 Keys.NumPad7, Keys.NumPad8, Keys.NumPad9,
@@ -31,7 +28,33 @@ namespace Rot.Ui {
                 Keys.NumPad1, Keys.NumPad2, Keys.NumPad3,
             };
 
-            var keyNumPadQwerty = new [] {
+            var digits = new [] {
+                Keys.D7, Keys.D8, Keys.D9,
+                Keys.D4, Keys.D6,
+                Keys.D1, Keys.D2, Keys.D3,
+            };
+
+            var dirs = new [] {
+                Dir9.NW, Dir9.N, Dir9.NE,
+                Dir9.W, Dir9.E,
+                Dir9.SW, Dir9.S, Dir9.SE,
+            };
+
+            var keysZipped = new [] { numpads, digits, };
+            for (int i = 0; i < dirs.Length; i++) {
+                bts.dirNode(dirs[i])
+                    .addKeyboardKeys(keysZipped.Select(keys => keys[i]));
+            }
+        }
+
+        public static void setupQwertyDirButtons(VEightDirButtonBatch bts) {
+            var dirs = new [] {
+                Dir9.NW, Dir9.N, Dir9.NE,
+                Dir9.W, Dir9.E,
+                Dir9.SW, Dir9.S, Dir9.SE,
+            };
+
+            var leftQwerty = new [] {
                 Keys.Q, Keys.W, Keys.E,
                 Keys.A, Keys.D,
                 Keys.Z, Keys.X, Keys.C,
@@ -43,8 +66,7 @@ namespace Rot.Ui {
                 Keys.B, Keys.J, Keys.N,
             };
 
-            var keysZipped = new [] { numpads, keyNumPadQwerty, vimQwerty, };
-
+            var keysZipped = new [] { leftQwerty, vimQwerty };
             for (int i = 0; i < dirs.Length; i++) {
                 bts.dirNode(dirs[i])
                     .addKeyboardKeys(keysZipped.Select(keys => keys[i]));

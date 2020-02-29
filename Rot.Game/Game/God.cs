@@ -11,12 +11,12 @@ namespace Rot.Game {
     /// <summary> The owner of everything </summary>
     public class StaticGod {
         // engine
-        public RlGameContext gameCtx;
+        public RlGameContext gameCx;
         public RlRuleStorage rules;
         public RlGameState gameState;
         // control
         public Scene scene;
-        public ControlContext ctrlCtx;
+        public ControlContext ctrlCx;
         public RlViewPlatform view;
         public TmxMap tiled;
         // utilities

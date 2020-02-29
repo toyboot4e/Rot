@@ -129,6 +129,7 @@ namespace Rot.Game {
 
             var body = this.controller.actor.get<Body>();
 
+            // TODO: remove game logic from the controller
             if (!this.dirMode.isOn && new RlLogic(this.gameCtx).canWalkIn(this.controller.actor, dir)) {
                 return new RlEv.Walk(this.controller.actor, dir);
             } else {

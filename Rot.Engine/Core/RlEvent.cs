@@ -19,9 +19,9 @@ namespace Rot.Engine {
 namespace Rot.RlEv {
     /// <summary> Cause of an RlEvent </summary>
     public class Cause {
-        public readonly RlEvent e;
+        public readonly RlEvent ev;
 
-        public static Cause ev(RlEvent ev) {
+        public static Cause ev_(RlEvent ev) {
             return new Cause(ev);
         }
 
@@ -30,7 +30,7 @@ namespace Rot.RlEv {
         }
 
         Cause(RlEvent ev) {
-            this.e = ev;
+            this.ev = ev;
         }
     }
 

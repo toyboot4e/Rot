@@ -130,20 +130,20 @@ namespace Rot.Engine.Fov {
             }
 
             // [rectangle block model]
-            // /// <summary> Called after scanning opaque cells </summary>
-            // /// <remark> Minimum to 1f is required to consider positions such as (1, 1) </remark>
-            // public static float updateStartSlope(int col, int row) => Math.Min(1f, (col + 0.5f) / (row - 0.5f));
-            // /// <summary> Called when splitting a scan </summary>
-            // public static float updateEndSlope(int col, int row) => (col - 0.5f) / (row + 0.5f);
+            /// <summary> Called after scanning opaque cells </summary>
+            /// <remark> Minimum to 1f is required to consider positions such as (1, 1) </remark>
+            public static float updateStartSlope(int col, int row) => Math.Min(1f, (col + 0.5f) / (row - 0.5f));
+            /// <summary> Called when splitting a scan </summary>
+            public static float updateEndSlope(int col, int row) => (col - 0.5f) / (row + 0.5f);
 
             // [diagnonal block model]
-            /// <summary> Called after scanning opaque cells </summary>
-            public static float updateStartSlope(int col, int row) => (col - 0.5f) / row;
-            /// <summary> Called when splitting a scan </summary>
-            public static float updateEndSlope(int col, int row) => (col - 0.5f) / row;
+            // /// <summary> Called after scanning opaque cells </summary>
+            // public static float updateStartSlope(int col, int row) => (col - 0.5f) / row;
+            // /// <summary> Called when splitting a scan </summary>
+            // public static float updateEndSlope(int col, int row) => (col - 0.5f) / row;
 
             /// <summary>
-            /// Used to detect a cell whose center it not in the range but one of whose vertex may hide following cells
+            /// Used to scan cells whose center are not in the range but one of whose vertex may hide following cells
             /// </summary>
             public static int colForSlopePermissive(float slope, int row, int radius) {
                 return Math.Min(

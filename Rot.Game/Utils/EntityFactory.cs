@@ -10,9 +10,11 @@ namespace Rot.Game {
     /// <summary> Helper for entity generation. Note that it doesn't add the generated entity to any entity list </summary>
     public class EntityFactory {
         public Entity entity;
+        public Entity tiledEntity;
         PosUtil posUtil;
         Nez.Systems.NezContentManager content => entity.Scene.Content;
 
+        /// <summary> Setup parent entity (maybe tiled) by yourself </summary>
         public EntityFactory(Entity entity, PosUtil posUtil) {
             this.entity = entity;
             this.posUtil = posUtil;

@@ -26,7 +26,7 @@ namespace Rot.Rules {
                 yield break;
             }
 
-            var cause = RlEv.Cause.ev(walk);
+            var cause = RlEv.Cause.ev_(walk);
             var prevDir = body.facing;
             var prevPos = body.pos;
             var nextDir = walk.dir;

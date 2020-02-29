@@ -30,6 +30,9 @@ namespace Rot.Ui.View {
                 case RlEv.JustSwing swing:
                     return this.visualize(swing);
 
+                case RlEv.Miss miss:
+                    return this.visualize(miss);
+
                 default:
                     return null;
             }
@@ -48,14 +51,18 @@ namespace Rot.Ui.View {
             float preRatio = (float) hp.val / (float) hp.max;
             float newRatio = (float) (hp.val - damage.amount) / (float) hp.max;
 
-            var bar = entity.get<HpBar>();
-            bar.animate(preRatio, newRatio);
-
+            entity.get<HpBar>().barAnimTween(preRatio, newRatio).Start();
+            // TODO: make non-blocking animation and return anim obj explicitly
             return null;
         }
 
         Animation visualize(RlEv.Dodge dodge) {
             Debug.Log("TODO: impl dodge animation");
+            return null;
+        }
+
+        Animation visualize(RlEv.Miss miss) {
+            Debug.Log("TODO: impl miss animation");
             return null;
         }
 

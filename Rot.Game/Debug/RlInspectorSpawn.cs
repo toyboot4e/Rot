@@ -22,14 +22,14 @@ namespace Rot.Game.Debug {
         }
 
         protected override void imGuiDrawImpl() {
-            var cradle = this.god.ctrlCtx.cradle;
-            var input = this.god.ctrlCtx.input;
+            var cradle = this.god.ctrlCx.cradle;
+            var input = this.god.ctrlCx.input;
             var tiled = this.god.tiled;
             var camera = god.scene.FindEntity(EntityNames.camera).get<Camera>();
             var cellPos = tiled.WorldToTilePosition(camera.ScreenToWorldPoint(input.mousePos));
-            var stage = god.gameCtx.stage;
+            var stage = god.gameCx.stage;
             string blockChar = stage.isBlocked(cellPos.X, cellPos.Y) ? "X" : "_";
-            var logic = god.gameCtx.logic;
+            var logic = god.gameCx.logic;
 
             var s = new StringBuilder();
             s.AppendLine($"cradle: {string.Join(" < ", cradle.stack.Select(c => c.GetType().Name))}");

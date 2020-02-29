@@ -21,12 +21,12 @@ namespace Rot.Game {
 
             switch (report) {
                 case RlTickReport.Ev evReport:
-                    // Nez.Debug.log(evReport.ev != null ? $"event: {evReport.ev}" : "event: null");
+                    Nez.Debug.Log($"event: {evReport.ev?.ToString() ?? "<null>"}");
                     var anim = this.view.visualize(evReport.ev);
                     if (anim == null) {
                         return ControlResult.Continue;
                     } else {
-                        Nez.Debug.Log("animation: " + anim);
+                        // Nez.Debug.Log("animation: " + anim);
                         var cradle = this.ctrlCtx.cradle;
                         var animCtrl = cradle.get<AnimationControl>();
                         return animCtrl.beginOrParallelize(anim);

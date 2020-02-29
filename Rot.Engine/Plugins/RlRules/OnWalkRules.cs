@@ -17,6 +17,10 @@ namespace Rot.Rules {
             hub.unsubscribe<RlEv.PosChange>(this.handle);
         }
 
+        bool filter(RlEv.PosChange posChange) {
+            return posChange.entity.has<Player>() && posChange.cause.ev is RlEv.Walk;
+        }
+
         public IEnumerable<RlEvent> handle(RlEv.PosChange posChange) {
             if (!this.filter(posChange)) yield break;
 
@@ -31,10 +35,6 @@ namespace Rot.Rules {
                     yield return new RlEv.Stair(RlEv.Stair.Kind.Upstair);
                 }
             }
-        }
-
-        bool filter(RlEv.PosChange posChange) {
-            return posChange.entity.has<Player>() && posChange.cause.e is RlEv.Walk;
         }
     }
 }

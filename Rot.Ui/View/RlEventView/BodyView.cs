@@ -20,7 +20,7 @@ namespace Rot.Ui.View {
         }
 
         Animation onPosChange(RlEv.PosChange posChange) {
-            switch (posChange.cause.e) {
+            switch (posChange.cause.ev) {
                 case RlEv.Walk walk:
                     var body = walk.entity.get<Body>();
                     var next = body.pos + walk.dir.vec;

@@ -69,6 +69,8 @@ namespace Rot.Ui {
 
         public override void Render(Batcher batcher, Camera camera) {
             var cellSize = new Point(map.TileWidth, map.TileHeight);
+            // FIXME: how to get tiled offset
+            var tiledOffset = Core.Scene.FindEntity(EntityNames.tiled).Position.ToPoint();
 
             // settings
             var rect = new SpriteData(Graphics.Instance.PixelTexture, cellSize, cellSize);
@@ -92,6 +94,7 @@ namespace Rot.Ui {
                         // var color = Color.Black * 0.9f;
                         var color = Color.Black;
                         var destRect = new Rectangle(pos.X + rect.offset.X, pos.Y + rect.offset.Y, rect.size.X, rect.size.Y);
+                        destRect.Offset(tiledOffset); // FIXME
                         batcher.Draw(rect.sprite, destRect, rect.sprite.SourceRect, color,
                             this.Entity.Transform.Rotation, SpriteEffects.None, this.LayerDepth,
                             0f, 0f, 0f, 0f
@@ -102,12 +105,14 @@ namespace Rot.Ui {
                     // draw grid to visible & walkable cells
                     if (this.fov.canSee(x, y) && !this.stage.isBlocked(x, y)) {
                         var destRect = new Rectangle(pos.X + grid.offset.X, pos.Y + grid.offset.Y, grid.size.X, grid.size.Y);
+                        destRect.Offset(tiledOffset); // FIXME
                         batcher.DrawHollowRect(destRect, gridColor);
                     }
 
                     { // draw shadow
                         var color = Color.Black * this.getAlphaAt(x, y);
                         var destRect = new Rectangle(pos.X + rect.offset.X, pos.Y + rect.offset.Y, rect.size.X, rect.size.Y);
+                        destRect.Offset(tiledOffset); // FIXME
                         batcher.Draw(rect.sprite, destRect, rect.sprite.SourceRect, color,
                             this.Entity.Transform.Rotation, SpriteEffects.None, this.LayerDepth,
                             0f, 0f, 0f, 0f

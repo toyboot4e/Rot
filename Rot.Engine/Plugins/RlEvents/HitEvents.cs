@@ -24,27 +24,49 @@ namespace Rot.RlEv {
         }
     }
 
-    /// <summary> Gives damage or heals health </simmary>
+    /// <summary> Gives damage or heals health. It may not have attacker </simmary>
     public class Hit : RlEvent {
         public readonly Entity hitEntity;
         public readonly Attack attack;
-        public readonly Cause cause;
+        public readonly Cause descendant;
+        public readonly HitCause hitCause;
 
-        public Hit(Entity target, Attack attack, Cause cause) {
+        public Hit(Entity target, Attack attack, Cause descendant, HitCause hitCause) {
             this.hitEntity = target;
             this.attack = attack;
-            this.cause = cause;
+            this.descendant = descendant;
+            this.hitCause = hitCause;
         }
+
+        public class HitCause {
+            public Entity entity;
+
+            public enum Kind {
+                ByEntity,
+            }
+
+            public HitCause(Entity entity) {
+                this.entity = entity;
+            }
+
+            public static HitCause byEntity(Entity entity) {
+                return new HitCause(entity);
+            }
+        }
+
     }
 
+    /// <summary> Mainly for view </summary>
     public class Miss : RlEvent {
+        public readonly Entity attacker;
         public readonly Dodge cause;
 
-        public Miss(Dodge dodge) {
+        public Miss(Entity attacker, Dodge dodge) {
             this.cause = dodge;
         }
     }
 
+    /// <summary> Mainly for view </summary>
     public class Dodge : RlEvent {
         public readonly Entity entity;
         public readonly Cause cause;
