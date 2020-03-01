@@ -13,6 +13,14 @@
 			"name": "Game"
 		},
 		{
+			"path": "./Rot.Data",
+			"name": "Data"
+		},
+		{
+			"path": "./Rot.Script",
+			"name": "Script"
+		},
+		{
 			"path": "NezEp"
 		},
 		{
@@ -40,7 +48,7 @@
 			"**/obj": true,
 			"**/bin": true,
 			"**/*.csproj.user": true,
-			"**/Content": true,
+			// "**/Content": true,
 			"**/CompiledContent": true,
 			// Nez, FNA
 			// "FNA/[^src,]*": true, // hide everything but the src folder
