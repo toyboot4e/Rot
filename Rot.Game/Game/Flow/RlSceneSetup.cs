@@ -14,7 +14,7 @@ namespace Rot.Game {
         public static void init(StaticGod god) {
             string initialStage = Content.Stages.@Static;
 
-            god.ctrlCtx = ControlContext.create(new VInput());
+            god.ctrlCx = ControlContext.create(new VInput());
             RlSceneSetup.loadTiledMap(god, initialStage);
             setup(god);
 
@@ -24,18 +24,18 @@ namespace Rot.Game {
         /// <summary> Loads a tiled map and updates contexts dependent on it </summary>
         public static void loadTiledMap(StaticGod god, string path) {
             // dispose all the entities except the player
-            if (god.gameCtx != null) {
-                for (int i = 0; i < god.gameCtx.entities.Count; i++) {
-                    var e = god.gameCtx.entities[i];
+            if (god.gameCx != null) {
+                for (int i = 0; i < god.gameCx.entities.Count; i++) {
+                    var e = god.gameCx.entities[i];
                     if (e == null) {
                         Nez.Debug.Log("Null found as an entity in the roguelike world when clearing it");
-                        god.gameCtx.entities.RemoveAt(i);
+                        god.gameCx.entities.RemoveAt(i);
                         continue;
                     }
                     if (e.has<Player>()) {
                         continue;
                     }
-                    god.gameCtx.entities.RemoveAt(i);
+                    god.gameCx.entities.RemoveAt(i);
                     i--;
                     e.Destroy();
                 }
@@ -59,18 +59,29 @@ namespace Rot.Game {
 
                 // restore all contexts
                 god.posUtil = new PosUtil(god.tiled, god.scene.Camera);
-                god.gameCtx = new RlGameContext(new TiledRlStage(god.tiled), new RotEntityList());
-                god.gameState = new RlGameState(god.gameCtx.evHub, god.gameCtx.entities as iRlActorIterator);
-                god.rules?.replCtx(god.gameCtx);
-                god.view?.replCtx(god.gameCtx, god.posUtil);
+                god.gameCx = new RlGameContext(new TiledRlStage(god.tiled), new RotEntityList());
+                god.gameState = new RlGameState(god.gameCx.evHub, god.gameCx.entities as iRlActorIterator);
+                god.rules?.replCtx(god.gameCx);
+                god.view?.replCtx(god.gameCx, god.posUtil);
             }
 
             // FIXME: player is always created when loading a map
-            var player = EntityFactory.genPlayer(god.scene, god.gameCtx.stage as TiledRlStage, god.posUtil, god.tiled).entity;
-            god.gameCtx.entities.Add(player);
+            var player = EntityFactory.genPlayer(god.scene, god.gameCx.stage as TiledRlStage, god.posUtil, god.tiled).entity;
+            player.SetParent(tiledEntity);
+            god.gameCx.entities.Add(player);
             setupFollowCamera(god.scene, player, god.tiled);
 
+            RlSceneSetup.centeriszeTiledIfNeeded(god.tiled, tiledEntity);
             RlHooks.afterLoadingMap(god);
+        }
+
+        /// <summary> Update the local position of tiled map entity so that it is centered </summary>
+        public static void centeriszeTiledIfNeeded(TmxMap tiled, Entity tiledEntity) {
+            bool centerX = tiled.WorldWidth < Screen.Width;
+            bool centerY = tiled.WorldHeight < Screen.Height;
+            var x = centerX ? (Screen.Width - tiled.WorldWidth) / 2 : 0;
+            var y = centerY ? (Screen.Height - tiled.WorldHeight) / 2 : 0;
+            tiledEntity.SetLocalPosition(new Vector2(x, y));
         }
 
         public static void setupFollowCamera(Scene scene, Entity followee, TmxMap tiled) {
@@ -84,24 +95,24 @@ namespace Rot.Game {
         }
 
         static void setup(StaticGod god) {
-            god.rules = new RlRuleStorage(god.gameCtx);
+            god.rules = new RlRuleStorage(god.gameCx);
             god.view = new RlViewPlatform(
-                new RlViewServices(god.ctrlCtx, god.gameCtx, god.posUtil)
+                new RlViewServices(god.ctrlCx, god.gameCx, god.posUtil)
             );
-            RlPluginSetter.initRules(god.rules, god.ctrlCtx, god.posUtil, god.scene);
+            RlPluginSetter.initRules(god.rules, god.ctrlCx, god.posUtil, god.scene);
             RlPluginSetter.initViews(god.view);
 
             { // create controls
-                var cradle = god.ctrlCtx.cradle;
-                cradle.addAndPush(new TickControl(god.gameState, god.gameCtx, god.view));
+                var cradle = god.ctrlCx.cradle;
+                cradle.addAndPush(new TickControl(god.gameState, god.gameCx, god.view));
                 cradle.add(new AnimationControl());
-                cradle.add(new PlayerControl(god.gameCtx));
+                cradle.add(new PlayerControl(god.gameCx));
             }
 
             { // script control
-                var cradle = god.ctrlCtx.cradle;
+                var cradle = god.ctrlCx.cradle;
                 var scripter = cradle.add(new ScriptControl());
-                RlPluginSetter.initScriptViews(scripter, god.ctrlCtx, god.posUtil);
+                RlPluginSetter.initScriptViews(scripter, god.ctrlCx, god.posUtil);
             }
         }
     }
@@ -127,7 +138,7 @@ namespace Rot.Game {
             rules.add(new Rules.InteractRule(ctrlCtx, posUtil));
 
             // meta rules
-            rules.add(new Rules.Log());
+            rules.add(new Rules.LogRule(scene));
         }
 
         public static void initViews(RlViewStorage views) {

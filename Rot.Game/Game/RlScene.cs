@@ -31,8 +31,8 @@ namespace Rot.Game {
         public override void Update() {
             base.Update();
 
-            this.god.ctrlCtx.input.update();
-            this.god.ctrlCtx.cradle.update();
+            this.god.ctrlCx.input.update();
+            this.god.ctrlCx.cradle.update();
         }
     }
 }

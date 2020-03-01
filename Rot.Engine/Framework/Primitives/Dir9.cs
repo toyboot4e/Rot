@@ -57,8 +57,8 @@ namespace Rot.Engine {
         #region enumerate
         public static Dir9[] clockwise => new [] { N, NE, E, SE, S, SW, W, NW };
         public static Dir9[] counterclockwise => new [] { N, NW, W, SW, S, SE, E, NE };
-        public static Dir9[] cardinals => new [] { N, S, E, W };
-        public static Dir9[] diagonals => new [] { NE, NW, SE, SW };
+        public static Dir9[] cardinals => new [] { N, E, S, W };
+        public static Dir9[] diagonals => new [] { NE, SE, SW, NW };
         #endregion
 
         #region clockwise index
@@ -147,7 +147,7 @@ namespace Rot.Engine {
         public bool isCardinal => this.belongsTo(Dir9.cardinals);
         public bool isDiagonal => this.belongsTo(Dir9.diagonals);
         bool belongsTo(IEnumerable<Dir9> set) {
-            var t = this; // we need tihs hack
+            var t = this; // somehow we need this hack
             return set.Any(d => d == t);
         }
 

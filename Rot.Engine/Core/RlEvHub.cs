@@ -21,8 +21,11 @@ namespace Rot.Engine {
             this.concHubs = new Dictionary<Type, IConcRlEvHub>();
         }
 
-        /// <remark> Use a concrete event type when calling </remark>
+        /// <summary>
+        ///  Use a concrete event type when calling. <c>precedence must be in [-1, 1]</c> where 0 means ordinary handlings
+        /// </summary>
         public AnyRlEvHub subscribe<T>(float precedence, Func<T, Evs> f) where T : RlEvent {
+            Force.between(precedence, -1f, 1f, $"AnyRlHub.subscribe for type {typeof(T)}");
             this.handlersOrNew<T>().add(new RlEvHandler<T>(precedence, f));
             return this;
         }
@@ -33,10 +36,7 @@ namespace Rot.Engine {
         }
 
         public IEnumerable<RlEvent> handleAbs(RlEvent e) {
-            if (e == null) {
-                Nez.Debug.Log("Given null as RlEvent in RlEventHub.handleAny()");
-                yield break;
-            }
+            Force.nonNull(e, "RlEventHub.handleAny()");
             if (!this.concHubs.TryGetValue(e.GetType(), out var concHub)) {
                 // we don't have any handler for that. think about `NotYetDecided` action
                 yield break;

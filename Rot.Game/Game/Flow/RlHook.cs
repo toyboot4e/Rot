@@ -20,12 +20,13 @@ namespace Rot.Game {
             var actor = actors.Objects[0];
             var pos = actor.tilePos(tiled);
             var actorEntity = god.scene.CreateEntity("script-test");
+            actorEntity.SetParent(god.scene.FindEntity(EntityNames.tiled));
             var factory = EntityFactory
                 .begin(actorEntity, god.posUtil)
                 .body(pos, Dir9.S, true, true)
                 .viewWodi8(Content.Chips.Wodi8.Cook_a)
                 .script(RlHooks.testScript(player, actorEntity, "aaaaa\nbbbb\ncccccc\nddddddddddddd:"));
-            god.gameCtx.entities.Add(actorEntity);
+            god.gameCx.entities.Add(actorEntity);
         }
 
         public static void afterInit(StaticGod god) {

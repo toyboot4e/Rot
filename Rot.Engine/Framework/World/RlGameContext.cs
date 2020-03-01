@@ -19,6 +19,7 @@ namespace Rot.Engine {
             this.evHub = new AnyRlEvHub();
         }
 
+        // TODO: maybe use cache for performance
         /// <summary> BE CAREFUL when you enumerate entities; they may be deleted when they die </summary>
         public IEnumerable<Entity> entitiesAt(Vec2i pos) {
             return this.entities.Where(e => e.get<Body>().pos == pos);

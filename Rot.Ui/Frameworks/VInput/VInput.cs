@@ -7,6 +7,7 @@ using NezEp.Prelude;
 
 namespace Rot.Ui {
     // TODO: extract it to users maybe using generics
+    // TODO: use bit flags
     public enum VKey {
         AxisKey,
         Select,

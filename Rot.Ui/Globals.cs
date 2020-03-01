@@ -41,6 +41,7 @@ namespace Rot.Ui {
         public static int nMaxLog => 100;
     }
 
+    // TODO: remove the class and cache them
     public static class EntityNames {
         public static string player => "player";
         public static string gameLog => "game-log";
@@ -49,6 +50,7 @@ namespace Rot.Ui {
         public static string tiled => "tiled";
         public static string camera => "camera";
         public static string stair => "stair";
+        public static string logView => "log-view";
         // public static string
     }
 

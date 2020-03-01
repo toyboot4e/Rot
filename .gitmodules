@@ -1,3 +1,6 @@
 [submodule "Nez"]
 	path = Nez
 	url = https://github.com/prime31/Nez.git
+[submodule "Rony.cs"]
+	path = Rony.cs
+	url = https://github.com/toyboot4e/Rony.cs.git
