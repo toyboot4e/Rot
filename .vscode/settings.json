@@ -31,4 +31,15 @@
     "**/Content/**": true,
     "**/CompiledContent/**": true
   },
+  // ***** VSCode Format Rule *****
+  "csharpfixformat.sort.usings.order": "System Microsoft ImGuiNET Nez Rot",
+  "csharpfixformat.style.spaces.afterBracket": false,
+  "csharpfixformat.style.braces.onSameLine": true,
+  "csharpfixformat.style.spaces.removeAfterCommandBeforeParenthesis": "foreach",
+  "csharpfixformat.style.spaces.beforeIndexerBracket": false,
+  "csharpfixformat.style.spaces.beforeParenthesis": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "Leopotam.csharpfixformat"
+    // "editor.defaultFormatter": "Leopotam.csharpfixformat"
+  },
 }

@@ -1,0 +1,24 @@
+= Coding rules
+
+There's no strict rule for now, but here is the basic.
+
+== Naming conventions
+
+=== Cases
+
+|====
+| kind             | notation
+
+| interface        | iInterfaceType
+| type/namespace   | UpperCamelCaseAkaPascaleCase
+| variable/methods | camelCase
+| constant         | USE_BIG_CHARS_AND_UNDER_SCORE
+|====
+
+### Scopes
+
+Always use the keyword `this` to access instance variables/methods.
+
+## Format
+
+Use "C# FixFormat" extension in VSCode.

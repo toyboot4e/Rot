@@ -20,7 +20,7 @@ namespace Rot.Game {
             var report = this.game.tick();
 
             switch (report) {
-                case RlTickReport.Ev evReport:
+                case RlGameProgress.Ev evReport:
                     Nez.Debug.Log($"event: {evReport.ev?.ToString() ?? "<null>"}");
                     var anim = this.view.visualize(evReport.ev);
                     if (anim == null) {
@@ -32,18 +32,18 @@ namespace Rot.Game {
                         return animCtrl.beginOrParallelize(anim);
                     }
 
-                case RlTickReport.Actor actorReport:
+                case RlGameProgress.Actor actorReport:
                     var entity = actorReport.actor.Entity;
                     switch (actorReport.kind) {
-                        case RlTickReport.Actor.Kind.TakeTurn:
+                        case RlGameProgress.Actor.Kind.TakeTurn:
                             break;
 
-                        case RlTickReport.Actor.Kind.EndTurn:
+                        case RlGameProgress.Actor.Kind.EndTurn:
                             break;
                     }
                     return ControlResult.Continue;
 
-                case RlTickReport.Error errorReport:
+                case RlGameProgress.Error errorReport:
                     var message = errorReport.message;
                     Nez.Debug.Log("error: " + message);
                     // maybe avoids stack overflow
