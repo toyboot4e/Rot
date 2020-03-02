@@ -63,20 +63,11 @@ namespace Rot.Ui {
             }
         }
 
-        static Dictionary<KTerrain, uint[]> terrainChipMap = new Dictionary<KTerrain, uint[]> { //
-            { KTerrain.Door, new uint[] { 2, 29, 0 } },
-            { KTerrain.Floor, new uint[] { 2, 0, 0 } },
-            { KTerrain.Rock, new uint[] { 2, 16, 0 } },
-        };
-
-        static uint[] kTerrainToTileIds(KTerrain t) {
-            return terrainChipMap[t];
-        }
-
         // TODO: static map
         static TmxLayerTile[] kTerrainToTiles(TmxMap map, KTerrain t, int x, int y) {
             // FIXMEEEEEEEEEEEEE
-            return kTerrainToTileIds(t).Select(id => id <= 0 ? null : new TmxLayerTile(map, id, x, y))
+            return TiledMapSettings.Main.terrainMap[t]
+                .Select(id => id <= 0 ? null : new TmxLayerTile(map, id, x, y))
                 .ToArray();
         }
 

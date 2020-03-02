@@ -77,7 +77,7 @@ namespace Rot.Game {
                 entities.Add(enemyGen
                     .body(gen.randomPosInRoom(god.gameCx), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .viewWodi8(Content.Chips.Wodi8.Patched.Gremlin_black)
+                    .viewWodi8(Content.Chips.Pochi.Animals.Usagi02)
                     .performance(50, 10, 5)
                     .entity
                 );

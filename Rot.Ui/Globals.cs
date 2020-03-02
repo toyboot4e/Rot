@@ -1,7 +1,13 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Tweens;
+using Karcero.Engine; // DungeonGenerator
+using KCell = Karcero.Engine.Models.Cell;
+using KMap = Karcero.Engine.Models.Map<Karcero.Engine.Models.Cell>;
+using KTerrain = Karcero.Engine.Models.TerrainType;
+using KConf = Karcero.Engine.Models.DungeonConfiguration;
 
 namespace Rot.Ui {
     // TODO: remove it or make it data-driven
@@ -119,5 +125,15 @@ namespace Rot.Ui {
         public static string leftDown => "leftDown";
         public static string rightUp => "rigthUp";
         public static string rightDown => "rigthDown";
+    }
+
+    public static class TiledMapSettings {
+        public static class Main {
+            public static Dictionary<KTerrain, uint[]> terrainMap = new Dictionary<KTerrain, uint[]> { //
+                { KTerrain.Door, new uint[] { 2, 0, 0 } },
+                { KTerrain.Floor, new uint[] { 2, 0, 0 } },
+                { KTerrain.Rock, new uint[] { 2, 18, 0 } },
+            };
+        }
     }
 }
