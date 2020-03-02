@@ -6,7 +6,7 @@ I havn't found a complete solution, but my game is working under the following i
 
 == Engine - View separation
 
-We split the game into *Engine* and *UI.* Engine is the internal game state, UI is the other (input and view). When we `tick` the game state, it returns `RlGameProgress`, with which UI can pull enough context to visualize what happened.
+We split the game into *Engine* and *UI.* Engine is the internal game state, UI is the other (input and view). When we `tick` the `RlGameState`, it returns `RlGameProgress`, with which UI can pull enough context to visualize what happened.
 
 NOTE: The terminology is based on https://journal.stuffwithstuff.com/2014/07/15/a-turn-based-game-loop/[this blog post], but they don't directly apply to our project names; `Rot.Engine` is almost same as the internal game state, but `Rot.Ui` is a view/input component for the `Rot.Game` application, and they are the UI to the Engine.
 
@@ -20,12 +20,12 @@ We mutate the game by pushing `RlEvent` to the engine. `RlEvent` is not only pri
 
 === Layers of logics (https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern[Chain of Responsibility] pattern)
 
-When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity is able to become "dissy", they may walk in a random direction when they're in that state. We need to add that logic to the `Walk` event handling then. How should we achive it?
+When we add a new feature to the game, we may want to add some logic to existing action event handlings. For example, if an entity is able to become "dissy", they may walk in a random direction when they're in that state. Then how should we add that logic to the `Walk` event handling?
 
-Since we add more *extension* to the engine later, we don't want to write an action handling logic at *one place*. Instead, we collect each logic via `RlEventHub`, which dispatches *event handlers* depending on their `precedence`. This is a variant of the https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern[Chain of Responsibility] pattern.
+Since we add more *extensions* to the engine later, we don't want to write an action handling logic at *one place*. Instead, we collect each logic via `RlEventHub`, which dispatches *event handlers* depending on their `precedence`. This is a variant of the https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern[Chain of Responsibility] pattern.
 
 Logics are combined as `RlRule` s. `DissyRule` may affect other event handlings than `Walk` event.
 
-== Visualizing `RlEvent`s
+== Visualizing `RlEvent` s
 
 This is in progress. I have to dig in and find more details.
