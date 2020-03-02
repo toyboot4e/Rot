@@ -1,5 +1,8 @@
 = 7DRL 2020
 
-This is a repository for my https://7drl.com/[seven day roguelike challenge] during in 2020 from March 2nd to 8th.
+This is a repository for my https://7drl.com/[seven day roguelike challenge] during in 2020 from March 2nd to 8th. This repository contains:
 
-link:devlog[devlog] is contained in this repository.
+* link:devlog[devlog]
+* link:Docs/Architecture.adoc[Docs/Architecture.adoc]
+
+Note that you CAN'T compile this repository; it doesn't contain images and a class that enumerates those files.
