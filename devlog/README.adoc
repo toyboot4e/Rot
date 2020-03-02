@@ -8,5 +8,12 @@ It's first time for me to program a game, and I've been working on it around two
 
 image::img/0_fov.png[]
 
-Cute XD. So, in this challenge, I have to focus on the game content it self, and I've been thinking about it. Unfortunatelly, however, I'm not sure what I really want to pl
-y; now I have to be a better creater.
+Cute XD. So, in this challenge, I have to focus on the game content it self, and I've been thinking about it. Unfortunatelly, however, I'm not sure what I really want to play; now I have to be a better creater.
+
+== Day 1 (Mon March 2nd)
+
+For the first day, I just visualized game log.
+
+image::img/1_log.png[]
+
+pass:[..]well, that's all. Entities even don't have their names. It was just a bit of work, but I think it's OK for the first day.
