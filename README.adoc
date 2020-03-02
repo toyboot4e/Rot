@@ -1,0 +1,5 @@
+= 7DRL 2020
+
+This is a repository for my https://7drl.com/[seven day roguelike challenge] during March 2nd to 8th.
+
+link:devlog[devlog] is contained in this repository.
