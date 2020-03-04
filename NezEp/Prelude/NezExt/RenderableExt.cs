@@ -4,7 +4,7 @@ using Nez.Tweens;
 
 namespace NezEp.Prelude {
     public static class RenderableComponentExt {
-        public static T zCtx<T>(this T self, int layer, float depth) where T : RenderableComponent {
+        public static T zCx<T>(this T self, int layer, float depth) where T : RenderableComponent {
             self.SetRenderLayer(layer).SetLayerDepth(depth);
             return self;
         }

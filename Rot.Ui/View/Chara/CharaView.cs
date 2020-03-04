@@ -13,7 +13,7 @@ namespace Rot.Ui {
 
         public CharaView(Charachip chip) {
             this.chip = chip;
-            this.zCtx(Layers.Stage, Depths.Charachip);
+            this.zCx(Layers.Stage, Depths.Charachip);
         }
 
         #region impl RenderableComponent

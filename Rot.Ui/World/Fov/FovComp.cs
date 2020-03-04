@@ -27,7 +27,7 @@ namespace Rot.Ui {
         public override void OnAddedToEntity() {
             var e = this.Entity.Scene.CreateEntity(EntityNames.fovRenedrer);
             this.fovRenderer = e.add(new Shadow(this.fovFow, this.fovFow.fow, this.stage, this.map));
-            this.fovRenderer.zCtx(Layers.Stage, Depths.Fov);
+            this.fovRenderer.zCx(Layers.Stage, Depths.Fov);
 
             this.refresh();
         }

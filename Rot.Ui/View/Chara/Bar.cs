@@ -44,7 +44,7 @@ namespace Rot.Ui {
 
 		public override void OnAddedToEntity() {
 			this.setupBars();
-			this.zCtx(Layers.Stage, Depths.CharaGage);
+			this.zCx(Layers.Stage, Depths.CharaGage);
 		}
 
 		void setupBars() {
@@ -54,7 +54,7 @@ namespace Rot.Ui {
 				var(ninepatch, color) = def;
 				var barImg = new NineSliceSpriteRenderer(ninepatch);
 
-				barImg.zCtx(Layers.Stage, Depths.CharaGage).setEntity(this.Entity);
+				barImg.zCx(Layers.Stage, Depths.CharaGage).setEntity(this.Entity);
 				barImg.setSize(this.size).SetColor(color);
 				barImg.SetLocalOffset(new Vector2(-this.size.X / 2, posUtil.tileHeight / 2));
 

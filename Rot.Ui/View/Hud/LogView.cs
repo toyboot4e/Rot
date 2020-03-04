@@ -34,7 +34,7 @@ namespace Rot.Ui {
             for (int i = 0; i < nLabels; i++) {
                 this.labels[i] = this.entity
                     .add(new TextComponent())
-                    .zCtx(Layers.Screen, Depths.Log);
+                    .zCx(Layers.Screen, Depths.Log);
             }
 
             this.forceLayout();
