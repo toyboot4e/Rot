@@ -9,8 +9,8 @@ using KMap = Karcero.Engine.Models.Map<Karcero.Engine.Models.Cell>;
 using KTerrain = Karcero.Engine.Models.TerrainType;
 using KConf = Karcero.Engine.Models.DungeonConfiguration;
 
+// TODO: remove them or make 'em data-driven
 namespace Rot.Ui {
-    // TODO: remove it or make it data-driven
     /// <summary> Temporary class to detect hard-coded values </summary>
     public static class ViewPreferences {
         // FoV animations
@@ -43,8 +43,19 @@ namespace Rot.Ui {
         static float quickSwingDirDuration => 2f / 60f;
     }
 
-    public static class FixedSize {
-        public static int nMaxLog => 100;
+    public static class Constants {
+        public static int sizeOfLogStorage => 100;
+        public static int nLogLabel => 10;
+        public static int nLogLines => 4;
+    }
+
+    public static class Layouts {
+        public static LogView.Layout logLayout() {
+            return new LogView.Layout() {
+                offset = new Vector2(100, 700),
+                    delta = new Vector2(0, -20),
+            };
+        }
     }
 
     // TODO: remove the class and cache them
@@ -57,6 +68,7 @@ namespace Rot.Ui {
         public static string camera => "camera";
         public static string stair => "stair";
         public static string logView => "log-view";
+        public static string selectionView => "selection-view";
         // public static string
     }
 
@@ -77,7 +89,9 @@ namespace Rot.Ui {
         public static float Fov => 0.45f;
         public static float CharaGage => 0.4f;
         public static float DamageVal => 0.3f;
+        public static float Log => 0.28f;
         public static float Menu => 0.25f;
+        public static float SelectionMenu => 0.24f;
         public static float Hud => 0.2f;
         public static float Talk => 0.15f;
         public static float TitleScreen => 0.12f;
@@ -129,11 +143,19 @@ namespace Rot.Ui {
 
     public static class TiledMapSettings {
         public static class Main {
-            public static Dictionary<KTerrain, uint[]> terrainMap = new Dictionary<KTerrain, uint[]> { //
-                { KTerrain.Door, new uint[] { 2, 0, 0 } },
-                { KTerrain.Floor, new uint[] { 2, 0, 0 } },
-                { KTerrain.Rock, new uint[] { 2, 18, 0 } },
-            };
+            // TODO: make it data-driven
+            public static uint?[] terrainToTiles(KTerrain terrain) {
+                switch (terrain) {
+                    case KTerrain.Door:
+                        return new uint?[] { 2, null, null };
+                    case KTerrain.Floor:
+                        return new uint?[] { 2, null, null };
+                    case KTerrain.Rock:
+                        return new uint?[] { 2, 18, null };
+                    default:
+                        throw new System.Exception("TiledMapSettings.terrainToTiles");
+                }
+            }
         }
     }
 }

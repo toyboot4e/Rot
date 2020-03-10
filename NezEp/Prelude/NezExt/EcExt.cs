@@ -48,6 +48,7 @@ namespace NezEp.Prelude {
         }
 
         public static bool rm<T>(this Entity self) where T : Component => self.RemoveComponent<T>();
+        public static void rm<T>(this Entity self, T c) where T : Component => self.RemoveComponent(c);
         public static T get<T>(this Entity self) where T : Component => self.GetComponent<T>();
         public static T getOrAdd<T>(this Entity self) where T : Component, new() => self.GetComponent<T>() ?? self.AddComponent<T>();
         public static List<T> getAll<T>(this Entity self) where T : Component => self.GetComponents<T>();

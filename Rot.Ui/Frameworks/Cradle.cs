@@ -40,8 +40,10 @@ namespace Rot.Ui {
         protected virtual void onContextInjected() { }
 
         public abstract ControlResult update();
+        // push this / pop it
         public virtual void onEnter() { }
         public virtual void onExit() { }
+        // push another / pop it
         public virtual void onPause() { }
         public virtual void onResume() { }
     }

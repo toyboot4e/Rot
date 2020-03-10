@@ -5,4 +5,4 @@ This is a repository for my https://7drl.com/[seven day roguelike challenge] dur
 * link:devlog[devlog]
 * link:Docs/Architecture.adoc[Docs/Architecture.adoc]
 
-Note that you CAN'T compile this repository; it doesn't contain images and a class that enumerates those files.
+Note that you CAN'T compile this repository; it doesn't contain image files (and a class that enumerates them).

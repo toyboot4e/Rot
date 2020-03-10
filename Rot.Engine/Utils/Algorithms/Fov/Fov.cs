@@ -125,7 +125,7 @@ namespace Rot.Engine.Fov {
                 return (from, to);
             }
 
-            public static int maxColForRow(int row, int radius) {
+            static int maxColForRow(int row, int radius) {
                 return (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
             }
 

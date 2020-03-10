@@ -25,6 +25,7 @@ namespace Rot.Rules {
         }
 
         public IEnumerable<RlEvent> handle(RlEv.Stair stair) {
+            // TODO: use control
             this.gen.newFloor(this.god);
             yield break;
         }
