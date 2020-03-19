@@ -7,7 +7,7 @@
   "files.exclude": {
     "**/.[^v]*": true, // hide any files that start with a '.' but keep the .vscode folder
     "getFNA.sh": true,
-    "imgui.ini": true,
+    // "imgui.ini": true,
     "MonoGameContent.targets": true,
     "**/obj": true,
     "**/bin": true,
@@ -30,5 +30,16 @@
   "files.watcherExclude": {
     "**/Content/**": true,
     "**/CompiledContent/**": true
+  },
+  // ***** VSCode Format Rule *****
+  "csharpfixformat.sort.usings.order": "System Microsoft ImGuiNET Nez Rot",
+  "csharpfixformat.style.spaces.afterBracket": false,
+  "csharpfixformat.style.braces.onSameLine": true,
+  "csharpfixformat.style.spaces.removeAfterCommandBeforeParenthesis": "foreach",
+  "csharpfixformat.style.spaces.beforeIndexerBracket": false,
+  "csharpfixformat.style.spaces.beforeParenthesis": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "Leopotam.csharpfixformat"
+    // "editor.defaultFormatter": "Leopotam.csharpfixformat"
   },
 }

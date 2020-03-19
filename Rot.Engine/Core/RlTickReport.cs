@@ -2,11 +2,11 @@ namespace Rot.Engine {
     /// <summary>
     /// Provides enough information to observe what happened in the game after a tick
     /// </summary>
-    public abstract class RlTickReport {
+    public abstract class RlGameProgress {
         public static Error error(string message) => new Error(message);
         public static Ev event_(RlEvent ev) => new Ev(ev);
 
-        public class Error : RlTickReport {
+        public class Error : RlGameProgress {
             public string message;
 
             public Error(string message) {
@@ -14,7 +14,7 @@ namespace Rot.Engine {
             }
         }
 
-        public class Actor : RlTickReport {
+        public class Actor : RlGameProgress {
             public Kind kind;
             public Engine.RlActor actor;
 
@@ -32,7 +32,7 @@ namespace Rot.Engine {
             }
         }
 
-        public class Ev : RlTickReport {
+        public class Ev : RlGameProgress {
             public RlEvent ev;
 
             public Ev(RlEvent ev) {

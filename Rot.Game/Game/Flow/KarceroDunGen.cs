@@ -14,56 +14,26 @@ namespace Rot.Game {
 
         public void newFloor(StaticGod god) {
             KarceroDunGen.clearEnemies(god);
-            var fovFow = getPlayer(god).get<FovComp>().fovFow;
-            fovFow.clearAll();
+
+            getPlayer(god).get<FovComp>().fovFow.clearAll();
 
             this.genDungeon(god);
             this.genEnemies(god);
             this.genStair(god);
             this.placePlayer(god);
 
-            // reset scheduler
             // FIXME: do not be dependent on RotEntityList or provide a safe way
             (god.gameCx.entities as RotEntityList).setIndex(0);
         }
 
-        // FIXME: the hacks
-        void placePlayer(StaticGod god) {
-            // HACK: tag
-            var player = getPlayer(god);
-            var pos = gen.randomPosInsideRoom(god.gameCx);
-            // HACK: or invoke event
-            player.get<Body>().setPos(pos);
-            player.get<CharaView>().forceUpdatePos();
-            var playerFov = player.get<FovComp>();
-            playerFov.refresh();
-            Rules.PlayerFovRule.updateEntityVisiblitiesAll(god.scene, playerFov.fovFow);
-            // HACK to update camera
-            // TODO: move camera at once
-            var camera = god.scene.FindEntity(EntityNames.camera)?.get<FollowCamera>();
-            if (camera != null) {
-                (camera.setEntity(player) as IUpdatable).Update();
-            }
-        }
-
+        #region gen
         public void genDungeon(StaticGod god) {
             this.gen = new KarceroTiledGenerator();
-            // FIXME: Karcero's coordinates begins with zero, so we have to consider about it
-            this.gen.generate(god.tiled.Width - 1, god.tiled.Height - 1);
+            // this.gen.genWithDefaultConfig(god.tiled.Width - 1, god.tiled.Height - 1);
+            // TODO: remove the margin
+            this.gen.genWithDefaultConfig(god.tiled.Width - 1, god.tiled.Height - 1);
+            // this.gen.genWithDefaultConfig(god.tiled.Width, god.tiled.Height);
             this.gen.copyToTiled(god.tiled);
-        }
-
-        /// <summary> Delete entities without player tag </summary>
-        public static void clearEnemies(StaticGod god) {
-            var entities = god.gameCx.entities;
-
-            for (int i = 0; i < entities.Count; i++) {
-                var entity = entities[i];
-                if (entity.has<Player>()) continue;
-                entities.Remove(entity);
-                i--;
-                entity.Destroy();
-            }
         }
 
         public void genEnemies(StaticGod god) {
@@ -77,7 +47,7 @@ namespace Rot.Game {
                 entities.Add(enemyGen
                     .body(gen.randomPosInRoom(god.gameCx), Dir9.random(), true, false)
                     .actor(new Beh.RandomWalk(enemyGen.entity), 3)
-                    .viewWodi8(Content.Chips.Wodi8.Patched.Gremlin_black)
+                    .viewWodi8(Content.Chips.Pochi.Animals.Usagi02)
                     .performance(50, 10, 5)
                     .entity
                 );
@@ -98,5 +68,40 @@ namespace Rot.Game {
                 .entity
             );
         }
+
+        // FIXME: the hacks
+        void placePlayer(StaticGod god) {
+            // HACK: tag
+            var player = getPlayer(god);
+            var pos = gen.randomPosInsideRoom(god.gameCx);
+            // HACK: or invoke event
+            player.get<Body>().setPos(pos);
+            player.get<CharaView>().forceUpdatePos();
+            var playerFov = player.get<FovComp>();
+            playerFov.refresh();
+            Rules.PlayerFovRule.updateEntityVisiblitiesAll(god.scene, playerFov.fovFow);
+            // HACK to update camera
+            // TODO: move camera at once
+            var camera = god.scene.FindEntity(EntityNames.camera)?.get<FollowCamera>();
+            if (camera != null) {
+                (camera.setEntity(player) as IUpdatable).Update();
+            }
+        }
+        #endregion
+
+        #region clear
+        /// <summary> Delete entities without player tag </summary>
+        public static void clearEnemies(StaticGod god) {
+            var entities = god.gameCx.entities;
+
+            for (int i = 0; i < entities.Count; i++) {
+                var entity = entities[i];
+                if (entity.has<Player>()) continue;
+                entities.Remove(entity);
+                i--;
+                entity.Destroy();
+            }
+        }
+        #endregion
     }
 }

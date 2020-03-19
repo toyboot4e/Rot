@@ -36,6 +36,8 @@ namespace Rot.Game.Debug {
             s.AppendLine($"camera: {camera.Position}");
             s.AppendLine($"mouse_screen: {input.mousePos}");
             s.AppendLine($"cell: {cellPos} {blockChar}");
+            s.AppendLine($"anim_cur: {god.ctrlCx.cradle.get<AnimationControl>().current}");
+            s.AppendLine($"anim_par: {god.ctrlCx.cradle.get<AnimationControl>().current}");
             var xs = Dir9.clockwise.Select(d =>
                 $"{d}: " + (logic.isDiagonallyPassingForEntity(
                     new Vec2i(cellPos.X, cellPos.Y),

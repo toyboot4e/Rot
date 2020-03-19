@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using Nez;
 using Rot.Engine;
 using RlEv = Rot.RlEv;
 using NezEp.Prelude;
@@ -32,7 +30,7 @@ namespace Rot.Rules {
             var nextDir = walk.dir;
             var nextPos = body.pos + nextDir.vec;
 
-            yield return RlEv.DirChange.turn(walk.entity, walk.dir);
+            // yield return RlEv.DirChange.turn(walk.entity, walk.dir);
             yield return new RlEv.PosChange(walk.entity, prevPos, nextPos, cause);
         }
     }

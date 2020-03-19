@@ -26,7 +26,7 @@ namespace Rot.Engine.Fov {
         int radius();
     }
 
-    // used for fov rendering
+    // used to get data for fov rendering
     public interface iFovDiff {
         // light := camSee(x, y) ? (new Vec2i(x, y) - offset).lenF / radius : 0
         (bool, float) prevLight(int x, int y);
@@ -48,11 +48,11 @@ namespace Rot.Engine.Fov {
         public static Vec2i operator *(Vec2i v, int c) => new Vec2i(v.x * c, v.y * c);
         public static Vec2i operator +(Vec2i v1, Vec2i v2) => new Vec2i(v1.x + v2.x, v1.y + v2.y);
         public static Vec2i operator -(Vec2i v1, Vec2i v2) => new Vec2i(v1.x - v2.x, v1.y - v2.y);
-
+        public static Vec2i fromTuple((int, int) t) => new Vec2i(t.Item1, t.Item2);
         public override string ToString() => $"({x}, {y})";
     }
 
-    // Clockwise from zero oclock
+    // Clockwise from zero o'clock
     public enum Octant {
         A,
         B,
@@ -80,13 +80,13 @@ namespace Rot.Engine.Fov {
                 ((-1, 0), (0, -1)),
                 ((0, -1), (-1, 0)),
             }
-            .Select(vs => (new Vec2i(vs.Item1.Item1, vs.Item1.Item2), new Vec2i(vs.Item2.Item1, vs.Item2.Item2)))
+            .Select(vs => (Vec2i.fromTuple(vs.Item1), Vec2i.fromTuple(vs.Item2)))
             .ToArray();
     }
     #endregion
 
-    public static class Scanner<Fov, Map> where Fov : iFovWrite where Map : iOpacityMap {
-        public static void refresh(Fov fov, Map map, int originX, int originY, int radius) {
+    public static class Scanner<TFov, TMap> where TFov : iFovWrite where TMap : iOpacityMap {
+        public static void refresh(TFov fov, TMap map, int originX, int originY, int radius) {
             fov.onRefresh(radius, originX, originY);
 
             var cx = new ScanContext {
@@ -103,9 +103,9 @@ namespace Rot.Engine.Fov {
         }
 
         /// <summary> Shared input among scanners </summary>
-        public class ScanContext {
-            public Map map;
-            public Fov fov;
+        class ScanContext {
+            public TMap map;
+            public TFov fov;
             public Vec2i origin;
             public int radius;
 
@@ -114,46 +114,7 @@ namespace Rot.Engine.Fov {
             }
         }
 
-        // TODO: make it an object so that it can be replaced
-        static class Rule {
-            /// <summary> Range of columns in a row to scan through; [from, to] </summary>
-            public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
-                int from = (int) Math.Ceiling(startSlope * row);
-                int to = Math.Min(
-                    (int) Math.Floor(endSlope * row),
-                    Rule.maxColForRow(row, radius));
-                return (from, to);
-            }
-
-            public static int maxColForRow(int row, int radius) {
-                return (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
-            }
-
-            // [rectangle block model]
-            /// <summary> Called after scanning opaque cells </summary>
-            /// <remark> Minimum to 1f is required to consider positions such as (1, 1) </remark>
-            public static float updateStartSlope(int col, int row) => Math.Min(1f, (col + 0.5f) / (row - 0.5f));
-            /// <summary> Called when splitting a scan </summary>
-            public static float updateEndSlope(int col, int row) => (col - 0.5f) / (row + 0.5f);
-
-            // [diagnonal block model]
-            // /// <summary> Called after scanning opaque cells </summary>
-            // public static float updateStartSlope(int col, int row) => (col - 0.5f) / row;
-            // /// <summary> Called when splitting a scan </summary>
-            // public static float updateEndSlope(int col, int row) => (col - 0.5f) / row;
-
-            /// <summary>
-            /// Used to scan cells whose center are not in the range but one of whose vertex may hide following cells
-            /// </summary>
-            public static int colForSlopePermissive(float slope, int row, int radius) {
-                return Math.Min(
-                    Rule.maxColForRow(row, radius),
-                    (int) Math.Ceiling(slope * (row + 0.5) - 0.500001f));
-                // We reduced (0.5f + small_amount) not to include a vertex on an `endSlope` e.g. (row, col) = (1, 1),
-            }
-        }
-
-        public struct OctantScanner {
+        struct OctantScanner {
             Vec2i colUnit;
             Vec2i rowUnit;
             float startSlope;
@@ -213,7 +174,7 @@ namespace Rot.Engine.Fov {
                     // skip points out of the map
                     if (!cx.map.contains(pos.x, pos.y)) return false;
 
-                    // scan the cell
+                    // scan the cell and may take an action based on the state transition:
                     // state \ found  | opaque cell  | transparent cell
                     //
                     // Initial        | (none)       | (none)
@@ -252,6 +213,45 @@ namespace Rot.Engine.Fov {
 
                 // finish the scan if we ended with an opaque cell
                 return state != RowScanState.WasTransparent;
+            }
+        }
+
+        // TODO: make it an object so that it can be replaced
+        static class Rule {
+            /// <summary> Range of columns in a row to scan through; [from, to] </summary>
+            public static(int, int) colRangeForRow(int row, int radius, float startSlope, float endSlope) {
+                int from = (int) Math.Ceiling(startSlope * row);
+                int to = Math.Min(
+                    (int) Math.Floor(endSlope * row),
+                    Rule.maxColForRow(row, radius));
+                return (from, to);
+            }
+
+            static int maxColForRow(int row, int radius) {
+                return (int) Math.Sqrt((radius + 0.5) * (radius + 0.5) - row * row);
+            }
+
+            // [rectangle block model]
+            /// <summary> Called after scanning opaque cells </summary>
+            /// <remark> Minimum to 1f is required to consider positions such as (1, 1) </remark>
+            public static float updateStartSlope(int col, int row) => Math.Min(1f, (col + 0.5f) / (row - 0.5f));
+            /// <summary> Called when splitting a scan </summary>
+            public static float updateEndSlope(int col, int row) => (col - 0.5f) / (row + 0.5f);
+
+            // [diagnonal block model]
+            // /// <summary> Called after scanning opaque cells </summary>
+            // public static float updateStartSlope(int col, int row) => (col - 0.5f) / row;
+            // /// <summary> Called when splitting a scan </summary>
+            // public static float updateEndSlope(int col, int row) => (col - 0.5f) / row;
+
+            /// <summary>
+            /// Used to scan cells whose center are not in the range but one of whose vertex may hide following cells
+            /// </summary>
+            public static int colForSlopePermissive(float slope, int row, int radius) {
+                return Math.Min(
+                    Rule.maxColForRow(row, radius),
+                    (int) Math.Ceiling(slope * (row + 0.5) - 0.500001f));
+                // We reduced (0.5f + small_amount) uot to include a vertex on an `endSlope` e.g. (row, col) = (1, 1),
             }
         }
     }

@@ -1,0 +1,48 @@
+#!/bin/bash -euE
+
+cd "$(dirname "${0}")"
+
+_SLN=Rot.Game.sln
+_PRJ=Rot.Game
+_CONTENT='Rot.Data/T4/ContentPath.cs'
+
+_content() {
+  ./pathgen > "${_CONTENT}" &
+  cd "${_PRJ}"
+  msbuild /t:BuildContent
+  cd ../
+}
+
+_build() {
+  msbuild "${_SLN}" "/p:configuration=Debug" "/p:platform=Any CPU" "/t:build"
+}
+
+_run() {
+  env "DYLD_LIBRARY_PATH=$(pwd)/${_PRJ}/bin/Debug/osx/" mono "$(pwd)/${_PRJ}/bin/Debug/${_PRJ}.exe"
+}
+
+_cmd="${1}"
+shift 1
+
+_main() {
+    case "${_cmd}" in
+        'b')
+            _content "$@" &
+            _build "$@" ;;
+        'c')
+            _content "$@" ;;
+        'r')
+            _run "$@" ;;
+        'a')
+            _content "$@" &
+            _build "$@"
+            _run "$@" ;;
+        'path')
+            cd "$(dirname "$0")"
+            ./scripts/pathgen ;;
+        *)
+            echo 'no matching command' ;;
+    esac
+}
+
+_main "$@"

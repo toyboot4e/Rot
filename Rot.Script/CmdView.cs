@@ -84,16 +84,16 @@ namespace Rot.Script.View {
             textRenderer
                 .SetOriginNormalized(new Vector2(0.5f, 0.5f))
                 .SetLocalOffset(textPos)
-                .zCtx(Layers.Stage, Depths.Talk - Depths._inc * 2);
+                .zCx(Layers.Stage, Depths.Talk - Depths._inc * 2);
 
             winRenderer
                 .setSize(winWidth, winHeight)
                 .SetLocalOffset(textPos)
-                .zCtx(Layers.Stage, Depths.Talk);
+                .zCx(Layers.Stage, Depths.Talk);
 
             baloonRenderer
                 .SetLocalOffset(balloonPos)
-                .zCtx(Layers.Stage, Depths.Talk - Depths._inc);
+                .zCx(Layers.Stage, Depths.Talk - Depths._inc);
 
             // ***** animate *****
             var anim = new Ui.Anim.Seq();

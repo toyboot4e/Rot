@@ -10,20 +10,24 @@ namespace Rot.Ui {
         public virtual bool isFinished { get; }
         public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
         System.Action<Animation> onEndAction;
+        public Animation chainning;
 
         public Animation setKind(AnimationKind kind) {
             this.kind = kind;
             return this;
         }
 
-        /// <summary> Called when started playing </summary>
-        public virtual void play() { }
-        /// <summary> Called to play the animation </summary>
-        public virtual void update() {
+        public virtual void onStart() { }
+        public virtual bool update() {
+            this.onUpdate();
             if (this.isFinished) {
                 this.onEnd();
+                return true;
+            } else {
+                return false;
             }
         }
+        protected virtual void onUpdate() { }
         public virtual void onClear() { }
         public virtual void onEnd() {
             this.onEndAction?.Invoke(this);
@@ -34,13 +38,19 @@ namespace Rot.Ui {
         }
 
         public static IEnumerable createProcess(Animation anim) {
-            anim.play();
+            anim.onStart();
             anim.update();
             while (!anim.isFinished) {
                 yield return null;
                 anim.update();
             }
             anim.onClear();
+        }
+
+        // TODO: enable channing more than one animation
+        public Animation chain(Animation next) {
+            this.chainning = next;
+            return this;
         }
     }
 
@@ -58,7 +68,7 @@ namespace Rot.Ui.Anim {
         public Wait(float duration) {
             this.duration = duration;
         }
-        public override void update() {
+        protected override void onUpdate() {
             this.duration -= Time.DeltaTime;
             base.update();
         }
@@ -71,7 +81,7 @@ namespace Rot.Ui.Anim {
             this.input = input;
             this.keys = keys;
         }
-        public override void update() {
+        protected override void onUpdate() {
             for (int i = 0; i < keys.Length; i++) {
                 var key = this.keys[i];
                 if (this.input.consume(key)) {
@@ -97,15 +107,19 @@ namespace Rot.Ui.Anim {
         bool isStarted;
         public override bool isFinished => this.isStarted && !this.tween.IsRunning();
 
-        public override void play() {
+        public override void onStart() {
+            if (this.tween == null) throw new System.Exception("A!");
             this.tween.Start();
-            // HACK: this enables tweens to be started at once
+            // FIXME: this hack enables tweens to be started at once
             this.tween.Tick();
             this.isStarted = true;
         }
     }
 
-    /// <summary> Plays all the animation at once. Finishes when all of them is done. </summary>
+    /// <summary>
+    /// Accumulates animations and play them at once.
+    /// Finishes when all of them is
+    /// </summary>
     public class Parallel : Animation {
         public List<Animation> anims { get; private set; }
 
@@ -116,20 +130,20 @@ namespace Rot.Ui.Anim {
         public override bool isFinished => _isFinished;
         bool _isFinished;
 
-        public override void update() {
+        protected override void onUpdate() {
             this._isFinished = true;
             for (int i = 0; i < this.anims.Count; i++) {
                 var anim = this.anims[i];
+                if (anim.isFinished) continue;
                 anim.update();
                 this._isFinished &= anim.isFinished;
             }
-            base.update();
         }
 
-        public override void play() {
+        public override void onStart() {
             for (int i = 0; i < this.anims.Count; i++) {
                 var anim = this.anims[i];
-                anim.play();
+                anim.onStart();
             }
         }
 
@@ -159,22 +173,18 @@ namespace Rot.Ui.Anim {
             get => this.index >= this.anims.Count;
         }
 
-        bool incIndex() {
-            this.index++;
-            return !this.isFinished;
-        }
-
-        public override void update() {
+        protected override void onUpdate() {
             if (this.isFinished) {
                 return;
             }
 
             var anim = this.anims[this.index];
             anim.update();
-            // play next animation if it's finished
-            while (anim.isFinished && this.incIndex()) {
+
+            // go to next animation
+            while (anim.isFinished && ++this.index < this.anims.Count) {
                 anim = this.anims[this.index];
-                anim.play();
+                anim.onStart();
                 anim.update();
                 continue; // process all one shot animations
             }
@@ -182,8 +192,8 @@ namespace Rot.Ui.Anim {
             base.update();
         }
 
-        public override void play() {
-            this.anims[this.index].play();
+        public override void onStart() {
+            this.anims[this.index].onStart();
         }
 
         public void clear() {
@@ -191,7 +201,7 @@ namespace Rot.Ui.Anim {
             this.index = 0;
         }
 
-        public Seq chain(params Animation[] anims) {
+        public Seq chainSeq(params Animation[] anims) {
             for (int i = 0; i < anims.Length; i++) {
                 this.anims.Add(anims[i]);
             }

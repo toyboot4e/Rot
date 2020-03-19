@@ -33,7 +33,7 @@ namespace Rot.Game {
             return factory
                 .body(new Vec2i(7, 7), Dir9.S, true, false)
                 .actor(new Engine.Beh.Player(factory.entity), 3)
-                .viewWodi8(Content.Chips.Wodi8.Chicken)
+                .viewWodi8(Content.Chips.Pochi.Animals.Kuma04)
                 .add(new FovComp(stage, map))
                 .performance(50, 10, 5)
                 .add(new Player());

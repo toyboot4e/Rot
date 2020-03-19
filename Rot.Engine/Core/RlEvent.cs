@@ -4,6 +4,7 @@ using Rot.Engine;
 namespace Rot.Engine {
     /// <summary> What happened in the game. Handled by a System and may be a next event is produced. </summary>
     public abstract class RlEvent {
+        // shall we put actor here?
         /// <summary> Hack to return handling result </summary>
         public bool consumesTurn = true;
     }

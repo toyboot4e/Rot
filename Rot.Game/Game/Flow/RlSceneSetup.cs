@@ -55,7 +55,7 @@ namespace Rot.Game {
                 var tiledComp = tiledEntity
                     // .add(new TiledMapRenderer(tiled, collisionLayerName: "collision"))
                     .add(new TiledMapRenderer(god.tiled))
-                    .zCtx(layer: Layers.Stage, depth: Depths.Stage);
+                    .zCx(layer: Layers.Stage, depth: Depths.Stage);
 
                 // restore all contexts
                 god.posUtil = new PosUtil(god.tiled, god.scene.Camera);

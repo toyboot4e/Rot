@@ -1,0 +1,5 @@
+= Rot
+
+A to-be GUI roguelike game made with https://github.com/prime31/Nez[Nez].
+
+Note that you cannot compile this repository; it doesn't contain resource files & a class that points them.

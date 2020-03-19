@@ -23,7 +23,7 @@ namespace Rot.Ui {
 
         internal static Charachip wodi8(Entity entity, PosUtil posUtil, Texture2D texture) {
             var chip = new Charachip(entity, posUtil);
-            chip.anim = animForWodi8(texture).zCtx(Layers.Stage, Depths.Charachip).setEntity(entity);
+            chip.anim = animForWodi8(texture).zCx(Layers.Stage, Depths.Charachip).setEntity(entity);
             return chip;
         }
 
