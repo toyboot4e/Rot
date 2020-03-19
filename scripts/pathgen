@@ -1,0 +1,54 @@
+#!/bin/bash -euE
+
+IFS=$'\n\t'
+
+# the root
+cd "$(dirname "${0}")"
+cd ../
+
+# directory that contains `Content`
+cd Rot.Game
+
+_add_indent() {
+    for __ in $(seq ${1}) ; do
+        printf '    '
+    done
+}
+
+_standarize() {
+    _name="${1}"
+    printf "${_name}" | sed 's/^static/@Static/g' | gsed 's/.*/\u&/' | sed 's/\..*$//g'
+}
+
+_rec_dir() {
+    local _dir="${1}"
+    cd "${_dir}"
+    local _indent="${2}"
+    local _basepath="${3}"
+
+    echo "$(_add_indent "${_indent}")public class ${_dir} {"
+    _indent=$(($_indent+1))
+
+    # print files
+    for __file in $(fd -t f -d 1) ; do
+        _add_indent "${_indent}"
+        local _name="$(_standarize "${__file}")"
+        printf 'public static readonly string '
+        printf "${_name} = "\"
+        printf "${_basepath}/${__file}" # | sed "s;^Content/;;g" | tr -d '\n'
+        echo \"\;
+    done
+
+    # recursively print directories
+    for __dir in $(fd -t d -d 1) ; do
+        _rec_dir "${__dir}" "$(($_indent))" "${_basepath}/${__dir}"
+    done
+
+    echo "$(_add_indent "$((${_indent}-1))")}"
+    cd ../
+}
+
+echo 'namespace Nez {'
+_rec_dir Content 1 Content
+echo '}'
+
