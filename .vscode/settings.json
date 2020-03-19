@@ -7,7 +7,7 @@
   "files.exclude": {
     "**/.[^v]*": true, // hide any files that start with a '.' but keep the .vscode folder
     "getFNA.sh": true,
-    "imgui.ini": true,
+    // "imgui.ini": true,
     "MonoGameContent.targets": true,
     "**/obj": true,
     "**/bin": true,

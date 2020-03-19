@@ -36,6 +36,7 @@ namespace Rot.Game {
                 // TODO: change font of ImGUI
                 var options = new ImGuiOptions().AddFont(Nez.Content.Fonts.Arial24, 24);
                 var imGuiManager = new ImGuiManager(options);
+                imGuiManager.ShowSeperateGameWindow = false;
                 Core.RegisterGlobalManager(imGuiManager);
                 ImGui.GetStyle().Alpha = 0.75f;
             }
