@@ -1,8 +1,5 @@
-= 7DRL 2020
+= Rot
 
-This is a repository for my https://7drl.com/[seven day roguelike challenge] during in 2020 from March 2nd to 8th. This repository contains:
+A to-be GUI roguelike game made with https://github.com/prime31/Nez[Nez].
 
-* link:devlog[devlog]
-* link:Docs/Architecture.adoc[Docs/Architecture.adoc]
-
-Note that you CAN'T compile this repository; it doesn't contain image files (and a class that enumerates them).
+Note that you cannot compile this repository; it doesn't contain resource files & a class that points them.
