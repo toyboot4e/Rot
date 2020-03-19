@@ -47,18 +47,22 @@ namespace Rot.Rules {
             var controller = new EntityController(ctrl.entity);
             var cradle = this.ctx.cradle;
 
+            { // stop the game if there any animations
+                // bool anyAnim = cradle.get<AnimationControl>().beginParallelizedIfAny();
+                bool anyAnim = cradle.get<AnimationControl>().anyParallel();
+                if (anyAnim) yield return new RlEv.PlayAnim();
+            }
+
             while (true) {
-                cradle
-                    .get<PlayerControl>()
-                    .setController(controller);
+                controller.resetAction();
+                cradle.get<PlayerControl>().setController(controller);
+                cradle.push<PlayerControl>();
 
-                cradle
-                    .push<PlayerControl>();
-
-                // FIXME: hack for stopping
-                cradle
-                    .get<AnimationControl>()
-                    .beginParallelIfAny();
+                { // FIXME: hack to stop the game if there any animations
+                    // bool anyAnim = cradle.get<AnimationControl>().beginParallelizedIfAny();
+                    bool anyAnim = cradle.get<AnimationControl>().anyParallel();
+                    if (anyAnim) yield return new RlEv.PlayAnim();
+                }
 
                 // Let user decide action of the actor
                 while (!controller.isDecided) {
@@ -67,10 +71,7 @@ namespace Rot.Rules {
 
                 yield return controller.action;
 
-                if (controller.action.consumesTurn) {
-                    break;
-                }
-                controller.resetAction();
+                if (controller.action.consumesTurn) break;
             }
         }
 
