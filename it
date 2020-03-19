@@ -1,14 +1,28 @@
-#!/bin/bash -euE
+#!/usr/bin/env bash -euE
 
+# go to the root of the solution
 cd "$(dirname "${0}")"
 
-_SLN=Rot.Game.sln
-_PRJ=Rot.Game
-_CONTENT='Rot.Data/T4/ContentPath.cs'
+# configurations
+_SLN='Rot.Game.sln'
+_CONTENT_ROOT='Rot.Game'
+_PATH_OUTPUT='Rot.Data/T4/ContentPath.cs'
+
+_help() {
+    cat <<FIN
+it is the main interface of script utilities (macOS only)
+
+content  build content
+build    build content & source
+run      just run the compiled application
+all      build and then run
+path     just print the content paths
+FIN
+}
 
 _content() {
-  ./pathgen > "${_CONTENT}" &
-  cd "${_PRJ}"
+  ./pathgen > "${_PATH_OUTPUT}" &
+  cd "${_CONTENT_ROOT}"
   msbuild /t:BuildContent
   cd ../
 }
@@ -18,28 +32,30 @@ _build() {
 }
 
 _run() {
-  env "DYLD_LIBRARY_PATH=$(pwd)/${_PRJ}/bin/Debug/osx/" mono "$(pwd)/${_PRJ}/bin/Debug/${_PRJ}.exe"
+  env "DYLD_LIBRARY_PATH=$(pwd)/${_CONTENT_ROOT}/bin/Debug/osx/" mono "$(pwd)/${_CONTENT_ROOT}/bin/Debug/${_CONTENT_ROOT}.exe"
 }
+
+[ $# -eq 0 ] && _help && exit 0
 
 _cmd="${1}"
 shift 1
 
 _main() {
     case "${_cmd}" in
-        'b')
+        'b' | 'build')
             _content "$@" &
             _build "$@" ;;
-        'c')
+        'c' | 'content')
             _content "$@" ;;
-        'r')
+        'r' | 'run')
             _run "$@" ;;
-        'a')
-            _content "$@" &
+        'a' | 'all')
             _build "$@"
             _run "$@" ;;
-        'path')
-            cd "$(dirname "$0")"
+        'p' | 'path')
             ./scripts/pathgen ;;
+        'h' | 'help')
+            _help ;;
         *)
             echo 'no matching command' ;;
     esac

@@ -1,0 +1,5 @@
+# Rot.Data
+
+Provides resources whose paths enumerated at `Nez.Content` (by `:/it`). May be hot swappable someday.
+
+WARNING: Images in this repository are **not commited** inspite of their use.

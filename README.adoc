@@ -2,4 +2,13 @@
 
 A to-be GUI roguelike game made with https://github.com/prime31/Nez[Nez].
 
-Note that you cannot compile this repository; it doesn't contain resource files & a class that points them.
+Note that you cannot compile this repository; it doesn't contain resource files & a class that points them generated with `./it content`.
+
+== Repository layout
+
+It's assumued that https://github.com/FNA-XNA/FNA[FNA] and http://fna.flibitijibibo.com/archive/[fnalibs] are located at the root.
+
+* `Rot.Xxx`: Components of the game
+* `NezEp`: Provides extensions and utilities around Nez
+* `it`: The main interface of script utilities (macOS only)
+* `Docs`: Explains the game program

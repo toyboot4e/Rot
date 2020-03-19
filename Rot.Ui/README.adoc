@@ -1,0 +1,5 @@
+# Rot.Ui
+
+Control, input and view component of the game.
+
+Dependencies: `Frameworks` <- `View` <- `World`
