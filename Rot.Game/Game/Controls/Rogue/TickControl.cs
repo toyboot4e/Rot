@@ -17,7 +17,7 @@ namespace Rot.Game {
         }
 
         public override ControlResult update() {
-            TICK : var report = this.game.tick();
+            var report = this.game.tick();
 
             // currently, the game stops with InputEvent (as a HACK)
 

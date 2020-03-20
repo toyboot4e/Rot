@@ -63,6 +63,8 @@ namespace Rot.Ui {
                     Nez.Debug.Log($"Given null as an animation for a command of type `{view.GetType()}` by `{view}`");
                     continue;
                 }
+
+                // play the animation
                 foreach(var _ in Animation.createProcess(anim)) {
                     yield return null;
                 }

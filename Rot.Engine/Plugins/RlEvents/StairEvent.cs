@@ -2,7 +2,7 @@ using Nez;
 using Rot.Engine;
 
 namespace Rot.RlEv {
-    /// <summary> To be handled outside engine </summary>
+    /// <summary> Emitted by <c>OnWalkRules</c>, handled outside engine </summary>
     public class Stair : RlEvent {
         public Entity stair;
         public Kind kind;

@@ -21,10 +21,10 @@ FIN
 }
 
 _content() {
-  ./pathgen > "${_PATH_OUTPUT}" &
   cd "${_CONTENT_ROOT}"
   msbuild /t:BuildContent
   cd ../
+  ./pathgen > "${_PATH_OUTPUT}"
 }
 
 _build() {
@@ -50,6 +50,7 @@ _main() {
         'r' | 'run')
             _run "$@" ;;
         'a' | 'all')
+            _content "$@" &
             _build "$@"
             _run "$@" ;;
         'p' | 'path')
