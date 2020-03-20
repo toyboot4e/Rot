@@ -44,7 +44,7 @@ namespace Rot.Ui.View {
 
         Anim visualize(RlEv.GiveDamage damage) {
             var entity = damage.entity;
-            var bar = entity.get<HpBar>();
+            var bar = entity.get<CharaView>()?.bar;
             if (bar == null) return null;
 
             var hp = entity.get<Performance>().hp;
@@ -53,6 +53,7 @@ namespace Rot.Ui.View {
 
             // TODO: add non-blocking animations and play them explicitly
             bar.barAnimTween(preRatio, newRatio).Start();
+
             return null;
         }
 
