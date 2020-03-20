@@ -3,6 +3,7 @@
 
 IFS=$'\n\t'
 source "$(dirname "$0")/_configure"
+_REQUIRE fd
 
 _NAME_SPACE=Nez
 

@@ -28,11 +28,15 @@ _content() {
 }
 
 _build() {
+    _REQUIRE msbuild
+
     cd "${_ROOT}"
     msbuild "${_SLN}" "/p:configuration=Debug" "/p:platform=Any CPU" "/t:build"
 }
 
 _run() {
+    _REQUIRE mono
+
     cd "${_ROOT}"
     env "DYLD_LIBRARY_PATH=${_ROOT}/${_EXEC_PROJ}/bin/Debug/osx/" mono "${_ROOT}/${_EXEC_PROJ}/bin/Debug/${_EXEC_PROJ}.exe"
 }
