@@ -22,7 +22,7 @@ _content() {
     # cd "${_ROOT}/${_CONTENT_PROJ}"
     # msbuild /t:BuildContent
 
-    _tmp="$(mktemp /tmp/it_content_file)"
+    _tmp=/tmp/it_content_file_xxx
     _RUN pathgen > "${_tmp}"
     mv "${_tmp}" "${_ROOT}/${_CONTENT_DEST}"
 }
