@@ -1,12 +1,9 @@
 #!/usr/bin/env bash -euE
+# provides the main interface of the script utilities
+# dependent on ./scripts/_confiture
 
-# go to the root of the solution
-cd "$(dirname "${0}")"
-
-# configurations
-_SLN='Rot.Game.sln'
-_CONTENT_ROOT='Rot.Game'
-_PATH_OUTPUT='Rot.Data/T4/ContentPath.cs'
+IFS=$'\n\t'
+source "$(dirname "$0")/scripts/_configure"
 
 _help() {
     cat <<FIN
@@ -21,26 +18,31 @@ FIN
 }
 
 _content() {
-  cd "${_CONTENT_ROOT}"
-  msbuild /t:BuildContent
-  cd ../
-  ./pathgen > "${_PATH_OUTPUT}"
+    # xnb files (not handled)
+    # cd "${_ROOT}/${_CONTENT_PROJ}"
+    # msbuild /t:BuildContent
+
+    _tmp="$(mktemp /tmp/it_content_file)"
+    _RUN pathgen > "${_tmp}"
+    mv "${_tmp}" "${_ROOT}/${_CONTENT_DEST}"
 }
 
 _build() {
-  msbuild "${_SLN}" "/p:configuration=Debug" "/p:platform=Any CPU" "/t:build"
+    cd "${_ROOT}"
+    msbuild "${_SLN}" "/p:configuration=Debug" "/p:platform=Any CPU" "/t:build"
 }
 
 _run() {
-  env "DYLD_LIBRARY_PATH=$(pwd)/${_CONTENT_ROOT}/bin/Debug/osx/" mono "$(pwd)/${_CONTENT_ROOT}/bin/Debug/${_CONTENT_ROOT}.exe"
+    cd "${_ROOT}"
+    env "DYLD_LIBRARY_PATH=${_ROOT}/${_EXEC_PROJ}/bin/Debug/osx/" mono "${_ROOT}/${_EXEC_PROJ}/bin/Debug/${_EXEC_PROJ}.exe"
 }
 
 [ $# -eq 0 ] && _help && exit 0
 
-_cmd="${1}"
-shift 1
-
 _main() {
+    _cmd="${1}"
+    shift 1
+
     case "${_cmd}" in
         'b' | 'build')
             _content "$@" &
@@ -58,7 +60,7 @@ _main() {
         'h' | 'help')
             _help ;;
         *)
-            echo 'no matching command' ;;
+            echo "no matching command: \`${_cmd}\`" ;;
     esac
 }
 
