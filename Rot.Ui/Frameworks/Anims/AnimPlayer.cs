@@ -1,20 +1,20 @@
 namespace Rot.Ui {
     public class AnimPlayer {
-        public Animation anim;
-        public Anim.Parallel parallels;
+        public Anim anim;
+        public AnimVariants.Parallel parallels;
 
         public AnimPlayer() {
-            this.parallels = new Anim.Parallel();
+            this.parallels = new AnimVariants.Parallel();
         }
 
         /// <summary> Returns true if it's accumulated as a parallelized animation </summary>
-        public bool beginOrParallelize(Animation anim) {
+        public bool beginOrParallelize(Anim anim) {
             if (anim.kind == AnimationKind.Parallel) {
                 this.parallels.add(anim);
                 return false;
             } else {
                 this.anim = this.parallels.anims.Count == 0 ? anim :
-                    new Anim.Seq().add(this.parallels, anim);
+                    new AnimVariants.Seq().add(this.parallels, anim);
                 return true;
             }
         }

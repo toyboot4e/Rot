@@ -13,7 +13,7 @@ namespace Rot.Ui.View {
         }
 
         // TODO: automate dispatchments using a hub
-        public override Animation visualize(RlEvent ev) {
+        public override Anim visualize(RlEvent ev) {
             switch (ev) {
                 case RlEv.Hit hitEv:
                     return this.visualize(hitEv);
@@ -38,11 +38,11 @@ namespace Rot.Ui.View {
             }
         }
 
-        Animation visualize(RlEv.Hit hit) {
+        Anim visualize(RlEv.Hit hit) {
             return null;
         }
 
-        Animation visualize(RlEv.GiveDamage damage) {
+        Anim visualize(RlEv.GiveDamage damage) {
             var entity = damage.entity;
             var bar = entity.get<HpBar>();
             if (bar == null) return null;
@@ -56,28 +56,28 @@ namespace Rot.Ui.View {
             return null;
         }
 
-        Animation visualize(RlEv.Dodge dodge) {
+        Anim visualize(RlEv.Dodge dodge) {
             Debug.Log("TODO: impl dodge animation");
             return null;
         }
 
-        Animation visualize(RlEv.Miss miss) {
+        Anim visualize(RlEv.Miss miss) {
             Debug.Log("TODO: impl miss animation");
             return null;
         }
 
-        Animation visualize(RlEv.JustSwing swing) {
+        Anim visualize(RlEv.JustSwing swing) {
             float duration = ViewPreferences.swingDuration;
             var ts = _s.viewUtil.swing(swing.entity, swing.dir, duration);
-            return Animation.seq()
+            return Anim.seq()
                 .tween(ts[0])
                 .tween(ts[1]);
         }
 
-        Animation visualize(RlEv.MeleeAttack melee) {
+        Anim visualize(RlEv.MeleeAttack melee) {
             float duration = ViewPreferences.swingDuration;
             var ts = _s.viewUtil.swing(melee.entity, melee.dir, duration);
-            return Animation.seq()
+            return Anim.seq()
                 .tween(ts[0])
                 .wait(ViewPreferences.delayAfterAttack)
                 .tween(ts[1]);

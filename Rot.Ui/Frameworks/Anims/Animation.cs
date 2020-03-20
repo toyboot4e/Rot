@@ -13,12 +13,12 @@ namespace Rot.Ui {
     }
 
     /// <summary> State object for an animation </summary>
-    public abstract class Animation {
+    public abstract class Anim {
         public virtual bool isFinished { get; }
         public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
-        System.Action<Animation> onEndAction;
+        System.Action<Anim> onEndAction;
 
-        public Animation setKind(AnimationKind kind) {
+        public Anim setKind(AnimationKind kind) {
             this.kind = kind;
             return this;
         }
@@ -38,12 +38,12 @@ namespace Rot.Ui {
         protected virtual void onUpdate() { }
         public virtual void onEnd() => this.onEndAction?.Invoke(this);
         public virtual void onClear() { }
-        public void setOnEnd(System.Action<Animation> onEndAction) => this.onEndAction = onEndAction;
+        public void setOnEnd(System.Action<Anim> onEndAction) => this.onEndAction = onEndAction;
         #endregion
 
         #region helpers
         /// <summary> Mainly for nesting </summary>
-        public static IEnumerable createProcess(Animation anim) {
+        public static IEnumerable createProcess(Anim anim) {
             anim.onStart();
             anim.update();
             while (!anim.isFinished) {
@@ -54,17 +54,17 @@ namespace Rot.Ui {
             anim.onClear();
         }
 
-        public static Anim.Tween<T> tween<T>(T t) where T : ITweenable {
-            return new Anim.Tween<T>(t);
+        public static AnimVariants.Tween<T> tween<T>(T t) where T : ITweenable {
+            return new AnimVariants.Tween<T>(t);
         }
 
-        public static Anim.Seq seq() => new Anim.Seq();
+        public static AnimVariants.Seq seq() => new AnimVariants.Seq();
         #endregion
     }
 }
 
-namespace Rot.Ui.Anim {
-    public class Wait : Animation {
+namespace Rot.Ui.AnimVariants {
+    public class Wait : Anim {
         public override bool isFinished => this.duration <= 0;
         float duration;
         public Wait(float duration) {
@@ -75,7 +75,7 @@ namespace Rot.Ui.Anim {
         }
     }
 
-    public class WaitForInput : Animation {
+    public class WaitForInput : Anim {
         VInput input;
         VKey[] keys;
         public WaitForInput(VInput input, VKey[] keys) {
@@ -97,7 +97,7 @@ namespace Rot.Ui.Anim {
 
     // public class WaitForDurationOrInput
 
-    public class Tween<T> : Animation where T : ITweenable {
+    public class Tween<T> : Anim where T : ITweenable {
         T tween;
 
         public Tween(T tween) {
@@ -120,11 +120,11 @@ namespace Rot.Ui.Anim {
     /// Accumulates animations and play them at once.
     /// Finishes when all of them is
     /// </summary>
-    public class Parallel : Animation {
-        public List<Animation> anims { get; private set; }
+    public class Parallel : Anim {
+        public List<Anim> anims { get; private set; }
 
         public Parallel() {
-            this.anims = new List<Animation>();
+            this.anims = new List<Anim>();
         }
 
         public override bool isFinished => _isFinished;
@@ -155,22 +155,22 @@ namespace Rot.Ui.Anim {
             this.anims.Clear();
         }
 
-        public Parallel add(Animation anim) {
+        public Parallel add(Anim anim) {
             this.anims.Add(anim);
             return this;
         }
     }
 
-    public class Seq : Animation {
-        public List<Animation> anims { get; private set; }
+    public class Seq : Anim {
+        public List<Anim> anims { get; private set; }
         public int index { get; private set; }
 
         public Seq() {
-            this.anims = new List<Animation>();
+            this.anims = new List<Anim>();
         }
 
-        public Seq(params Animation[] anims) {
-            this.anims = new List<Animation>();
+        public Seq(params Anim[] anims) {
+            this.anims = new List<Anim>();
             foreach(var anim in anims) {
                 this.anims.Add(anim);
             }
@@ -217,7 +217,7 @@ namespace Rot.Ui.Anim {
         #endregion
 
         #region helpers
-        public Seq add(params Animation[] anims) {
+        public Seq add(params Anim[] anims) {
             for (int i = 0; i < anims.Length; i++) {
                 this.anims.Add(anims[i]);
             }
@@ -225,17 +225,17 @@ namespace Rot.Ui.Anim {
         }
 
         public new Seq tween<T>(T tween) where T : ITweenable {
-            this.anims.Add(new Anim.Tween<T>(tween));
+            this.anims.Add(new AnimVariants.Tween<T>(tween));
             return this;
         }
 
         public Seq wait(float duration) {
-            this.anims.Add(new Anim.Wait(duration));
+            this.anims.Add(new AnimVariants.Wait(duration));
             return this;
         }
 
         public Seq waitForInput(VInput input, VKey[] keys) {
-            this.anims.Add(new Anim.WaitForInput(input, keys));
+            this.anims.Add(new AnimVariants.WaitForInput(input, keys));
             return this;
         }
         #endregion

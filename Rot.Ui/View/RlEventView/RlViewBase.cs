@@ -9,7 +9,7 @@ namespace Rot.Ui {
     public class RlViewPlatform : RlViewStorage {
         public RlViewPlatform(RlViewServices s) : base(s) { }
 
-        public Animation visualize(RlEvent ev) {
+        public Anim visualize(RlEvent ev) {
             // TODO: combine multiple animations
             foreach(var view in this) {
                 var anim = view.visualize(ev);
@@ -51,7 +51,7 @@ namespace Rot.Ui {
             _s = s;
         }
 
-        public virtual Animation visualize(RlEvent ev) {
+        public virtual Anim visualize(RlEvent ev) {
             return null;
         }
         public virtual void setup() { }

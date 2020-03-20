@@ -6,7 +6,7 @@ using NezEp.Prelude;
 
 namespace Rot.Ui.View {
     public class BodyRlView : RlView {
-        public override Animation visualize(RlEvent ev) {
+        public override Anim visualize(RlEvent ev) {
             switch (ev) {
                 case RlEv.PosChange posChange:
                     return this.onPosChange(posChange);
@@ -19,14 +19,14 @@ namespace Rot.Ui.View {
             }
         }
 
-        Animation onPosChange(RlEv.PosChange posChange) {
+        Anim onPosChange(RlEv.PosChange posChange) {
             switch (posChange.cause.ev) {
                 case RlEv.Walk walk:
                     var body = walk.entity.get<Body>();
                     var next = body.pos + walk.dir.vec;
 
                     var tween = _s.viewUtil.walk(walk.entity, next);
-                    var tweenAnim = Animation.tween(tween).setKind(AnimationKind.Parallel);
+                    var tweenAnim = Anim.tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
                     posChange.entity.get<CharaView>().forceUpdatePos();
@@ -34,12 +34,12 @@ namespace Rot.Ui.View {
             }
         }
 
-        Animation onDirChange(RlEv.DirChange dirChange) {
+        Anim onDirChange(RlEv.DirChange dirChange) {
             if (dirChange.from == dirChange.to) return null;
             if (dirChange.isSmooth) {
                 var tween = _s.viewUtil.turn(dirChange.entity, dirChange.to);
                 Force.nonNull(tween, "BodyView.onDirChange");
-                return Animation.tween(tween).setKind(AnimationKind.Parallel);
+                return Anim.tween(tween).setKind(AnimationKind.Parallel);
             } else {
                 dirChange.entity.get<CharaView>().setDir(dirChange.to);
                 return null;

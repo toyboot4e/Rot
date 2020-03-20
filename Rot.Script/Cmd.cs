@@ -15,7 +15,7 @@ namespace Rot.Script {
 namespace Rot.Script.Cmd {
     public interface iCmd { }
     public interface iCmdView {
-        Animation anim(iCmd cmd);
+        Anim anim(iCmd cmd);
     }
 
     public struct Talk : iCmd {

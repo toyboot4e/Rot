@@ -65,7 +65,7 @@ namespace Rot.Ui {
                 }
 
                 // play the animation
-                foreach(var _ in Animation.createProcess(anim)) {
+                foreach(var _ in Anim.createProcess(anim)) {
                     yield return null;
                 }
             }
