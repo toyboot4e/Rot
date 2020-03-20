@@ -53,11 +53,11 @@ namespace Rot.Script.View {
             this.ctrlCtx = ctrlCtx;
         }
 
-        Animation Cmd.iCmdView.anim(Cmd.iCmd cmd) {
+        Anim Cmd.iCmdView.anim(Cmd.iCmd cmd) {
             return this.anim((Cmd.Talk) cmd);
         }
 
-        public Animation anim(Cmd.Talk talk) {
+        public Anim anim(Cmd.Talk talk) {
             var text = talk.text;
             var color = Color.Black;
 
@@ -96,7 +96,7 @@ namespace Rot.Script.View {
                 .zCx(Layers.Stage, Depths.Talk - Depths._inc);
 
             // ***** animate *****
-            var anim = new Ui.Anim.Seq();
+            var anim = new Ui.AnimVariants.Seq();
 
             var ease = EaseType.SineIn;
             float duration = 8f / 60f; // for smooth animation
@@ -113,7 +113,7 @@ namespace Rot.Script.View {
             anim
                 .tween(resize)
                 .waitForInput(this.ctrlCtx.input, new [] { VKey.Select, VKey.Cancel, })
-                .setCompletionHandler(_ => {
+                .setOnEnd(_ => {
                     // we have to disable the entity so that components don't in
                     // screen while it's deleted (, which requires some frames?)
                     entity.SetEnabled(false).Destroy();

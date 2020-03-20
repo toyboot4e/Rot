@@ -1,0 +1,3 @@
+# Rot.Script
+
+A to-be scripting engine (currently hardcoded)

@@ -1,0 +1,7 @@
+= Rot.Engine
+
+The internal game state, basic concepts and common utilities.
+
+== Dependencies
+
+`Core` <- `Framework` <- `Plugins`

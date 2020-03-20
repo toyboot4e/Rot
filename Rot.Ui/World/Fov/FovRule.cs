@@ -6,7 +6,7 @@ using Rot.Engine.Fov;
 using Rot.Ui;
 
 namespace Rot.Rules {
-    /// <summary> Updates FoV on walk of player </summary>
+    /// <summary> Updates visibilities of entities when the player walks </summary>
     public class PlayerFovRule : RlRule {
         Scene scene;
         Entity player;
@@ -43,25 +43,23 @@ namespace Rot.Rules {
             yield break;
         }
 
-        public static void updateEntityVisiblitiesAll<TFov>(Scene scene, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
+        public static void updateEntityVisiblitiesAll<TFov>(Scene scene, TFov fov) where TFov : class, iFovRead, iFovWrite, iFovDiff {
             foreach(var v in scene.FindComponentsOfType<CharaView>()) {
                 updateEntityVisibility(v.Entity, v, fov);
             }
         }
 
-        public static void updateEntityVisibility<TFov>(Entity entity, CharaView view, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
+        public static void updateEntityVisibility<TFov>(Entity entity, CharaView view, TFov fov) where TFov : class, iFovRead, iFovWrite, iFovDiff {
             if (view == null) return;
             var pos = entity.get<Body>().pos;
             if (fov.canSee(pos.x, pos.y)) {
                 view.SetEnabled(true);
-                view.bar?.SetEnabled(true); // not all entities have hp bar
             } else {
                 view.SetEnabled(false);
-                view.bar?.SetEnabled(false); // not all entities have hp bar
             }
         }
 
-        public static void updateEntityVisibility<TFov>(Entity entity, TFov fov) where TFov : iFovRead, iFovWrite, iFovDiff {
+        public static void updateEntityVisibility<TFov>(Entity entity, TFov fov) where TFov : class, iFovRead, iFovWrite, iFovDiff {
             updateEntityVisibility(entity, entity.get<CharaView>(), fov);
         }
     }

@@ -17,6 +17,9 @@ namespace Rot.Ui {
 	}
 
 	// TODO: put bar in UI
+	/// <remark>
+	/// It handles sub <c>RenderableComponents</c> WITHOUT adding them to the <c>Entity</c>.
+	/// </remark>
 	public class EntityBar : RenderableComponent {
 		public enum BarLayer {
 			Background = 0,
@@ -42,11 +45,6 @@ namespace Rot.Ui {
 			this.size = new Vector2(posUtil.tileWidth - 2, 5);
 		}
 
-		public override void OnAddedToEntity() {
-			this.setupBars();
-			this.zCx(Layers.Stage, Depths.CharaGage);
-		}
-
 		void setupBars() {
 			this.bars = new NineSliceSpriteRenderer[4] { null, null, null, null };
 
@@ -63,9 +61,11 @@ namespace Rot.Ui {
 		}
 
 		#region impl RenderableComponent
+		public override void OnAddedToEntity() {
+			this.setupBars();
+			this.zCx(Layers.Stage, Depths.CharaGage);
+		}
 		public override RectangleF Bounds => this.bars[0].Bounds;
-		// public override RectangleF Bounds => this.bars?[0]?.Bounds ?? new RectangleF(0, 0, 0, 0);
-		// public override RectangleF Bounds => new RectangleF(0, 0, 5000, 5000);
 		public override void Render(Batcher batcher, Camera camera) {
 			foreach(var bar in this.bars) {
 				bar?.Render(batcher, camera);

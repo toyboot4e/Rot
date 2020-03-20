@@ -1,0 +1,8 @@
+= NezEp
+
+Empowerment for the https://github.com/prime31/Nez[Nez] framework!
+
+Currently, it contains:
+
+* prelude: extension methods and utilitiy classes
+* debug: `spawn` ables

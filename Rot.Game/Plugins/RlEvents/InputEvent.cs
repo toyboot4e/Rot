@@ -46,10 +46,11 @@ namespace Rot.Rules {
         IEnumerable<RlEvent> handle(RlEv.ControlEntity ctrl) {
             var controller = new EntityController(ctrl.entity);
             var cradle = this.ctx.cradle;
+            var animCtrl = cradle.get<AnimationControl>();
 
             { // stop the game if there any animations
                 // bool anyAnim = cradle.get<AnimationControl>().beginParallelizedIfAny();
-                bool anyAnim = cradle.get<AnimationControl>().anyParallel();
+                bool anyAnim = animCtrl.anyParallel();
                 if (anyAnim) yield return new RlEv.PlayAnim();
             }
 
@@ -59,12 +60,12 @@ namespace Rot.Rules {
                 cradle.push<PlayerControl>();
 
                 { // FIXME: hack to stop the game if there any animations
-                    // bool anyAnim = cradle.get<AnimationControl>().beginParallelizedIfAny();
-                    bool anyAnim = cradle.get<AnimationControl>().anyParallel();
+                    // play walk animation
+                    bool anyAnim = animCtrl.anyParallel();
                     if (anyAnim) yield return new RlEv.PlayAnim();
                 }
 
-                // Let user decide action of the actor
+                // Let user decide an action of the actor
                 while (!controller.isDecided) {
                     yield return new RlEv.NotYetDecided();
                 }
@@ -74,6 +75,5 @@ namespace Rot.Rules {
                 if (controller.action.consumesTurn) break;
             }
         }
-
     }
 }

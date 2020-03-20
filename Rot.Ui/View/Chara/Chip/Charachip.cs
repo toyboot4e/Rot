@@ -6,7 +6,7 @@ using NezEp.Prelude;
 using Rot.Engine;
 
 namespace Rot.Ui {
-    /// <summary> Image for entities with direction </summary>
+    /// <summary> Wrapper of a <c>SpriteAnimation</c> that represents a character image </summary>
     public class Charachip {
         PosUtil posUtil;
         public SpriteAnimator anim { get; private set; }
@@ -55,7 +55,7 @@ namespace Rot.Ui {
             var dirs = Dir9.clockwise;
             for (int i = 0; i < 8; i++) {
                 var(dir, patterns) = (dirs[i], wodi8AnimPatterns[i]);
-                anim.AddAnimation(dir.ToString(), ViewPreferences.walkAnimFps, patterns.Select(p => sprites[p]).ToArray());
+                anim.AddAnimation(dir.ToString(), ViewPreferences.chipAnimFps, patterns.Select(p => sprites[p]).ToArray());
             }
 
             return anim;

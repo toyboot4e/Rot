@@ -23,7 +23,7 @@ namespace Rot.Rules {
 
             var body = entity.get<Body>();
             if (body.facing != dir) {
-                yield return RlEv.DirChange.turn(entity, dir);
+                yield return RlEv.DirChange.smooth(entity, dir);
             }
 
             if (!this.gameCtx.logic.canAttackIn(melee.entity, melee.dir)) {

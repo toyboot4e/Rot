@@ -9,19 +9,20 @@ namespace Rot.Game {
         AnimPlayer impl;
 
         // hacks to inspect animations
-        public Animation current => this.impl.anim;
-        public Animation parallels => this.impl.parallels;
+        public Anim current => this.impl.anim;
+        public Anim parallels => this.impl.parallels;
 
         public AnimationControl() {
             this.impl = new AnimPlayer();
         }
 
-        public bool anyParallel() => this.impl.anyParallel;
+        public bool anyParallel() => this.impl.anyParallel();
+        public bool anyAnim() => this.impl.anyAnim();
 
         /// <summary> Lets accumulated animations start to play </summary>
         public bool beginParallelizedIfAny() => this.impl.beginParallelizedIfAny();
 
-        public bool beginOrParallelize(Animation anim) {
+        public bool beginOrParallelize(Anim anim) {
             Force.nonNull(anim, "beginOrParallelize");
             if (this.impl.beginOrParallelize(anim)) {
                 // play the animation
