@@ -26,7 +26,7 @@ namespace Rot.Ui.View {
                     var next = body.pos + walk.dir.vec;
 
                     var tween = _s.viewUtil.walk(walk.entity, next);
-                    var tweenAnim = new Anim.Tween(tween).setKind(AnimationKind.Parallel);
+                    var tweenAnim = Animation.tween(tween).setKind(AnimationKind.Parallel);
                     return tweenAnim;
                 default:
                     posChange.entity.get<CharaView>().forceUpdatePos();
@@ -35,14 +35,15 @@ namespace Rot.Ui.View {
         }
 
         Animation onDirChange(RlEv.DirChange dirChange) {
+            if (dirChange.from == dirChange.to) return null;
             if (dirChange.isSmooth) {
                 var tween = _s.viewUtil.turn(dirChange.entity, dirChange.to);
-                if (tween != null) {
-                    return new Anim.Tween(tween).setKind(AnimationKind.Parallel);
-                }
+                Force.nonNull(tween, "BodyView.onDirChange");
+                return Animation.tween(tween).setKind(AnimationKind.Parallel);
+            } else {
+                dirChange.entity.get<CharaView>().setDir(dirChange.to);
+                return null;
             }
-            dirChange.entity.get<CharaView>().setDir(dirChange.to);
-            return null;
         }
     }
 }

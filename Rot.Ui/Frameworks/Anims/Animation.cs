@@ -1,24 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Nez;
 using Nez.Tweens;
 
 namespace Rot.Ui {
+    /// <summary> e.g. Walking animation does not block the game <summary>
+    public enum AnimationKind {
+        /// <summary> Soon played </summary>
+        Blocking,
+        /// <summary> Accumulated until they're run </summary>
+        Parallel,
+    }
+
     /// <summary> State object for an animation </summary>
     public abstract class Animation {
         public virtual bool isFinished { get; }
         public AnimationKind kind { get; protected set; } = AnimationKind.Blocking;
         System.Action<Animation> onEndAction;
-        public Animation chainning;
 
         public Animation setKind(AnimationKind kind) {
             this.kind = kind;
             return this;
         }
 
-        public virtual void onStart() { }
-        public virtual bool update() {
+        public bool update() {
             this.onUpdate();
             if (this.isFinished) {
                 this.onEnd();
@@ -27,16 +32,17 @@ namespace Rot.Ui {
                 return false;
             }
         }
+
+        #region lifecycle
+        public virtual void onStart() { }
         protected virtual void onUpdate() { }
+        public virtual void onEnd() => this.onEndAction?.Invoke(this);
         public virtual void onClear() { }
-        public virtual void onEnd() {
-            this.onEndAction?.Invoke(this);
-        }
+        public void setOnEnd(System.Action<Animation> onEndAction) => this.onEndAction = onEndAction;
+        #endregion
 
-        public void setCompletionHandler(System.Action<Animation> onEndAction) {
-            this.onEndAction = onEndAction;
-        }
-
+        #region helpers
+        /// <summary> Mainly for nesting </summary>
         public static IEnumerable createProcess(Animation anim) {
             anim.onStart();
             anim.update();
@@ -44,20 +50,16 @@ namespace Rot.Ui {
                 yield return null;
                 anim.update();
             }
+            anim.onEnd();
             anim.onClear();
         }
 
-        // TODO: enable channing more than one animation
-        public Animation chain(Animation next) {
-            this.chainning = next;
-            return this;
+        public static Anim.Tween<T> tween<T>(T t) where T : ITweenable {
+            return new Anim.Tween<T>(t);
         }
-    }
 
-    /// <summary> e.g. Walking animation does not block the game <summary>
-    public enum AnimationKind {
-        Blocking,
-        Parallel,
+        public static Anim.Seq seq() => new Anim.Seq();
+        #endregion
     }
 }
 
@@ -70,7 +72,6 @@ namespace Rot.Ui.Anim {
         }
         protected override void onUpdate() {
             this.duration -= Time.DeltaTime;
-            base.update();
         }
     }
 
@@ -86,7 +87,6 @@ namespace Rot.Ui.Anim {
                 var key = this.keys[i];
                 if (this.input.consume(key)) {
                     this._isFinished = true;
-                    base.update();
                     return;
                 }
             }
@@ -97,10 +97,10 @@ namespace Rot.Ui.Anim {
 
     // public class WaitForDurationOrInput
 
-    public class Tween : Animation {
-        ITweenable tween;
+    public class Tween<T> : Animation where T : ITweenable {
+        T tween;
 
-        public Tween(ITweenable tween) {
+        public Tween(T tween) {
             this.tween = tween;
         }
 
@@ -169,6 +169,14 @@ namespace Rot.Ui.Anim {
             this.anims = new List<Animation>();
         }
 
+        public Seq(params Animation[] anims) {
+            this.anims = new List<Animation>();
+            foreach(var anim in anims) {
+                this.anims.Add(anim);
+            }
+        }
+
+        #region Animation
         public override bool isFinished {
             get => this.index >= this.anims.Count;
         }
@@ -181,35 +189,43 @@ namespace Rot.Ui.Anim {
             var anim = this.anims[this.index];
             anim.update();
 
-            // go to next animation
-            while (anim.isFinished && ++this.index < this.anims.Count) {
+            // go to next animation (one shot animations are all played)
+            while (anim.isFinished) {
+                anim.onEnd();
+                anim.onClear();
+
+                this.index++;
+                if (this.isFinished) break;
+
                 anim = this.anims[this.index];
                 anim.onStart();
                 anim.update();
-                continue; // process all one shot animations
             }
-
-            base.update();
         }
 
         public override void onStart() {
             this.anims[this.index].onStart();
         }
 
-        public void clear() {
+        public override void onClear() {
+            for (int i = this.index; i < this.anims.Count; i++) {
+                this.anims[i].onClear();
+            }
             this.anims.Clear();
             this.index = 0;
         }
+        #endregion
 
-        public Seq chainSeq(params Animation[] anims) {
+        #region helpers
+        public Seq add(params Animation[] anims) {
             for (int i = 0; i < anims.Length; i++) {
                 this.anims.Add(anims[i]);
             }
             return this;
         }
 
-        public Seq tween(ITweenable tween) {
-            this.anims.Add(new Anim.Tween(tween));
+        public new Seq tween<T>(T tween) where T : ITweenable {
+            this.anims.Add(new Anim.Tween<T>(tween));
             return this;
         }
 
@@ -222,5 +238,6 @@ namespace Rot.Ui.Anim {
             this.anims.Add(new Anim.WaitForInput(input, keys));
             return this;
         }
+        #endregion
     }
 }

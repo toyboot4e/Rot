@@ -113,7 +113,7 @@ namespace Rot.Script.View {
             anim
                 .tween(resize)
                 .waitForInput(this.ctrlCtx.input, new [] { VKey.Select, VKey.Cancel, })
-                .setCompletionHandler(_ => {
+                .setOnEnd(_ => {
                     // we have to disable the entity so that components don't in
                     // screen while it's deleted (, which requires some frames?)
                     entity.SetEnabled(false).Destroy();

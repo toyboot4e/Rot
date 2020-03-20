@@ -44,15 +44,15 @@ namespace Rot.Ui.View {
 
         Animation visualize(RlEv.GiveDamage damage) {
             var entity = damage.entity;
-
-            // var dmgLabel = entity.add(new Text().setText($"{damage.amount}"));
+            var bar = entity.get<HpBar>();
+            if (bar == null) return null;
 
             var hp = entity.get<Performance>().hp;
             float preRatio = (float) hp.val / (float) hp.max;
             float newRatio = (float) (hp.val - damage.amount) / (float) hp.max;
 
-            entity.get<HpBar>().barAnimTween(preRatio, newRatio).Start();
-            // TODO: make non-blocking animation and return anim obj explicitly
+            // TODO: add non-blocking animations and play them explicitly
+            bar.barAnimTween(preRatio, newRatio).Start();
             return null;
         }
 
@@ -68,16 +68,19 @@ namespace Rot.Ui.View {
 
         Animation visualize(RlEv.JustSwing swing) {
             float duration = ViewPreferences.swingDuration;
-            var tweens = _s.viewUtil.swing(swing.entity, swing.dir, duration);
-            tweens[0].SetNextTween(tweens[1]);
-            return new Anim.Tween(tweens[0]);
+            var ts = _s.viewUtil.swing(swing.entity, swing.dir, duration);
+            return Animation.seq()
+                .tween(ts[0])
+                .tween(ts[1]);
         }
 
         Animation visualize(RlEv.MeleeAttack melee) {
             float duration = ViewPreferences.swingDuration;
-            var swing = _s.viewUtil.swing(melee.entity, melee.dir, duration);
-            swing[0].SetNextTween(swing[1]);
-            return new Anim.Tween(swing[0]);
+            var ts = _s.viewUtil.swing(melee.entity, melee.dir, duration);
+            return Animation.seq()
+                .tween(ts[0])
+                .wait(ViewPreferences.delayAfterAttack)
+                .tween(ts[1]);
         }
     }
 }

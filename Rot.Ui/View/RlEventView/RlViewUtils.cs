@@ -16,7 +16,7 @@ namespace Rot.Ui {
             this.input = input;
         }
 
-        /// <summary> Walk animations are made before walking </summary>
+        /// <summary> Walk animations (made before actually walking) </summary>
         public ITweenable walk(Entity entity, Vec2i to) {
             var body = entity.get<Body>();
             var from = body.pos;
@@ -44,15 +44,15 @@ namespace Rot.Ui {
             return anim;
         }
 
-        public ITween<Vector2>[] swing(Entity entity, Dir9 to, float duration = 4f / 60f) {
+        public ITween<Vector2>[] swing(Entity entity, Dir9 to, float duration) {
             var body = entity.get<Body>();
-            var chip = entity.get<CharaView>().chipAnim;
-
             var offset = new Vector2(0, 0);
             var deltaPos = body.facing.vector2 * posUtil.tileSize / 2;
+            var ease = EaseType.QuintOut;
 
-            var first = chip.tweenLocalOffset(offset + deltaPos, duration, EaseType.CircIn);
-            var second = chip.tweenLocalOffset(offset, duration, EaseType.CircIn);
+            var chip = entity.get<CharaView>().chipAnim;
+            var first = chip.tweenLocalOffset(offset + deltaPos, duration, ease);
+            var second = chip.tweenLocalOffset(offset, duration, ease);
 
             return new ITween<Vector2>[] { first, second };
         }

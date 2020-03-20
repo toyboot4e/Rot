@@ -25,22 +25,23 @@ namespace Rot.Ui {
         public static EaseType walkEase => EaseType.Linear;
 
         // body animation durations
-        public static float walkDuration => isQuick ? quickWalkDuration : _walkDuration;
-        public static float walkAnimFps => isQuick ? quickWalkFps : _walkAnimFps; // ?
-        public static float turnDirDuration => isQuick ? _turnDirDuration : quickTurnDirDuration;
-        public static float swingDuration = isQuick ? _swingDuration : quickSwingDirDuration;
-
-        // FIXME: the hack to enable quick mode
         static bool isQuick => Input.IsKeyDown(Keys.LeftControl) || Input.IsKeyDown(Keys.RightControl);
+
+        public static float chipAnimFps => 60f / 32f;
+        public static float walkDuration => isQuick ? quickWalkDuration : _walkDuration;
+        public static float turnDirDuration => isQuick ? quickTurnDirDuration : _turnDirDuration;
+        public static float swingDuration => isQuick ? quickSwingDirDuration : _swingDuration;
+        public static float delayAfterAttack => isQuick ? quickAttackWait : _attackWait;
+
         static float _walkDuration => 8f / 60f;
-        static float _walkAnimFps => 60f / 16f;
         static float _turnDirDuration => 0.02f;
         static float _swingDuration = 4f / 60f;
+        static float _attackWait = 4f / 60;
 
         static float quickWalkDuration = 4f / 60f;
-        static float quickWalkFps => 60f / 32f;
         static float quickTurnDirDuration => 0.01f;
         static float quickSwingDirDuration => 2f / 60f;
+        static float quickAttackWait = 2f / 60;
     }
 
     public static class Constants {

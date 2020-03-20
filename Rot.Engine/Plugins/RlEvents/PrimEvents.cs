@@ -21,6 +21,7 @@ namespace Rot.RlEv {
         public readonly Entity entity;
         public readonly Dir9 from;
         public readonly Dir9 to;
+        // FIXME: hack for view
         public readonly bool isSmooth;
 
         public DirChange(Entity entity, Dir9 from, Dir9 to, bool isSmooth) {
@@ -30,8 +31,12 @@ namespace Rot.RlEv {
             this.isSmooth = isSmooth;
         }
 
-        public static DirChange turn(Entity entity, Dir9 to) {
+        public static DirChange smooth(Entity entity, Dir9 to) {
             return new DirChange(entity, entity.get<Body>().facing, to, isSmooth : true);
+        }
+
+        public static DirChange quick(Entity entity, Dir9 to) {
+            return new DirChange(entity, entity.get<Body>().facing, to, isSmooth : false);
         }
     }
 

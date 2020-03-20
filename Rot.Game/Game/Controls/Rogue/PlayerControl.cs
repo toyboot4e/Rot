@@ -101,7 +101,7 @@ namespace Rot.Game {
             if (PlayerControl.findOnlyNeighbor(this.controller.actor, this.gameCtx) is Entity neighbor) {
                 var entity = this.controller.actor;
                 var dir = Dir9.fromVec2i(neighbor.get<Body>().pos - entity.get<Body>().pos);
-                return RlEv.DirChange.turn(entity, dir).noConsumeTurn();
+                return RlEv.DirChange.smooth(entity, dir).noConsumeTurn();
             } else {
                 return null;
             }
@@ -133,7 +133,7 @@ namespace Rot.Game {
             if (!this.dirMode.isOn && new RlLogic(this.gameCtx).canWalkIn(this.controller.actor, dir)) {
                 return new RlEv.Walk(this.controller.actor, dir);
             } else {
-                return RlEv.DirChange.turn(this.controller.actor, dir).noConsumeTurn();
+                return RlEv.DirChange.smooth(this.controller.actor, dir).noConsumeTurn();
             }
         }
 

@@ -16,7 +16,8 @@ namespace Rot.Game {
             this.impl = new AnimPlayer();
         }
 
-        public bool anyParallel() => this.impl.anyParallel;
+        public bool anyParallel() => this.impl.anyParallel();
+        public bool anyAnim() => this.impl.anyAnim();
 
         /// <summary> Lets accumulated animations start to play </summary>
         public bool beginParallelizedIfAny() => this.impl.beginParallelizedIfAny();
