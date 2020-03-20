@@ -1,0 +1,21 @@
+#!/usr/bin/env bash -euE
+# exports constants and some utility
+
+# the only absolute path in use
+_ROOT="$(cd "$(dirname "$(dirname "$0")")" && pwd)"
+
+# paths relative to the root
+_SLN='Rot.Game.sln'
+_CONTENT_PROJ='Rot.Game'
+_CONTENT_DEST='Rot.Data/ContentPath.cs'
+_EXEC_PROJ='Rot.Game'
+
+_RUN() {
+    local _BASE="${_ROOT}/scripts"
+    if [ ! -x "${_BASE}/$1" ] ; then
+        echo "could not find executable script: \`{1}\`" 2>&1
+        return 1
+    else
+        "${_BASE}/$1"
+    fi
+}

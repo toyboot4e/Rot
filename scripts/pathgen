@@ -1,15 +1,14 @@
 #!/bin/bash -euE
+# generates "${_ROOT}/${_CONTENT_PATH}"
 
 IFS=$'\n\t'
+source "$(dirname "$0")/_configure"
 
-# the root of the solution
-cd "$(dirname "${0}")"
-cd ../
+_NAME_SPACE=Nez
 
-# directory that contains `Content`
-cd Rot.Game
+cd "${_ROOT}/${_CONTENT_PROJ}"
 
-_add_indent() {
+_print_indent() {
     for __ in $(seq ${1}) ; do
         printf '    '
     done
@@ -21,22 +20,20 @@ _standarize() {
 }
 
 _rec_dir() {
-    local _dir="${1}"
-    cd "${_dir}"
+    local _next_dir="${1}"
+    cd "${_next_dir}"
     local _indent="${2}"
     local _basepath="${3}"
 
-    echo "$(_add_indent "${_indent}")public class ${_dir} {"
+    _print_indent "${_indent}"
+    printf '%s\n' "public static class ${_next_dir} {"
     _indent=$(($_indent+1))
 
     # print files
     for __file in $(fd -t f -d 1) ; do
-        _add_indent "${_indent}"
         local _name="$(_standarize "${__file}")"
-        printf '%s' 'public static readonly string '
-        printf '%s' "${_name} = "\"
-        printf '%s' "${_basepath}/${__file}" # | sed "s;^Content/;;g" | tr -d '\n'
-        printf '%s' '";'
+        _print_indent "${_indent}"
+        printf '%s\n' "public static readonly string ${_name} = \"${_basepath}/${__file}\";"
     done
 
     # recursively print directories
@@ -44,11 +41,10 @@ _rec_dir() {
         _rec_dir "${__dir}" "$(($_indent))" "${_basepath}/${__dir}"
     done
 
-    echo "$(_add_indent "$((${_indent}-1))")}"
+    printf '%s\n' "$(_print_indent "$((${_indent}-1))")}"
     cd ../
 }
 
-echo 'namespace Nez {'
+printf '%s\n' "namespace ${_NAME_SPACE} {"
 _rec_dir Content 1 Content
-echo '}'
-
+printf '%s\n' '}'
