@@ -60,7 +60,7 @@ namespace Rot.Ui {
         public List<ValueBufNode<Dir9>> dirNodes => this.selecters.nodes;
 
         // use clockwise `Dir9`s
-        public ValueBufNode<Dir9> dirNode(Dir9 dir) => this.selecters.nodes[dir.indexClockwise];
+        public ValueBufNode<Dir9> dirNode(Dir9 dir) => this.selecters.nodes[dir.asIndexClockwise];
         public VEightDirButtonBatch() {
             Dir9.clockwise.forEach(dir => this.selecters.nodes.Add(new ValueBufNode<Dir9>(dir)));
         }

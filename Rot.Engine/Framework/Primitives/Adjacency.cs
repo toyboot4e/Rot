@@ -14,11 +14,11 @@ namespace Rot.Engine {
 
     public static class AdjacencyExt {
         public static void add(this Adjacency8 self, Dir9 dir) {
-            self |= (Adjacency8) dir.asFlag8;
+            self |= (Adjacency8) dir.asIndexClockwise;
         }
 
         public static void rm(this Adjacency8 self, Dir9 dir) {
-            self &= (Adjacency8) dir.asFlag8;
+            self &= (Adjacency8) dir.asIndexClockwise;
         }
     }
 }
