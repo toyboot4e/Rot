@@ -18,42 +18,44 @@ namespace Nez.Sprites {
             PingPongOnce
         }
 
-        public SpriteAnimatorT() { }
-        public SpriteAnimatorT(Sprite sprite) => base.SetSprite(sprite);
-
-        public struct Settings {
-            public Dictionary<T, SpriteAnimation> anims;
-            public Mode mode;
-            public float speed;
-
-            public Settings(Mode mode, float speed) {
-                this.anims = new Dictionary<T, SpriteAnimation>();
-                this.mode = mode;
-                this.speed = speed;
-            }
-        }
-
+        // TODO: enable something like an array
+        Dictionary<T, SpriteAnimation> anims;
         Settings settings;
         State state;
         public event Action<T> onComp;
 
-        void IUpdatable.Update() {
-            if (this.state.flag != State.Flag.Running || this.state.current.anim == null)
-                return;
+        public SpriteAnimatorT(float speedRate = 1f) {
+            this.settings = new Settings(speedRate);
+            this.anims = new Dictionary<T, SpriteAnimation>();
+            this.state = State.initial();
+        }
 
-            var result = this.state.update(ref this.settings);
-            this.Sprite = this.state.current.anim.Sprites[result.frame];
+        public SpriteAnimatorT(Sprite sprite) : this() {
+            base.SetSprite(sprite);
+        }
+
+        void IUpdatable.Update() {
+            if (!this.state.canUpdate()) {
+                return;
+            }
+
+            var result = this.state.update(this.settings);
+
+            var anim = this.state.currentAnim;
+            this.Sprite = anim.Sprites[result.frame];
+
             if (result.isCompleted) {
-                this.onComp?.Invoke(this.state.current.key);
+                this.onComp?.Invoke(this.state.currentKey);
             }
         }
 
+        #region builder
         public SpriteAnimatorT<T> add(T key, SpriteAnimation animation) {
             // if we have no sprite use the first frame we find
-            if (Sprite == null && animation.Sprites.Length > 0) {
+            if (base.Sprite == null && animation.Sprites.Length > 0) {
                 base.SetSprite(animation.Sprites[0]);
             }
-            this.settings.anims[key] = animation;
+            this.anims[key] = animation;
             return this;
         }
 
@@ -62,13 +64,15 @@ namespace Nez.Sprites {
             this.add(key, new SpriteAnimation(sprites, fps));
             return this;
         }
+        #endregion
 
         #region Playback
         public bool isActive(T key) => this.state.isActive(key);
         public void play(T key, Mode mode = Mode.Loop) {
-            var anim = this.settings.anims[key];
+            var anim = this.anims[key];
             this.state.play(key, anim);
-            this.Sprite = anim.Sprites[0];
+            base.Sprite = anim.Sprites[0];
+            this.settings.mode = mode;
         }
         public void pause() => this.state.pause();
         public void resume() => this.state.resume();
@@ -76,6 +80,18 @@ namespace Nez.Sprites {
         #endregion
 
         #region internals
+        /// <remark> Should be very cheap </summary>
+        struct Settings {
+            /// <summary> Determined externally when an animation is played </summary>
+            public Mode mode;
+            public float speedRate;
+
+            public Settings(float speedRate = 1f) {
+                this.mode = Mode.Loop;
+                this.speedRate = speedRate;
+            }
+        }
+
         struct State {
             public enum Flag {
                 None,
@@ -90,9 +106,18 @@ namespace Nez.Sprites {
                 public int frame;
             }
 
-            public float elapsed;
-            public AnimData current;
-            public Flag flag;
+            public SpriteAnimation currentAnim => this.current.anim;
+            public T currentKey => this.current.key;
+
+            float elapsed;
+            AnimData current;
+            Flag flag;
+
+            public static State initial() => new State(new AnimData() {
+                anim = null,
+                    key = default(T),
+                    frame = 0,
+            });
 
             public State(AnimData current) {
                 this.elapsed = 0;
@@ -105,9 +130,11 @@ namespace Nez.Sprites {
                 public int frame;
             }
 
-            public Result update(ref Settings settings) {
+            public bool canUpdate() => this.flag == Flag.Running && this.current.anim != null;
+
+            public Result update(Settings settings) {
                 var anim = this.current.anim;
-                var secondsPerFrame = 1 / (anim.FrameRate * settings.speed);
+                var secondsPerFrame = 1 / (anim.FrameRate * settings.speedRate);
                 var iterationDuration = secondsPerFrame * anim.Sprites.Length;
                 var pingPongIterationDuration = anim.Sprites.Length < 3 ? iterationDuration : secondsPerFrame * (anim.Sprites.Length * 2 - 2);
 
@@ -130,8 +157,6 @@ namespace Nez.Sprites {
                 if (settings.mode == Mode.ClampForever && time > iterationDuration) {
                     this.flag = Flag.Completed;
                     this.current.frame = anim.Sprites.Length - 1;
-                    // this.Sprite = anim.Sprites[this.current.frame];
-                    // this.onComp?.Invoke(currentKey);
                     return new Result() {
                         isCompleted = true,
                             frame = this.current.frame,
@@ -145,9 +170,10 @@ namespace Nez.Sprites {
                     // create a pingpong frame
                     int maxIndex = n - 1;
                     this.current.frame = maxIndex - Math.Abs(maxIndex - i % (maxIndex * 2));
-                } else
+                } else {
                     // create a looping frame
                     this.current.frame = i % n;
+                }
 
                 return new Result() {
                     isCompleted = false,
@@ -157,8 +183,8 @@ namespace Nez.Sprites {
 
             public bool isActive(T key) => this.current.anim != null && this.current.key.Equals(key);
             public void play(T key, SpriteAnimation anim) {
-                this.current.anim = anim;
                 this.current.key = key;
+                this.current.anim = anim;
                 this.current.frame = 0;
                 this.flag = Flag.Running;
                 this.elapsed = 0;
