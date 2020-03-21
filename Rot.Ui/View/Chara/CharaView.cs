@@ -12,7 +12,7 @@ namespace Rot.Ui {
     /// </remark>
     public class CharaView : RenderableComponent, IUpdatable {
         Charachip chip;
-        public SpriteAnimator chipAnim => this.chip.anim;
+        public SpriteAnimatorT<EDir8> chipAnim => this.chip.anim;
         public HpBar bar { get; private set; }
 
         public CharaView(Charachip chip) {
@@ -51,9 +51,13 @@ namespace Rot.Ui {
             return this;
         }
 
-        public CharaView setDir(Dir9 dir) {
+        public CharaView setDir(EDir8 dir) {
             this.chip.setDir(dir);
             return this;
+        }
+
+        public CharaView setDir(Dir9 dir) {
+            return this.setDir(dir.toEDir8());
         }
 
         public CharaView forceUpdatePos() {

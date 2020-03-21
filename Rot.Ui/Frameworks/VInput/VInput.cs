@@ -20,7 +20,7 @@ namespace Rot.Ui {
         RestATurn,
     }
 
-    /// <summary> Represents one of VKey, EDir, or none. </summary>
+    /// <summary> Represents one of VKey, Dir9, or none. </summary>
     public struct VKeyResult {
         public enum Kind {
             Key,
