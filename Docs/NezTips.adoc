@@ -74,14 +74,14 @@ I reimplemented a generic `SpriteAnimator` in the NezEp project.
 
 === CompositeRenderer (manual renderer tree)
 
-You may want to make sub renderers:
+You may want to make sub renderables:
 
 [source]
 ----
 Entity
-└── SomeRenderer
-   ├── SubRenderer
-   └── SubRenderer
+└── SomeRenderable
+   ├── SubRenderable
+   └── SubRenderable
 ----
 
 And you can set `SpriteRenderable.Parent` to let it follow another. That's useful e.g. when you draw an entitiy with its image and status icons. But you have to set it as a child of an entity, so your `Components` s are arranged in flat.
@@ -95,7 +95,7 @@ public class CompositeRenderer : RenderableComponent, IUpdatable {
 
     public CompositeRenderer(params RenderableComponent[] renderers) {
         this.subs = new List<RenderableComponent>();
-        foreach(var r in renderers) this.add(r);
+        foreach(var r in renderers) this.subs.Add(r);
     }
 
     public void add<T>(T r) where T: RenderableComponent {
@@ -109,6 +109,9 @@ public class CompositeRenderer : RenderableComponent, IUpdatable {
     public override RectangleF Bounds => this.subs[0];
     public void Update() {
         foreach(var r this.subs) r.Update();
+    }
+    public override void OnAddedToEntity() {
+        foreach(var r this.subs) r.OnAddedToEntity();
     }
     public override void Render(Batcher batcher, Camera camera) {
         foreach(var r this.subs) r.Render(batcher, camera);
