@@ -28,6 +28,8 @@ var renderer = tex.toNineRenderer();
 
 It used to accept any type `T` than `string` as a key, and `enum` was often used. However, `enum` s are _boxed_ when it's used as a key of `Dictionary` if you don't implement `IEqualityComparer<T>`. So it was changed to use `string`.
 
+==== `IEqualityComparer<T>`
+
 If you want to use an `enum` for a key of dictionary, do this:
 
 [source,cs]
@@ -64,6 +66,10 @@ Then you can avoid boxing.
 
 NOTE: I didn't make `MyEnumComparer` a struct, because it may cause boxing. But I'm not 100% sure about that.
 
+==== `SpriteAnimatorT`
+
+I reimplemented a generic `SpriteAnimator` in the NezEp project.
+
 == Techniques
 
 === CompositeRenderer (manual renderer tree)
@@ -85,11 +91,17 @@ Instead, you can manually `Render` sub renderables:
 [source,cs]
 ----
 public class CompositeRenderer : RenderableComponent, IUpdatable {
-    List<SpriteRenderer> subs;
+    List<RenderableComponent> subs;
 
-    public CompositeRenderer(params SpriteRenderer[] renderers) {
-        this.renderers = new List<SpriteRenderer>();
-        foreach(var r in subs) this.renderers.Add(r);
+    public CompositeRenderer(params RenderableComponent[] renderers) {
+        this.subs = new List<RenderableComponent>();
+        foreach(var r in renderers) this.add(r);
+    }
+
+    public void add<T>(T r) where T: RenderableComponent {
+        this.subs.Add(r);
+        r.Entity = this.Entity;
+        r.OnAddedToEntity();
     }
 
     #region impl RenderableComponent
