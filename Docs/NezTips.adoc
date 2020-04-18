@@ -1,0 +1,112 @@
+= Tips on Nez
+
+== Extension methods
+
+The `NezEp` project in this repository contains many extensions methods. One of which generates a `NineSliceSpriteRenderer`:
+
+[source,cs]
+----
+public static NineSliceSpriteRenderer toNineRenderer(this Texture2D self) {
+    int w = self.Width / 3;
+    int h = self.Height / 3;
+    return new NineSliceSpriteRenderer(self, h, h, w, w);
+}
+----
+
+Then you can:
+
+[source,cs]
+----
+var path = .. ;
+var tex = Content.LoadTexture(path);
+var renderer = tex.toNineRenderer();
+----
+
+== Modifications/supplements
+
+=== `SpriteAnimator` with any type `T`?
+
+It used to accept any type `T` than `string` as a key, and `enum` was often used. However, `enum` s are _boxed_ when it's used as a key of `Dictionary` if you don't implement `IEqualityComparer<T>`. So it was changed to use `string`.
+
+If you want to use an `enum` for a key of dictionary, do this:
+
+[source,cs]
+----
+using System;
+// ~~
+
+public enum MyEnum {
+    // ~~
+}
+
+public class MyEnumComparer : IEqualityComparer<MyEnum> {
+    public bool Equals(MyEnum x, MyEnum y) {
+        return x == y;
+    }
+
+    public int GetHashCode(MyEnum obj) {
+        return (int) obj;
+    }
+}
+----
+
+And pass it to your `Dictionary`:
+
+[source,cs]
+----
+using System.Collections.Generic;
+// ~~
+
+var myEnumDict = new Dictionary<MyEnum, SomeValue>(new MyEnumComparer());
+----
+
+Then you can avoid boxing.
+
+NOTE: I didn't make `MyEnumComparer` a struct, because it may cause boxing. But I'm not 100% sure about that.
+
+== Techniques
+
+=== CompositeRenderer (manual renderer tree)
+
+You may want to make sub renderers:
+
+[source]
+----
+Entity
+└── SomeRenderer
+   ├── SubRenderer
+   └── SubRenderer
+----
+
+And you can set `SpriteRenderable.Parent` to let it follow another. That's useful e.g. when you draw an entitiy with its image and status icons. But you have to set it as a child of an entity, so your `Components` s are arranged in flat.
+
+Instead, you can manually `Render` sub renderables:
+
+[source,cs]
+----
+public class CompositeRenderer : RenderableComponent, IUpdatable {
+    List<SpriteRenderer> subs;
+
+    public CompositeRenderer(params SpriteRenderer[] renderers) {
+        this.renderers = new List<SpriteRenderer>();
+        foreach(var r in subs) this.renderers.Add(r);
+    }
+
+    #region impl RenderableComponent
+    // This is not good
+    public override RectangleF Bounds => this.subs[0];
+    public void Update() {
+        foreach(var r this.subs) r.Update();
+    }
+    public override void Render(Batcher batcher, Camera camera) {
+        foreach(var r this.subs) r.Render(batcher, camera);
+    }
+    public override void OnEntityTransformChanged(Transform.Component comp) {
+        foreach(var r this.subs) r.OnEntityTransformChanged(comp);
+    }
+    #endregion
+}
+----
+
+TODO: Does it work as 100% expected? Can we set `layerDepth` or `renderLayer` of that?
+

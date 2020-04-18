@@ -1,0 +1,655 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Rot.Game/Game/Flow/RlHook.cs",
+			"settings":
+			{
+				"buffer_size": 2320,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "⠤\n▸ Docs/\n▸ FNA/\n▸ fnalibs/\n▸ Nez/\n▸ NezEp/\n▸ Rony.cs/\n▸ Rot.Data/\n▸ Rot.Engine/\n▸ Rot.Game/\n▸ Rot.Script/\n▸ Rot.Ui/\n▸ scripts/\n≡ .gitignore\n≡ .gitmodules\n≡ getFNA.sh\n≡ imgui.ini\n≡ it\n≡ MonoGameContent.targets\n≡ README.adoc\n≡ Rot.Game.sln\n≡ Rot.Game.sublime-project\n≡ Rot.Game.sublime-workspace\n≡ setup.md\n≡ TODO.adoc",
+			"settings":
+			{
+				"buffer_size": 317,
+				"line_ending": "Unix",
+				"name": "𝌆 Rot",
+				"read_only": true,
+				"scratch": true
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"omn hide",
+				"OmniSharpSublime: Hide Info Panel"
+			],
+			[
+				"omn show",
+				"OmniSharpSublime: Show Server Output"
+			],
+			[
+				"omn restart",
+				"OmniSharpSublime: Restart Server"
+			],
+			[
+				"gitgutter",
+				"GitGutter: Support Info"
+			],
+			[
+				"omni show",
+				"OmniSharpSublime: Show Server Output"
+			],
+			[
+				"om",
+				"OmniSharpSublime: Hide Info Panel"
+			],
+			[
+				"omn",
+				"OmniSharpSublime: Show Server Output"
+			],
+			[
+				"omni",
+				"OmniSharpSublime: Hide Info Panel"
+			],
+			[
+				"omnisharp",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove o\t",
+				"Package Control: Remove Package"
+			],
+			[
+				"omn reload",
+				"OmniSharpSublime: Reload Solution"
+			],
+			[
+				"omn defi",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"gotoim",
+				"OmniSharpSublime: Go to implementation"
+			],
+			[
+				"gotod",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"gotoe",
+				"GitGutter: Goto Next Change"
+			],
+			[
+				"goto",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"gotode",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"gotodefiniti",
+				"OmniSharpSublime: Goto Definition"
+			],
+			[
+				"omnisharp restart",
+				"OmniSharpSublime: Restart Server"
+			],
+			[
+				"termius open",
+				"Terminus: Open Default Shell in Panel"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings"
+			],
+			[
+				"browse",
+				"Browse Mode..."
+			],
+			[
+				"settings",
+				"Preferences: Settings"
+			],
+			[
+				"paclage ",
+				"Package Control: List Packages"
+			],
+			[
+				"package install",
+				"Package Control: Install Package"
+			],
+			[
+				"key ",
+				"Preferences: Key Bindings"
+			],
+			[
+				"package list",
+				"Package Control: List Packages"
+			],
+			[
+				"browse mode",
+				"Browse Mode..."
+			],
+			[
+				"vim",
+				"ActualVim: Enable (Global)"
+			],
+			[
+				"browser",
+				"Browse Mode: Right Sidebar"
+			],
+			[
+				"actual vim \t\t",
+				"Preferences: ActualVim Settings"
+			],
+			[
+				"package controk",
+				"Package Control: Remove Package"
+			],
+			[
+				"install package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 113.0,
+		"history":
+		[
+			"pwd",
+			"exa",
+			"e"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/toy/dev/cs/Rot"
+	],
+	"file_history":
+	[
+		"/Users/toy/dev/cs/Rot/Rot.Game.sublime-project",
+		"/Users/toy/dev/cs/Rot/Rot.Game/Game/God.cs",
+		"/Users/toy/dev/cs/Serde.cs/src/Defaults/De/DefaultDeserialize.cs",
+		"/Users/toy/dev/cs/Serde.cs/src/Interfaces/DeInterfaces.cs",
+		"/Users/toy/dev/cs/Serde.cs/Tyon/src/TyonDeserializer.cs",
+		"/Users/toy/dev/cs/Serde.cs/Serde.sublime-project",
+		"/Users/toy/dev/cs/Serde.cs/Serde.sublime-workspace",
+		"/Users/toy/Library/Application Support/Sublime Text 3/Packages/User/OmniSharpSublime.sublime-settings",
+		"/Users/toy/dev/cs/Serde.cs/Serde.sln",
+		"/Users/toy/dev/cs/Serde.cs/.sublime-project",
+		"/Users/toy/dev/cs/Rot/Rot.Game.sln",
+		"/Users/toy/dev/cs/Rot/.vscode/tasks.json",
+		"/Users/toy/dev/cs/Rot/.vscode/settings.json",
+		"/Users/toy/Library/Application Support/Sublime Text 3/Packages/User/TodoReview.sublime-settings",
+		"/Users/toy/Library/Application Support/Sublime Text 3/Packages/User/dired.sublime-settings",
+		"/Users/toy/dev/cs/Rot/README.adoc",
+		"/Users/toy/Library/Application Support/Sublime Text 3/Packages/OmniSharp/OmniSharpSublime.sublime-settings",
+		"/Users/toy/Library/Application Support/Sublime Text 3/Packages/User/ActualVim.sublime-settings",
+		"/Users/toy/dev/cs/Rot/NezEp/Prelude/NezAdditions/SpriteAnimatorT.cs"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Rot.Game/Game/Flow/RlHook.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2320,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								164,
+								164
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"git_gutter_is_enabled": true,
+							"highlight_line": false,
+							"oops":
+							{
+								"261,267": "Member modifier 'public' must precede the member type and name"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"sequence": "",
+								"xpos": 0
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 317,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"dired_count": 24,
+							"dired_index":
+							[
+								"⠤",
+								"/Users/toy/dev/cs/Rot/Docs/",
+								"/Users/toy/dev/cs/Rot/FNA/",
+								"/Users/toy/dev/cs/Rot/fnalibs/",
+								"/Users/toy/dev/cs/Rot/Nez/",
+								"/Users/toy/dev/cs/Rot/NezEp/",
+								"/Users/toy/dev/cs/Rot/Rony.cs/",
+								"/Users/toy/dev/cs/Rot/Rot.Data/",
+								"/Users/toy/dev/cs/Rot/Rot.Engine/",
+								"/Users/toy/dev/cs/Rot/Rot.Game/",
+								"/Users/toy/dev/cs/Rot/Rot.Script/",
+								"/Users/toy/dev/cs/Rot/Rot.Ui/",
+								"/Users/toy/dev/cs/Rot/scripts/",
+								"/Users/toy/dev/cs/Rot/.gitignore",
+								"/Users/toy/dev/cs/Rot/.gitmodules",
+								"/Users/toy/dev/cs/Rot/getFNA.sh",
+								"/Users/toy/dev/cs/Rot/imgui.ini",
+								"/Users/toy/dev/cs/Rot/it",
+								"/Users/toy/dev/cs/Rot/MonoGameContent.targets",
+								"/Users/toy/dev/cs/Rot/README.adoc",
+								"/Users/toy/dev/cs/Rot/Rot.Game.sln",
+								"/Users/toy/dev/cs/Rot/Rot.Game.sublime-project",
+								"/Users/toy/dev/cs/Rot/Rot.Game.sublime-workspace",
+								"/Users/toy/dev/cs/Rot/setup.md",
+								"/Users/toy/dev/cs/Rot/TODO.adoc"
+							],
+							"dired_path": "/Users/toy/dev/cs/Rot/",
+							"dired_rename_mode": false,
+							"dired_show_hidden_files": false,
+							"dired_stop_preview_thread": true,
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/FileBrowser/dired.sublime-syntax",
+							"vintage":
+							{
+								"xpos": 13
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.86,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 272.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.variable_get":
+	{
+		"height": 108.0
+	},
+	"pinned_build_system": "",
+	"project": "Rot.Game.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"de",
+				"Tyon/src/TyonDeserializer.cs"
+			],
+			[
+				"interface",
+				"src/Interfaces/DeInterfaces.cs"
+			],
+			[
+				"readme",
+				"README.adoc"
+			],
+			[
+				"",
+				"Package Control Messages"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"_vintageous_last_char_search": ",",
+		"_vintageous_last_char_search_command": "vi_big_f",
+		"_vintageous_reset_during_init": true
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 208.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

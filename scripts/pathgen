@@ -3,6 +3,7 @@
 
 IFS=$'\n\t'
 source "$(dirname "$0")/_configure"
+_REQUIRE fd
 
 _NAME_SPACE=Nez
 
@@ -19,29 +20,40 @@ _standarize() {
     # TODO: enable other names that are hidden by keywords
 }
 
+_start_class() {
+    _print_indent "${2}"
+    printf '%s\n' "public static class ${1} {"
+}
+
+_end_class() {
+    _print_indent "$((${1}))"
+    printf '%s\n' '}'
+}
+
 _rec_dir() {
     local _next_dir="${1}"
-    cd "${_next_dir}"
     local _indent="${2}"
     local _basepath="${3}"
 
-    _print_indent "${_indent}"
-    printf '%s\n' "public static class ${_next_dir} {"
+    cd "${_next_dir}"
+    _start_class "${_next_dir}" "${_indent}"
     _indent=$(($_indent+1))
 
-    # print files
+    # files
     for __file in $(fd -t f -d 1) ; do
+        # print file name as a field
         local _name="$(_standarize "${__file}")"
         _print_indent "${_indent}"
         printf '%s\n' "public static readonly string ${_name} = \"${_basepath}/${__file}\";"
     done
 
-    # recursively print directories
+    # directories
     for __dir in $(fd -t d -d 1) ; do
         _rec_dir "${__dir}" "$(($_indent))" "${_basepath}/${__dir}"
     done
 
-    printf '%s\n' "$(_print_indent "$((${_indent}-1))")}"
+    _indent=$(($_indent-1))
+    _end_class "${_indent}"
     cd ../
 }
 

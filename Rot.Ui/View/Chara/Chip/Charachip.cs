@@ -9,7 +9,7 @@ namespace Rot.Ui {
     /// <summary> Wrapper of a <c>SpriteAnimation</c> that represents a character image </summary>
     public class Charachip {
         PosUtil posUtil;
-        public SpriteAnimator anim { get; private set; }
+        public SpriteAnimatorT<EDir8> anim { get; private set; }
         Entity entity;
 
         Charachip(Entity entity, PosUtil posUtil) {
@@ -27,35 +27,36 @@ namespace Rot.Ui {
             return chip;
         }
 
-        static SpriteAnimator animForWodi8(Texture2D texture) {
+        static SpriteAnimatorT<EDir8> animForWodi8(Texture2D texture) {
             // var texture = this.Entity.Scene.Content.LoadTexture(path);
             var sprites = texture.splitIntoSprites(6, 4);
-            var anim = new SpriteAnimator();
+            var anim = new SpriteAnimatorT<EDir8>();
 
-            // TODO: make it static
-            var wodi8AnimPatterns = new [] {
-                // N
-                new [] { 18, 19, 20 },
-                // NE
-                new [] { 21, 22, 23 },
-                // E
-                new [] { 12, 13, 14 },
-                // SE
-                new [] { 9, 10, 11 },
-                // S
-                new [] { 0, 1, 2 },
-                // SW
-                new [] { 3, 4, 5 },
-                // W
-                new [] { 6, 7, 8 },
-                // NW
-                new [] { 15, 16, 17 },
-            };
+            // Sprite[][]
+            var wodiSpriteAnimPatterns = new [] {
+                    // N
+                    new [] { 18, 19, 20 },
+                    // NE
+                    new [] { 21, 22, 23 },
+                    // E
+                    new [] { 12, 13, 14 },
+                    // SE
+                    new [] { 9, 10, 11 },
+                    // S
+                    new [] { 0, 1, 2 },
+                    // SW
+                    new [] { 3, 4, 5 },
+                    // W
+                    new [] { 6, 7, 8 },
+                    // NW
+                    new [] { 15, 16, 17 },
+                }.Select(frames => frames.Select(f => sprites[f]).ToArray())
+                .ToArray();
 
-            var dirs = Dir9.clockwise;
+            var dirs = EDir9Helper.enumerate();
             for (int i = 0; i < 8; i++) {
-                var(dir, patterns) = (dirs[i], wodi8AnimPatterns[i]);
-                anim.AddAnimation(dir.ToString(), ViewPreferences.chipAnimFps, patterns.Select(p => sprites[p]).ToArray());
+                var(dir, anims) = (dirs[i], wodiSpriteAnimPatterns[i]);
+                anim.add(dir, ViewPreferences.chipAnimFps, anims);
             }
 
             return anim;
@@ -67,10 +68,10 @@ namespace Rot.Ui {
             return this;
         }
 
-        public Charachip setDir(Dir9 dir) {
-            var key = dir.ToString();
-            if (key != this.anim.CurrentAnimationName) {
-                this.anim.Play(key, SpriteAnimator.LoopMode.PingPong);
+        public Charachip setDir(EDir8 dir) {
+            var key = dir;
+            if (!this.anim.isActive(key)) {
+                this.anim.play(key, SpriteAnimatorT<EDir8>.Mode.PingPong);
             }
             return this;
         }

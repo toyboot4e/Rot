@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -euE
-# exports constants and some utility
+# exports constants and some utilitieies
 
 # the only absolute path in use
 _ROOT="$(cd "$(dirname "$(dirname "$0")")" && pwd)"
@@ -12,10 +12,25 @@ _EXEC_PROJ='Rot.Game'
 
 _RUN() {
     local _BASE="${_ROOT}/scripts"
-    if [ ! -x "${_BASE}/$1" ] ; then
-        echo "could not find executable script: \`{1}\`" 2>&1
+    _cmd="$1"
+    shift 1
+    if [ ! -x "${_BASE}/${_cmd}" ] ; then
+        echo "could not find executable script: \`${_cmd}\`" 1>&2
         return 1
     else
-        "${_BASE}/$1"
+        "${_BASE}/${_cmd}" "$@"
     fi
+}
+
+_REQUIRE() {
+    _any_err=0
+    while true ; do
+        [ $# -eq 0 ] && break
+        if ! command -v "$1" 1>/dev/null 2>&1 ; then
+            echo "error: required command \`$1\` doesn't exist" 1>&2
+            _any_err=1
+        fi
+        shift 1
+    done
+    return $_any_err
 }

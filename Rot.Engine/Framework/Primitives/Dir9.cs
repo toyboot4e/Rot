@@ -9,10 +9,38 @@ using Nez.ImGuiTools.TypeInspectors;
 using NezEp.Prelude;
 
 namespace Rot.Engine {
+    /// <summary> Uset it only for indexing </summary>
+    public enum EDir8 {
+        N = 0,
+        NE = 1,
+        E = 2,
+        SE = 3,
+        S = 4,
+        SW = 5,
+        W = 6,
+        NW = 7,
+    }
+
+    public static class EDir9Helper {
+        public static EDir8[] enumerate() => new [] {
+            EDir8.N,
+            EDir8.NE,
+            EDir8.E,
+            EDir8.SE,
+            EDir8.S,
+            EDir8.SW,
+            EDir8.W,
+            EDir8.NW,
+        };
+
+        public static EDir8 fromDir9(Dir9 dir) => (EDir8) dir.asIndexClockwise;
+        public static EDir8 toEDir8(this Dir9 self) => (EDir8) self.asIndexClockwise;
+    }
+
     /// <summary>
     /// One of the eight directions: almost an enum. Can be Ground.
     /// </summary>
-    [Nez.CustomInspector(typeof(EDirInspector))]
+    [Nez.CustomInspector(typeof(Dir9Inspector))]
     public struct Dir9 : IEquatable<Dir9> {
         private const bool V = false;
         readonly Vec2i mVec;
@@ -62,7 +90,7 @@ namespace Rot.Engine {
         #endregion
 
         #region clockwise index
-        public int indexClockwise {
+        public int asIndexClockwise {
             get {
                 if (this == N) return 0;
                 if (this == NE) return 1;
@@ -93,48 +121,6 @@ namespace Rot.Engine {
                     return Dir9.SW;
                 case 6:
                     return Dir9.W;
-                case 7:
-                    return Dir9.NW;
-                default:
-                    return Dir9.Ground;
-            }
-        }
-        #endregion
-
-        #region flag8Int
-        public static Dir9[] flags => new [] { N, S, W, E, NE, SE, SW, NW };
-        public byte asFlag8 => System.Convert.ToByte(1 << this.indexFlag8);
-
-        public int indexFlag8 {
-            get {
-                if (this == N) return 0;
-                if (this == S) return 1;
-                if (this == W) return 2;
-                if (this == E) return 3;
-                if (this == NE) return 4;
-                if (this == SE) return 5;
-                if (this == SW) return 6;
-                if (this == NW) return 7;
-                else return -1;
-            }
-        }
-
-        public static Dir9 fromIndexFlag8(int n) {
-            switch (n) {
-                case 0:
-                    return Dir9.N;
-                case 1:
-                    return Dir9.E;
-                case 2:
-                    return Dir9.S;
-                case 3:
-                    return Dir9.W;
-                case 4:
-                    return Dir9.NE;
-                case 5:
-                    return Dir9.SE;
-                case 6:
-                    return Dir9.SW;
                 case 7:
                     return Dir9.NW;
                 default:
@@ -199,7 +185,7 @@ namespace Rot.Engine {
             return !left.Equals(right);
         }
         public bool Equals(Dir9 other) {
-            // if EDir is a class:
+            // if Self is a class:
             // if (other is null) return false;
             return mVec.Equals(other.mVec);
         }
@@ -233,8 +219,8 @@ namespace Rot.Engine {
         #endregion
     }
 
-    /// <summary> EDir inspector for Nez.ImGui </summary>
-    class EDirInspector : AbstractTypeInspector {
+    /// <summary> Inspector for Nez.ImGui </summary>
+    class Dir9Inspector : AbstractTypeInspector {
         public override void DrawMutable() {
             var dir = base.GetValue<Dir9>();
             if (dir == null) {
