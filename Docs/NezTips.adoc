@@ -90,36 +90,41 @@ Instead, you can manually `Render` sub renderables:
 
 [source,cs]
 ----
-public class CompositeRenderer : RenderableComponent, IUpdatable {
-    List<RenderableComponent> subs;
+using Nez;
+using System.Collections.Generic;
 
-    public CompositeRenderer(params RenderableComponent[] renderers) {
-        this.subs = new List<RenderableComponent>();
-        foreach(var r in renderers) this.subs.Add(r);
-    }
+namespace NezEp.Prelude {
+    public class CompositeRenderable<T> : RenderableComponent, IUpdatable where T : RenderableComponent, IUpdatable {
+        List<T> subs;
 
-    public void add<T>(T r) where T: RenderableComponent {
-        this.subs.Add(r);
-        r.Entity = this.Entity;
-        r.OnAddedToEntity();
-    }
+        public CompositeRenderable(params T[] renderers) {
+            this.subs = new List<T>();
+            foreach (var r in renderers) this.subs.Add(r);
+        }
 
-    #region impl RenderableComponent
-    // This is not good
-    public override RectangleF Bounds => this.subs[0];
-    public void Update() {
-        foreach(var r this.subs) r.Update();
+        public void add<U>(U r) where U : T {
+            this.subs.Add(r);
+            r.Entity = this.Entity;
+            r.OnAddedToEntity();
+        }
+
+        #region impl RenderableComponent
+        // This is not good
+        public override RectangleF Bounds => this.subs[0].Bounds;
+        public void Update() {
+            foreach (var r in this.subs) r.Update();
+        }
+        public override void OnAddedToEntity() {
+            foreach (var r in this.subs) r.OnAddedToEntity();
+        }
+        public override void Render(Batcher batcher, Camera camera) {
+            foreach (var r in this.subs) r.Render(batcher, camera);
+        }
+        public override void OnEntityTransformChanged(Transform.Component comp) {
+            foreach (var r in this.subs) r.OnEntityTransformChanged(comp);
+        }
+        #endregion
     }
-    public override void OnAddedToEntity() {
-        foreach(var r this.subs) r.OnAddedToEntity();
-    }
-    public override void Render(Batcher batcher, Camera camera) {
-        foreach(var r this.subs) r.Render(batcher, camera);
-    }
-    public override void OnEntityTransformChanged(Transform.Component comp) {
-        foreach(var r this.subs) r.OnEntityTransformChanged(comp);
-    }
-    #endregion
 }
 ----
 
