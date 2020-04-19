@@ -10,8 +10,8 @@ There's no strict rule for now, but here is the basic.
 | kind             | notation
 
 | interface        | iInterfaceType
-| type/namespace   | UpperCamelCaseAkaPascaleCase
-| variable/methods | camelCase
+| type/namespace   | PascaleCaseAkaUpperCamelCase
+| variable/method  | camelCase
 | constant         | USE_BIG_CHARS_AND_UNDER_SCORE
 |====
 
