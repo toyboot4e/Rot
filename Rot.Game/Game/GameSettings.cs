@@ -16,8 +16,7 @@ namespace Rot.Game {
         // public static int debugH => 810;
 
         public static string title => "rogue";
-        // public static Scene.SceneResolutionPolicy policy => Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
-        public static Scene.SceneResolutionPolicy policy => Scene.SceneResolutionPolicy.FixedWidth;
+        public static Scene.SceneResolutionPolicy policy => Scene.SceneResolutionPolicy.NoBorderPixelPerfect;
 
         // those values should be Set by players (especially the scale)
         // FIXME: avoid jitters with variable time step

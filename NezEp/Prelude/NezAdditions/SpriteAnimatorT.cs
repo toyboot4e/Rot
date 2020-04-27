@@ -4,7 +4,7 @@ using Nez.Textures;
 
 namespace Nez.Sprites {
     /// <summary> Modifies <c>base.Sprite</c> so that it animates </summary>
-    public class SpriteAnimatorT<T> : SpriteRenderer, IUpdatable {
+    public class SpriteAnimatorT<TKey> : SpriteRenderer, IUpdatable {
         public enum Mode {
             /// <summary> [A][B][C][A][B][C][A][B][C]... </summary>
             Loop,
@@ -19,14 +19,14 @@ namespace Nez.Sprites {
         }
 
         // TODO: enable something like an array
-        Dictionary<T, SpriteAnimation> anims;
+        Dictionary<TKey, SpriteAnimation> anims;
         Settings settings;
         State state;
-        public event Action<T> onComp;
+        public event Action<TKey> onComp;
 
         public SpriteAnimatorT(float speedRate = 1f) {
             this.settings = new Settings(speedRate);
-            this.anims = new Dictionary<T, SpriteAnimation>();
+            this.anims = new Dictionary<TKey, SpriteAnimation>();
             this.state = State.initial();
         }
 
@@ -50,7 +50,7 @@ namespace Nez.Sprites {
         }
 
         #region builder
-        public SpriteAnimatorT<T> add(T key, SpriteAnimation animation) {
+        public SpriteAnimatorT<TKey> add(TKey key, SpriteAnimation animation) {
             // if we have no sprite use the first frame we find
             if (base.Sprite == null && animation.Sprites.Length > 0) {
                 base.SetSprite(animation.Sprites[0]);
@@ -59,16 +59,16 @@ namespace Nez.Sprites {
             return this;
         }
 
-        public SpriteAnimatorT<T> add(T key, Sprite[] sprites, float fps = 10) => this.add(key, fps, sprites);
-        public SpriteAnimatorT<T> add(T key, float fps, params Sprite[] sprites) {
+        public SpriteAnimatorT<TKey> add(TKey key, Sprite[] sprites, float fps = 10) => this.add(key, fps, sprites);
+        public SpriteAnimatorT<TKey> add(TKey key, float fps, params Sprite[] sprites) {
             this.add(key, new SpriteAnimation(sprites, fps));
             return this;
         }
         #endregion
 
         #region Playback
-        public bool isActive(T key) => this.state.isActive(key);
-        public void play(T key, Mode mode = Mode.Loop) {
+        public bool isActive(TKey key) => this.state.isActive(key);
+        public void play(TKey key, Mode mode = Mode.Loop) {
             var anim = this.anims[key];
             this.state.play(key, anim);
             base.Sprite = anim.Sprites[0];
@@ -102,12 +102,12 @@ namespace Nez.Sprites {
 
             public struct AnimData {
                 public SpriteAnimation anim;
-                public T key;
+                public TKey key;
                 public int frame;
             }
 
             public SpriteAnimation currentAnim => this.current.anim;
-            public T currentKey => this.current.key;
+            public TKey currentKey => this.current.key;
 
             float elapsed;
             AnimData current;
@@ -115,7 +115,7 @@ namespace Nez.Sprites {
 
             public static State initial() => new State(new AnimData() {
                 anim = null,
-                    key = default(T),
+                    key = default(TKey),
                     frame = 0,
             });
 
@@ -181,8 +181,8 @@ namespace Nez.Sprites {
                 };
             }
 
-            public bool isActive(T key) => this.current.anim != null && this.current.key.Equals(key);
-            public void play(T key, SpriteAnimation anim) {
+            public bool isActive(TKey key) => this.current.anim != null && this.current.key.Equals(key);
+            public void play(TKey key, SpriteAnimation anim) {
                 this.current.key = key;
                 this.current.anim = anim;
                 this.current.frame = 0;
@@ -193,7 +193,7 @@ namespace Nez.Sprites {
             public void resume() => this.flag = Flag.Running;
             public void stop() {
                 this.current.anim = null;
-                this.current.key = default(T);
+                this.current.key = default(TKey);
                 this.current.frame = 0;
                 this.flag = Flag.None;
             }
