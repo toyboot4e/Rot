@@ -41,6 +41,14 @@ _run() {
     env "DYLD_LIBRARY_PATH=${_ROOT}/${_EXEC_PROJ}/bin/Debug/osx/" mono "${_ROOT}/${_EXEC_PROJ}/bin/Debug/${_EXEC_PROJ}.exe"
 }
 
+_restore() {
+    nuget restore Nez/Nez.sln
+    msbuild Nez/Nez.sln
+
+    msbuild /t:restore Rot.Game
+    msbuild Rot.Game
+}
+
 [ $# -eq 0 ] && _help && exit 0
 
 _main() {
@@ -59,6 +67,8 @@ _main() {
             _content "$@" &
             _build "$@"
             _run "$@" ;;
+        'restore')
+            _restore "$@" ;;
         'p' | 'path')
             ./scripts/pathgen ;;
         'h' | 'help')
