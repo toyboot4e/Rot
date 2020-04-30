@@ -12,7 +12,6 @@ it is the main interface of script utilities (macOS only)
 content  build content
 build    build content & source
 run      just run the compiled application
-all      build and then run
 path     just print the content paths
 FIN
 }
@@ -41,7 +40,15 @@ _run() {
     env "DYLD_LIBRARY_PATH=${_ROOT}/${_EXEC_PROJ}/bin/Debug/osx/" mono "${_ROOT}/${_EXEC_PROJ}/bin/Debug/${_EXEC_PROJ}.exe"
 }
 
+_all() {
+    _content "$@" &
+    _build "$@"
+    _run "$@"
+}
+
 _restore() {
+    git submodule foreach --recursive git pull
+
     nuget restore Nez/Nez.sln
     msbuild Nez/Nez.sln
 
@@ -49,7 +56,7 @@ _restore() {
     msbuild Rot.Game
 }
 
-[ $# -eq 0 ] && _help && exit 0
+[ $# -eq 0 ] && _all && exit 0
 
 _main() {
     _cmd="${1}"
@@ -64,14 +71,12 @@ _main() {
         'r' | 'run')
             _run "$@" ;;
         'a' | 'all')
-            _content "$@" &
-            _build "$@"
-            _run "$@" ;;
+            _all "$@" ;;
         'restore')
             _restore "$@" ;;
         'p' | 'path')
             ./scripts/pathgen ;;
-        'h' | 'help')
+        'h' | 'help' | '-h' | '--help')
             _help ;;
         *)
             echo "no matching command: \`${_cmd}\`" ;;
